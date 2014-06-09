@@ -60,7 +60,7 @@ function Map() {
 									.attr("preserveAspectRatio","xMidYMid meet")
 									.attr("viewBox","0 0 "+width+" "+height)
 									.attr("width",m_width)
-									.attr("height",m_width*height/width);
+									.attr("height",m_width*height/width); //Questo dovrebbe sistemare il problema del taglio dell'Argentina
 	svg.append("rect")
         .attr("class", "background")
         .attr("width", width)
@@ -179,7 +179,7 @@ function Map() {
 	
 	// Gestisce il click su un paese
 	function country_clicked(d){
-		if ($.inArray(d.id, enabledCountries) == -1) return; // Nessuna interazione su questo paese perchè non abbiamo dati o perchè è satta disattivata esplicitamente
+		if (d && $.inArray(d.id, enabledCountries) == -1) return; // Nessuna interazione su questo paese perchè non abbiamo dati o perchè è satta disattivata esplicitamente
 		g.selectAll(["#states", "#cities"]).remove();
 		if (country) {
 	        if (currentStatus != 2) // Se sono nello stato 2 non devo ricolorare i paesi visto che li ho colorati in base agli ascolti
@@ -211,7 +211,7 @@ function Map() {
 	        selectedCountry = {}; // Imposto il paese come selezionato
 			fireCountryChanged();
 	        var xyz = [width / 2, height / 1.5, 1];
-	        if (currentStatus != 2) // Se sono nello stato 1 non devo ricolorare i paesi visto che li ho colorati in base agli ascolti
+	        if (currentStatus != 2) // Se sono nello stato 2 non devo ricolorare i paesi visto che li ho colorati in base agli ascolti
 	            g.selectAll("#" + country.id)
 		            .transition()
 		            .duration(500)
@@ -348,7 +348,7 @@ function Map() {
 	
 	// Se il mouse si muove aggiorno la posizione del tooltip per seguire il mouse
 	function circleMouseMove(){
-		var top = ((d3.event.pageY > grafico.height) ? 500 : d3.event.pageY);
+		var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
 	    coverTooltip.style("left", (d3.event.pageX) + "px")
                     .style("top", (top) + "px");
 	}
@@ -372,6 +372,9 @@ function Map() {
 	        .duration(1000)
 	        .style("opacity", 0)
 	        .attr("r", 0);
+   		// Devo resettare lo zoom e lo stato selezionato
+   		if(country)
+			country_clicked(country);
 	}
 	
 	// Imposta il secondo stato di visualizzazione
@@ -415,6 +418,16 @@ function Map() {
 			}
 		}
 		fireStateChanged();
+	};
+	
+	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
+	grafico.toMosaic = function(){
+		svg.attr("transform", "translate(30,0) scale(0.9,0.9)");
+	};
+	
+	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
+	grafico.toFull = function(){
+		svg.attr("transform", "translate(140,50) scale(0.8, 0.8)"); //Questo dovrebbe sistemare il problema del taglio dell'Argentina
 	};
 	
 	/* Fine funzioni pubbliche */

@@ -12,21 +12,26 @@
 					$("#grafico3").animate({ height: $("#grafico3").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", opacity:1}, 500);				
 					$("#grafico4").animate({ height: $("#grafico4").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", left: "47%", opacity:1}, 500);				
 					isMosaic = true;
-					//$("#grafico3").trigger('resizeMosaic');
+					// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
+					map.toMosaic();
+			};
+			var toFull = function(grafico){
+				if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
+					$(".graficoContent").animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:0, "z-index":0}, 500);
+					$(grafico).animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:1, "z-index":1}, 500);
+					isMosaic = false;
+				} else {
+					$(".graficoContent").animate({opacity:0, "z-index":0});
+					$(grafico).delay(250).animate({opacity:1, "z-index":1});
+				}	
+				// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
+				map.toFull();
 			};
 			jQuery(document).ready(function($) {			
 				$(".scroll").click(function(event) {
-					event.preventDefault();		
-					//$("#grafico3").trigger('resizeFull');					
+					event.preventDefault();						
 					var grafico = "#" + event.currentTarget.id.replace("-btn", "");
-					if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
-						$(".graficoContent").animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:0, "z-index":0}, 500);
-						$(grafico).animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:1, "z-index":1}, 500);
-						isMosaic = false;
-					} else {
-						$(".graficoContent").animate({opacity:0, "z-index":0});
-						$(grafico).delay(250).animate({opacity:1, "z-index":1});
-					}					
+					toFull(grafico);				
 				});
 				$(".mosaic").click(function(event) {
 					event.preventDefault();								
