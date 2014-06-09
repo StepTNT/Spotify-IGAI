@@ -73,7 +73,22 @@
 					</script>
 				</div>
 				<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">GRAFICO 2</div>
-				<div id="grafico3" class="graficoContent" style="border: 1px solid green; opacity:0">GRAFICO 3</div>
+				<div id="grafico3" class="graficoContent" style="border: 1px solid green; opacity:0">
+					<link rel="stylesheet" href="charts/force/force.css"/>
+					<script src="charts/force/force.js"></script>
+					<div id="force"></div>
+					<div id="sidepanel">
+						<div id="title">
+						</div>
+						<div id="trackInfo" class="panel_off">
+							<div id="cover" height="100"></div>
+						</div>
+					</div>
+					<script type="text/javascript">
+						var force = new Force();
+						force.draw();
+					  </script>
+				</div>
 				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">GRAFICO 4</div>				
 			</div>
 		</div>

@@ -13,12 +13,12 @@
 *     Eventi:
 *         - Passando il mouse sulla copertina mostriamo un tooltip con la copertina
 *           completa, i dati del disco e il numero di ascolti.
-*	       - Passando il mouse sullo stato mostriamo un tooltip con il nome dello stato e il
-*		     numero di ascolti totali in quello stato
-*		   - Il click sulla copertina imposta il brano come selezionato, cambiando lo stato
-*		     degli altri grafici
-*		   - Il click sullo stato lo imposta come selezionato. I grafici mostreranno quindi
-*		     le statistiche relative allo stato selezionato.
+*	      - Passando il mouse sullo stato mostriamo un tooltip con il nome dello stato e il
+*		    numero di ascolti totali in quello stato
+*		  - Il click sulla copertina imposta il brano come selezionato, cambiando lo stato
+*		    degli altri grafici
+*		  - Il click sullo stato lo imposta come selezionato. I grafici mostreranno quindi
+*		    le statistiche relative allo stato selezionato.
 * 2)  Coloriamo ogni stato in base alla popolarità del brano in quello stato. Ad una
 *     popolarità più elevata corrisponde un colore più intenso. La popolarità è calcolata
 *     come somma degli ascolti tra tutte le settimane per le quali abbiamo dei dati.
@@ -34,8 +34,6 @@
  * @constructor
  */
 function Map() {
-	//TODO: verificare perchè viene tagliata una parte dell'Argentina
-	
 	// grafico è l'oggetto che utilizziamo per esportare i metodi pubblici
 	var grafico             = {};
 	
@@ -61,6 +59,8 @@ function Map() {
 									.attr("viewBox","0 0 "+width+" "+height)
 									.attr("width",m_width)
 									.attr("height",m_width*height/width); //Questo dovrebbe sistemare il problema del taglio dell'Argentina
+    
+    // Creo il rettangolo per gestire gli eventi della mappa
 	svg.append("rect")
         .attr("class", "background")
         .attr("width", width)
