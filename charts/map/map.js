@@ -290,7 +290,7 @@ function Map() {
 	           						circleMouseMove();
 	           					}) 
 	           					.on("click", function(d){
-	           						circleClick(d);
+	           						circleMouseClick(d);
 	           					})
 	           					.style("stroke", selectedCountryStroke)
 	           					.style("stroke-width", "0.5")
@@ -374,6 +374,29 @@ function Map() {
 	        .attr("r", 0);
 	}
 	
+	// Imposta il secondo stato di visualizzazione
+	function setStatus2(){
+		currentStatus = 2;
+		d3.json("sample-data/world-top/latest.json", function(error, data){
+			// Per costruire il range dei colori mi serve il numero massimo degli ascolti
+			var maxStreams = d3.max(data.tracks, function (d) {
+                return d.num_streams;
+            });
+            // Creo la scala con i colori utilizzando la libreria colorbrewer 
+            //TODO: Abbiamo massimo 11 colori, potrebbe dare problemi se mostriamo più di 11 paesi, da verificare.
+            var quantize = d3.scale.ordinal()
+                .domain([0, maxStreams])
+                .range(colorbrewer.Spectral[data.tracks.length]); 
+            // Adesso posso colorare ogni paese utilizzando la funzione di quantizzazione
+            data.tracks.forEach(function (d) {                
+                g.selectAll("#" + getCountry(d.country).id)
+                    .transition()
+                    .duration(1000)
+                    .ease("bounce")
+                    .style("fill", quantize(d.num_streams));
+            });
+		});
+	}
 	/* Fine funzioni private */
 	
 	/* Inizio funzioni pubbliche */
@@ -387,6 +410,7 @@ function Map() {
 			}
 			case 2:{
 				exitStatus1();
+				setStatus2();
 				break;
 			}
 		}
