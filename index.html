@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+	<head>
+		<title>Spotify-IGAI</title>
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>			
+		<script>
+			var isMosaic = false;
+			var toMosaic = function(){
+				if (isMosaic) return; // Siamo già nella modalità mosaico, non devo fare niente
+					$("#grafico1").animate({ height: $("#grafico1").height()/2-70, width: $("#grafico1").width()/2-25, opacity:1}, 500);
+					$("#grafico2").animate({ height: $("#grafico2").height()/2-70, width: $("#grafico2").width()/2-25, left:"47%", opacity:1}, 500);				
+					$("#grafico3").animate({ height: $("#grafico3").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", opacity:1}, 500);				
+					$("#grafico4").animate({ height: $("#grafico4").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", left: "47%", opacity:1}, 500);				
+					isMosaic = true;
+					$("#grafico3").trigger('resizeMosaic');
+			};
+			jQuery(document).ready(function($) {			
+				$(".scroll").click(function(event) {
+					event.preventDefault();		
+					$("#grafico3").trigger('resizeFull');					
+					var grafico = "#" + event.currentTarget.id.replace("-btn", "");
+					if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
+						$(".graficoContent").animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:0, "z-index":0}, 500);
+						$(grafico).animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:1, "z-index":1}, 500);
+						isMosaic = false;
+					} else {
+						$(".graficoContent").animate({opacity:0, "z-index":0});
+						$(grafico).delay(250).animate({opacity:1, "z-index":1});
+					}					
+				});
+				$(".mosaic").click(function(event) {
+					event.preventDefault();								
+					toMosaic();					
+				});	
+				toMosaic(); // La visualizzazione di default è quella con il mosaico dei grafici				
+			});
+		</script>
+	</head>
+	<body>
+		<div id="wrap">
+			<!-- TODO: sviluppare il widget per l'header invece di cambiare l'html a mano ogni volta -->
+			<div id="header">HEADER</div>
+			<div id="content">
+				<div id="grafico1" class="graficoContent" style="opacity:1; border: 1px solid red;">GRAFICO 1</div>
+				<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">GRAFICO 2</div>
+				<div id="grafico3" class="graficoContent" style="border: 1px solid green; opacity:0">GRAFICO 3</div>
+				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">GRAFICO 4</div>				
+			</div>
+		</div>
+		<div id="footer">
+			<a href="#grafico1" id="grafico1-btn" class="scroll">1</a>
+			<a href="#grafico2" id="grafico2-btn" class="scroll">2</a>
+			<a href="#grafico3" id="grafico3-btn" class="scroll">3</a>
+			<a href="#grafico4" id="grafico4-btn" class="scroll">4</a>
+			<a href="#mosaic" id="mosaic-btn" class="mosaic" style="float: right; margin: 5px 5px 0px 0px;">Mosaic</a>
+		</div>
+	</body>
+</html>
