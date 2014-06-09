@@ -422,12 +422,14 @@ function Map() {
 	
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function(){
-		svg.attr("transform", "translate(30,0) scale(0.9,0.9)");
+		$("#map").animate({"style": "margin: 5px; height: 260px;"}, 250);
+		svg.transition().duration(250).attr("transform", "translate(30,0) scale(0.9,0.9)");
 	};
 	
 	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
 	grafico.toFull = function(){
-		svg.attr("transform", "translate(140,50) scale(0.8, 0.8)"); //Questo dovrebbe sistemare il problema del taglio dell'Argentina
+		$("#map").animate({"style": "margin: 5px; height: 520px;"}, 250);
+		svg.transition().duration(250).attr("transform", "translate(140,35) scale(0.8, 0.8)"); //Questo dovrebbe sistemare il problema del taglio dell'Argentina
 	};
 	
 	/* Fine funzioni pubbliche */
