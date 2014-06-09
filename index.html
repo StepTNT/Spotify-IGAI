@@ -2,7 +2,7 @@
 	<head>
 		<title>Spotify-IGAI</title>
 		<link rel="stylesheet" type="text/css" href="css/index.css">
-		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>			
+		<script src="common-libs/jquery-2.1.1.min.js"></script>			
 		<script>
 			var isMosaic = false;
 			var toMosaic = function(){
@@ -12,12 +12,12 @@
 					$("#grafico3").animate({ height: $("#grafico3").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", opacity:1}, 500);				
 					$("#grafico4").animate({ height: $("#grafico4").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", left: "47%", opacity:1}, 500);				
 					isMosaic = true;
-					$("#grafico3").trigger('resizeMosaic');
+					//$("#grafico3").trigger('resizeMosaic');
 			};
 			jQuery(document).ready(function($) {			
 				$(".scroll").click(function(event) {
 					event.preventDefault();		
-					$("#grafico3").trigger('resizeFull');					
+					//$("#grafico3").trigger('resizeFull');					
 					var grafico = "#" + event.currentTarget.id.replace("-btn", "");
 					if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
 						$(".graficoContent").animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:0, "z-index":0}, 500);
@@ -41,7 +41,32 @@
 			<!-- TODO: sviluppare il widget per l'header invece di cambiare l'html a mano ogni volta -->
 			<div id="header">HEADER</div>
 			<div id="content">
-				<div id="grafico1" class="graficoContent" style="opacity:1; border: 1px solid red;">GRAFICO 1</div>
+				<div id="grafico1" class="graficoContent" style="opacity:1; border: 1px solid red;">
+					<link href="charts/map/map.css" rel="stylesheet" type="text/css">
+					<script src="common-libs/d3.v3.min.js"></script>
+					<script src="charts/map/libs/topojson.v1.min.js"></script>
+					<script src="charts/map/libs/colorbrewer.js"></script>
+					<script src="charts/map/map.js"></script>
+					<div id="map" style="margin: 6.5px 7px 5px 7px;"></div>
+					<script type="text/javascript">
+						// Creo l'oggetto grafico
+						var map = new Map();
+						// Registro i listener per gli eventi
+						document.addEventListener('map.stateChanged', function(e){ 
+								console.log("map.stateChanged - " + e.detail.state); 
+							}, false);
+						document.addEventListener('map.trackChanged', function(e){ 
+								$("#header").html(e.detail.track.track_name);
+								console.log("map.trackChanged - " + e.detail.track.track_name); 
+							}, false);
+						document.addEventListener('map.countryChanged', function(e){ 
+								$("#header").html(e.detail.country.id);
+								console.log("map.countryChanged - " + e.detail.country.id); 
+							}, false);
+						// Disegno la mappa
+						map.draw();		
+					</script>
+				</div>
 				<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">GRAFICO 2</div>
 				<div id="grafico3" class="graficoContent" style="border: 1px solid green; opacity:0">GRAFICO 3</div>
 				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">GRAFICO 4</div>				
