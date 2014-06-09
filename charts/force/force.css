@@ -69,90 +69,6 @@ div.panel_on {
     pointer-events: all;
 }
 
-
-/* ....................................................................... */
-/* Help boxes */
-
-div#help {
-    margin: 6px;
-    padding: 4px;
-    background-color: #DEDFA3;
-    position: absolute;
-    width: 420px;
-    right: 0px;
-    z-index: 1001;
-    border: 1px solid #989970;
-
-    font-family: Georgia, Times New Roman, Times, serif;
-    font-size: 11pt;
-
-    -moz-transition: visibility 1.2s;
-    -o-transition: visibility 1.2s;
-    -webkit-transition: visibility 1.2s;
-    transition: visibility 1.2s;
-
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-
-    -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-div#help ul {
-    margin: 0.5em 0em 0.5em 0em;
-    padding-left: 1.5em;
-    
-}
-
-div#help li {
-    margin: 0em;
-    padding: 0px;
-}
-
-div#faq {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    padding: 4px;
-    width: 860px;
-    height: 600px;
-    overflow-y: auto;
-    z-index: 1002;
-    background: #E5E4D6;
-
-    font-size: 11pt;
-
-    border: solid 1px #aaa;
-    border-radius: 8px;    
-    -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-div#faq dt {
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    font-size: 13pt;    
-    color: #5D1D4D;
-    font-weight: bold;
-    margin-top: .4em;
-}
-
-div#faq dd {
-    font-family: Georgia, Times New Roman, Times, serif;
-    padding-left: 0px;
-    margin-left: 0.7em;
-}
-
-div#close_faq {
-    position: fixed; 
-    margin-left: 820px; 
-    margin-top: 0px;
-    padding: 0px;
-}
-
-
 /* ....................................................................... */
 
 div#nocontent {
@@ -183,7 +99,7 @@ div#nocontent h1 {
 /* ....................................................................... */
 /* Movie details panel */
 
-div#movieInfo {
+div#trackInfo {
     position: relative;
     right: 4px;
     cursor: text;
@@ -198,42 +114,42 @@ div#movieInfo {
     text-align: right;
 }
 
-div#movieInfo div#cover {
+div#trackInfo div#cover {
     text-align: left; 
     height: 300px;
 }
 
-div#movieInfo div.t {
+div#trackInfo div.t {
     font-size: 14px;
     font-weight: bold;
 }
 
-div#movieInfo img.cover {
+div#trackInfo img.cover {
     margin-bottom: 6px;
     position: absolute;
     right: 3px;
 }
 
-div#movieInfo img.action {
+div#trackInfo img.action {
     cursor: pointer;
     position: absolute;
 }
 
-div#movieInfo div.f {
+div#trackInfo div.f {
     border-top: 1px dotted #8E5981;
     margin-bottom: 3px;
     margin-top: 3px;
 }
 
-div#movieInfo span.d {
+div#trackInfo span.d {
     font-weight: bold;
 }
 
-div#movieInfo span.c {
+div#trackInfo span.c {
     font-style: italic;
 }
 
-div#movieInfo span.l {
+div#trackInfo span.l {
     font-size: 11px;
     color: #24553E;
     font-variant: small-caps;
@@ -242,7 +158,7 @@ div#movieInfo span.l {
 /* ....................................................................... */
 /* SVG elements */
 
-div#movieNetwork svg {
+div#force svg {
     background-color: #555555;
     cursor: move;
 	overflow: hidden;

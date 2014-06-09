@@ -46,8 +46,8 @@ function Force(){
 	/* Inizio variabili private */
 	
 	// Dimensioni del grafo
-	var width               = 938,
-		height              = 500;
+	var width               = 1300,
+		height              = 550;
 		
 	// Il limite massimo per lo zoom
 	var	show_threshold      = 2.5;
@@ -345,14 +345,14 @@ function Force(){
 	
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function(){
-		$("#map").animate({"style": "margin: 5px; height: 260px;"}, 250);
-		svg.transition().duration(250).attr("transform", "translate(30,0) scale(0.9,0.9)");
+		$("#sidepanel").fadeOut(250);	
+		svg.transition().attr("transform", "translate(-330,-30) scale(0.8, 0.8)");	
 	};
 	
 	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
 	grafico.toFull = function(){
-		$("#map").animate({"style": "margin: 5px; height: 520px;"}, 250);
-		svg.transition().duration(250).attr("transform", "translate(140,35) scale(0.8, 0.8)"); //Questo dovrebbe sistemare il problema del taglio dell'Argentina
+		$("#sidepanel").fadeIn(250);
+		svg.transition().attr("transform", "");
 	};
 	
 	/* Fine funzioni pubbliche */

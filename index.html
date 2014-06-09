@@ -14,6 +14,7 @@
 					isMosaic = true;
 					// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
 					map.toMosaic();
+					force.toMosaic();
 			};
 			var toFull = function(grafico){
 				if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
@@ -26,6 +27,7 @@
 				}	
 				// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
 				map.toFull();
+				force.toFull();
 			};
 			jQuery(document).ready(function($) {			
 				$(".scroll").click(function(event) {
