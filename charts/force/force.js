@@ -402,7 +402,8 @@ function Force(){
 			graphLinks = networkGraph.append('svg:g').attr('class','grp gLinks')
 										   .selectAll("line")
 										   .data(linkArray)
-										   .enter().append("line")
+										   .enter()
+										   .append("line")
 										   .style('stroke-width', function(d) {return edge_width(d.weight);})
 										   .attr("class", "link");
 			// Nodi
