@@ -17,6 +17,7 @@
 					mapChart.toMosaic();
 					lineChart.toMosaic();
 					forceChart.toMosaic();
+					distributionChart.toMosaic();
 			};
 			var toFull = function(grafico){
 				if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
@@ -31,6 +32,7 @@
 				mapChart.toFull();
 				lineChart.toFull();
 				forceChart.toFull();
+				distributionChart.toFull();
 			};
 			jQuery(document).ready(function($) {			
 				$(".scroll").click(function(event) {
@@ -78,6 +80,7 @@
 				</div>
 				<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">
 					<link href="charts/line/line.css" rel="stylesheet" type="text/css">
+					<link href="charts/line/libs/nv.d3.css" rel="stylesheet" type="text/css">
 					<script src="charts/line/libs/nv.d3.js"></script>
 					<script src="charts/line/libs/tooltip.js"></script>
 					<script src="charts/line/libs/utils.js"></script>
@@ -139,7 +142,40 @@
 						forceChart.draw();
 					  </script>
 				</div>
-				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">GRAFICO 4</div>				
+				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">
+					<link rel="stylesheet" href="charts/distribution/distribution.css"/>
+					<script src="charts/distribution/distribution.js"></script>
+					<div class="popup" id="popup">
+				    	<div class="thumb"><img id="thumb" src="thumbnails/loading.gif"></div>
+				      	<div class="popdetails">				
+				        	<div class="poptitle">Ascolti     : </div><div class="popdetail" id="popFocalLength"></div>
+				          	<div class="poptitle">Condivisioni: </div><div class="popdetail" id="popIso"></div>
+				         	<div class="poptitle">Artista     : </div><div class="popdetail" id="popCamera"></div>
+				          	<div class="poptitle">Brano       : </div><div class="popdetail" id="popLens"></div>
+				      	</div>
+				  </div>
+				  <div class="container">
+      		          <div id="distributionChart" class="svgcontainer" style="width: 1200px; height: 520px; transform: translate(-120px, -10px);"></div>
+      		      </div>
+				</div>	
+				<script type="text/javascript">
+					// Creo l'oggetto grafico
+					var distributionChart = new Distribution();
+					// Registro i listener per gli eventi
+					document.addEventListener('distribution.stateChanged', function(e){ 
+							console.log("distribution.stateChanged - " + e.detail.state); 
+						}, false);
+					document.addEventListener('distribution.trackChanged', function(e){ 
+							$("#header").html(e.detail.track.track_name);
+							console.log("distribution.trackChanged - " + e.detail.track.track_name); 
+						}, false);
+					document.addEventListener('distribution.countryChanged', function(e){ 
+							$("#header").html(e.detail.country.id);
+							console.log("distribution.countryChanged - " + e.detail.country.id); 
+						}, false);
+					// Disegno il grafo
+					distributionChart.draw();
+				</script>			
 			</div>
 		</div>
 		<div id="footer">

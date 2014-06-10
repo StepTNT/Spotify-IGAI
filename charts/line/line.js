@@ -279,6 +279,7 @@ function Line() {
 				lineChart.y2Axis.tickFormat(d3.format(".2s"));
 				// Definisco il contenuto dei tooltip
 				lineChart.tooltipContent(function(key, y, e, graph) {
+					console.log("TOOLTIP!");
 		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
 		            var y = String(graph.point.y);
 		            var y = String(graph.point.y)  + ' ascolti';				
