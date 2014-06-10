@@ -2,7 +2,8 @@
 	<head>
 		<title>Spotify-IGAI</title>
 		<link rel="stylesheet" type="text/css" href="css/index.css">
-		<script src="common-libs/jquery-2.1.1.min.js"></script>			
+		<script src="common-libs/jquery-2.1.1.min.js"></script>
+		<script src="common-libs/d3.v3.min.js"></script>			
 		<script>
 			var isMosaic = false;
 			var toMosaic = function(){
@@ -13,8 +14,9 @@
 					$("#grafico4").animate({ height: $("#grafico4").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", left: "47%", opacity:1}, 500);				
 					isMosaic = true;
 					// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
-					map.toMosaic();
-					force.toMosaic();
+					mapChart.toMosaic();
+					lineChart.toMosaic();
+					forceChart.toMosaic();
 			};
 			var toFull = function(grafico){
 				if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
@@ -26,8 +28,9 @@
 					$(grafico).delay(250).animate({opacity:1, "z-index":1});
 				}	
 				// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
-				map.toFull();
-				force.toFull();
+				mapChart.toFull();
+				lineChart.toFull();
+				forceChart.toFull();
 			};
 			jQuery(document).ready(function($) {			
 				$(".scroll").click(function(event) {
@@ -49,15 +52,14 @@
 			<div id="header">HEADER</div>
 			<div id="content">
 				<div id="grafico1" class="graficoContent" style="opacity:1; border: 1px solid red;">
-					<link href="charts/map/map.css" rel="stylesheet" type="text/css">
-					<script src="common-libs/d3.v3.min.js"></script>
+					<link href="charts/map/map.css" rel="stylesheet" type="text/css">					
 					<script src="charts/map/libs/topojson.v1.min.js"></script>
 					<script src="charts/map/libs/colorbrewer.js"></script>
 					<script src="charts/map/map.js"></script>
-					<div id="map" style="margin :5px; height: 520px;"></div>
+					<div id="mapChart" style="margin :5px; height: 520px;"></div>
 					<script type="text/javascript">
 						// Creo l'oggetto grafico
-						var map = new Map();
+						var mapChart = new Map();
 						// Registro i listener per gli eventi
 						document.addEventListener('map.stateChanged', function(e){ 
 								console.log("map.stateChanged - " + e.detail.state); 
@@ -71,14 +73,46 @@
 								console.log("map.countryChanged - " + e.detail.country.id); 
 							}, false);
 						// Disegno la mappa
-						map.draw();		
+						mapChart.draw();		
 					</script>
 				</div>
-				<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">GRAFICO 2</div>
+				<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">
+					<link href="charts/line/line.css" rel="stylesheet" type="text/css">
+					<script src="charts/line/libs/nv.d3.js"></script>
+					<script src="charts/line/libs/tooltip.js"></script>
+					<script src="charts/line/libs/utils.js"></script>
+					<script src="charts/line/libs/models/legend.js"></script>
+					<script src="charts/line/libs/models/axis.js"></script>
+					<script src="charts/line/libs/models/lineWithFocusChart.js"></script>					
+					<script src="charts/line/libs/models/line.js"></script>
+					<script src="charts/line/libs/models/scatter.js"></script>					
+					<script src="charts/line/line.js"></script>				
+					<div id="lineChart" class='with-3d-shadow with-transitions'>
+				    	<svg transform="translate(-10,0)scale(0.615,0.58)" height="NaN" width="NaN" viewBox="0 0 940 400" preserveAspectRatio="xMidYMid meet" style="">
+				    </div>
+				    <script type="text/javascript">
+						// Creo l'oggetto grafico
+						var lineChart = new Line();
+						// Registro i listener per gli eventi
+						document.addEventListener('line.stateChanged', function(e){ 
+								console.log("line.stateChanged - " + e.detail.state); 
+							}, false);
+						document.addEventListener('line.trackChanged', function(e){ 
+								$("#header").html(e.detail.track.track_name);
+								console.log("line.trackChanged - " + e.detail.track.track_name); 
+							}, false);
+						document.addEventListener('line.countryChanged', function(e){ 
+								$("#header").html(e.detail.country.id);
+								console.log("line.countryChanged - " + e.detail.country.id); 
+							}, false);
+						// Disegno il grafo
+						lineChart.draw();
+					  </script>								  		 
+				</div>
 				<div id="grafico3" class="graficoContent" style="border: 1px solid green; opacity:0">
 					<link rel="stylesheet" href="charts/force/force.css"/>
 					<script src="charts/force/force.js"></script>
-					<div id="force"></div>
+					<div id="forceChart"></div>
 					<div id="sidepanel">
 						<div id="title">
 						</div>
@@ -87,8 +121,22 @@
 						</div>
 					</div>
 					<script type="text/javascript">
-						var force = new Force();
-						force.draw();
+						// Creo l'oggetto grafico
+						var forceChart = new Force();
+						// Registro i listener per gli eventi
+						document.addEventListener('force.stateChanged', function(e){ 
+								console.log("force.stateChanged - " + e.detail.state); 
+							}, false);
+						document.addEventListener('force.trackChanged', function(e){ 
+								$("#header").html(e.detail.track.track_name);
+								console.log("force.trackChanged - " + e.detail.track.track_name); 
+							}, false);
+						document.addEventListener('force.countryChanged', function(e){ 
+								$("#header").html(e.detail.country.id);
+								console.log("force.countryChanged - " + e.detail.country.id); 
+							}, false);
+						// Disegno il grafo
+						forceChart.draw();
 					  </script>
 				</div>
 				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">GRAFICO 4</div>				

@@ -53,7 +53,7 @@ function Map() {
 									.projection(projection);
 	
 	// L'oggetto grafico SVG che conterrà la mappa
-	var svg                   = d3.select("#map")
+	var svg                   = d3.select("#mapChart")
 									.append("svg")
 									.attr("preserveAspectRatio","xMidYMid meet")
 									.attr("viewBox","0 0 "+width+" "+height)
@@ -73,7 +73,7 @@ function Map() {
 	// Il tooltip da mostrare quando passo il mouse su una copertina
 	var coverTooltip          = d3.select("body")
 									.append("div")
-			        				.attr("class", "tooltip")
+			        				.attr("class", "mapTooltip")
 			        				.style("opacity", 0)
 			        				.style("z-index", 1000);
 		        				
@@ -295,6 +295,7 @@ function Map() {
 	           					.style("stroke", selectedCountryStroke)
 	           					.style("stroke-width", "0.5")
 	           					.style("opacity", 0) // L'opacità iniziale è 0 perchè verrà animata successivamente
+	           					.attr("id", "mapCircle") //TODO: force.css ridefinisce circle e mi colora anche questi di arancione -.-
 	           					.attr("r", 0) // Come sopra, anche il raggio verrà animato
 	           					.attr("cx", function(d){
 	           						var coords = get_xyz(getCountry(d.country));
@@ -364,7 +365,7 @@ function Map() {
 		coverTooltip.transition()
 	            .duration(500)
 	            .style("opacity", 0);
-	    d3.selectAll("circle")
+	    d3.selectAll("circle#mapCircle")
 	        .transition()
 	        .delay(function (d) { // Animo opacità e raggio in modo da nascondere i cerchi uno per volta
 	            return Math.random() * Math.sqrt(d.num_streams / 10);
@@ -422,13 +423,13 @@ function Map() {
 	
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function(){
-		$("#map").animate({"style": "margin: 5px; height: 260px;"}, 250);
+		$("#mapChart").animate({"style": "margin: 5px; height: 260px;"}, 250);
 		svg.transition().duration(250).attr("transform", "translate(30,0) scale(0.9,0.9)");
 	};
 	
 	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
 	grafico.toFull = function(){
-		$("#map").animate({"style": "margin: 5px; height: 520px;"}, 250);
+		$("#mapChart").animate({"style": "margin: 5px; height: 520px;"}, 250);
 		svg.transition().duration(250).attr("transform", "translate(140,35) scale(0.8, 0.8)"); //Questo dovrebbe sistemare il problema del taglio dell'Argentina
 	};
 	

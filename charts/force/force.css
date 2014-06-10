@@ -158,7 +158,7 @@ div#trackInfo span.l {
 /* ....................................................................... */
 /* SVG elements */
 
-div#force svg {
+div#forceChart svg {
     background-color: #555555;
     cursor: move;
 	overflow: hidden;
@@ -169,32 +169,32 @@ line.link {
     stroke: #B2D9D8;
 }
 
-circle {
+div#forceChart circle {
     cursor: crosshair;
     fill: #EBC763;
 }
 
-circle.level1 {
+div#forceChart circle.level1 {
     stroke: #f00;
 }
 
-circle.level2 {
+div#forceChart circle.level2 {
     fill-opacity: 0.8;
     stroke-opacity: 0.8;
     stroke: #777;
 }
 
-circle.level3 {
+div#forceChart circle.level3 {
     fill-opacity: 0.5;
     stroke-opacity: 0.5;
 }
 
-circle.sibling {
+div#forceChart circle.sibling {
     /*fill: blue;*/
     fill: #455EE8;
 }
 
-circle.main {
+div#forceChart circle.main {
     /*fill: red;*/
     fill: #732A9A;
     fill-opacity: 1.0;

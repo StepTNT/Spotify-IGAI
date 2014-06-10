@@ -69,7 +69,7 @@ function Force(){
 										.clamp(true);					
 									
 	// L'oggetto grafico che conterrà il grafo										
-	var svg                 = d3.select("#force").append("svg:svg")
+	var svg                 = d3.select("#forceChart").append("svg:svg")
 													.attr('xmlns','http://www.w3.org/2000/svg')
 													.attr("width", width)
 													.attr("height", height)
@@ -190,7 +190,7 @@ function Force(){
 		//TODO: invece ti toggleDiv, visto che qua posso solo chiudere, metto una funzione che semplicemente nasconde il pannello
 		info +=
 		'<img src="charts/force/images/close.png" class="action" style="top: 0px;" title="close panel" onClick="toggleDiv(\'movieInfo\');"/>' +
-		'<img src="charts/force/images/target-32.png" class="action" style="top: 280px;" title="center graph on movie" onclick="force.selectTrack('+n.index+',true);"/>';
+		'<img src="charts/force/images/target-32.png" class="action" style="top: 280px;" title="center graph on movie" onclick="forceChart.selectTrack('+n.index+',true);"/>';
 		info += '<br/></div><div style="clear: both;">';
 		if(n.artist_name) // Inserisce il nome dell'artista
 			info += '<div class=f><span class=l>Artista</span>: <span class=d>' + n.artist_name + '</span></div>';
@@ -199,7 +199,7 @@ function Force(){
 		if(n.links) { // Genera e inserisce i links alle altre tracce collegate
 		  info += '<div class=f><span class=l>Collegato con</span>: ';
 		  n.links.forEach( function(idx) {
-		      info += '[<a href="javascript:void(0);" onclick="force.selectTrack('  
+		      info += '[<a href="javascript:void(0);" onclick="forceChart.selectTrack('  
 			  + idx + ',true);">' + nodeArray[idx].artist_name + " - " + nodeArray[idx].track_name + '</a>]';
 		  });
 		  info += '</div>';
@@ -322,7 +322,7 @@ function Force(){
 			repositionGraph( offset, undefined, 'move' );
 		}
 		// Now highlight the graph node and show its movie panel		
-		highlightGraphNode( nodeArray[new_idx], true );
+		highlightGraphNode(nodeArray[new_idx], true);
 		showTrackPanel(nodeArray[new_idx]);
 		fireTrackChanged();
 	};
@@ -413,10 +413,11 @@ function Force(){
 										   .attr('id', function(d) {return "c" + d.index;})
 										   .attr('class', function(d) {return 'node level'+Math.round(Math.random()*10);})
 										   .attr('r', function(d) {return node_size(d.num_streams);})
-										   .attr('pointer-events', 'all')  
+										   .attr('pointer-events', 'all')  										   
 										   .on("click", function(d) {showTrackPanel(d);} )
 										   .on("mouseover", function(d) {highlightGraphNode(d,true,this);})
-										   .on("mouseout",  function(d) {highlightGraphNode(d,false,this);});	
+										   .on("mouseout",  function(d) {highlightGraphNode(d,false,this);});
+			graphNodes.attr("class", "forceCircle");	//TODO: la classe non viene applicata e i cerchi restano tutti neri
 			// Etichette
 			graphLabels = networkGraph.append('svg:g')
 											.attr('class','grp gLabel')

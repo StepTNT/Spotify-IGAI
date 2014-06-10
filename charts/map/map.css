@@ -20,7 +20,7 @@ pre.prettyprint {
 	margin-bottom: 0;
 	padding: 9.5px;
 }
-div.tooltip {
+div.mapTooltip {
 	position: absolute;
 	text-align: center;
 	width: 150px;
@@ -31,4 +31,8 @@ div.tooltip {
 	border: 0px;
 	border-radius: 8px;
 	pointer-events: none;
+}
+
+circle#mapCircle {
+	!important;
 }
