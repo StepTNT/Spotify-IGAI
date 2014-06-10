@@ -53,6 +53,9 @@ function Line() {
 	// Funzione utilizzata per il parse delle date	
 	var dateParser          = d3.time.format("%Y-%m-%d").parse;
 	
+	// Lo stato di visualizzazione attuale
+	var currentStatus        = 1;
+	
 	/* Fine variabili private */
 	
 	/* Inizio eventi */
@@ -204,43 +207,10 @@ function Line() {
 				}
 		];
 	}
-	/* Fine funzioni private */
 	
-	/* Inizio funzioni pubbliche */
-	
-	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
-	grafico.changeStatus = function(newStatus){
-		switch(newStatus){
-			case 1:{
-				setStatus1();
-				break;
-			}
-			case 2:{
-				exitStatus1();
-				setStatus2();
-				break;
-			}
-		}
-		fireStateChanged();
-	};
-	
-	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
-	grafico.toMosaic = function(){
-		d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-5,1)scale(0.72,0.725)");	
-	};
-	
-	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
-	grafico.toFull = function(){
-		d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-10,0)scale(0.72,0.68)");		
-	};
-	
-	/* Fine funzioni pubbliche */
-	
-	/* Main */
-	
-	// La funzione principale da chiamare per disegnare il grafico.
-	grafico.draw = function(){		
-	    // Creo il grafico a partire dai dati topografici
+	// Imposta il primo stato di visualizzazione
+	function setStatus1(){
+		// Creo il grafico
 	    d3.json("sample-data/line-data.json", function (error, data) {	  	
     		nv.addGraph(function(){
     			// Imposto i margini del grafico
@@ -295,10 +265,111 @@ function Line() {
 				  .style({ 'width': 1200, 'height': 520 });			 
 				// Sposto le label dell'asse x più in basso
 				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');					  
-				//nv.utils.windowResize(chart.update);	
+				nv.utils.windowResize(lineChart.update);	
 				return lineChart;
     		});
 	    });
+	}
+	
+	// Imposta il secondo stato di visualizzazione
+	function setStatus2(){
+		// Creo il grafico
+	    d3.json("sample-data/line-data-2.json", function (error, data) {
+	    	if(error) alert(error);	  	
+    		nv.addGraph(function(){
+    			// Imposto i margini del grafico
+		    	lineChart.margin({bottom: 40, left:50});
+		    	// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
+		    	var maxStreams = d3.extent(data, function(d,i){ 
+		    										return d.values[i].y;
+		    									 })[1];
+		    	// Adesso posso impostare il dominio su y
+		    	lineChart.yDomain([0, maxStreams*(6/5)]); // Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
+		    	// Imposto il formato dell'asse x utilizzando delle date
+		    	lineChart.lines.xScale(d3.time.scale());
+		    	// Formatto i tick dell'asse x e scelgo i valori da mostrare
+		    	lineChart.xAxis.tickFormat(function(d) {
+						        return d3.time.format("%d-%m-%Y")(new Date(d)); 
+						   })
+						   .tickValues(function(d,i){
+								var tmp = d[i].values.map(function(el){ return el.x;});
+								var res = [];					
+								res.concat.apply(res, tmp);					
+								return res;
+						   });
+				// Imposto l'asse x per il secondo grafico
+				lineChart.lines2.xScale(d3.time.scale());
+				lineChart.x2Axis.tickFormat(function(d) { 
+								return d3.time.format("%d-%m-%Y")(new Date(d)); 
+							})
+							.tickValues(function(d,i){
+								var tmp = d[i].values.map(function(el){ return el.x;});
+								var res = [];
+								res.concat.apply(res, tmp);
+								return res; 
+				   			});
+				// Imposto il formato dei tick per gli assi y
+				lineChart.yAxis.tickFormat(d3.format(".2s"));
+				lineChart.y2Axis.tickFormat(d3.format(".2s"));
+				// Definisco il contenuto dei tooltip
+				lineChart.tooltipContent(function(key, y, e, graph) {
+					console.log("TOOLTIP!");
+		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
+		            var y = String(graph.point.y);
+		            var y = String(graph.point.y)  + ' ascolti';				
+		            tooltip_str = '<center><image src="' + getArtworkFromKey(key) + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
+		            return tooltip_str;
+	    		});    		
+				// Finalizzo il grafico e lo aggiungo alla pagina
+				d3.select('#lineChart svg')
+				  .datum(data)
+				  .transition()
+				  .duration(500)
+				  .call(lineChart)
+				  .style({ 'width': 1200, 'height': 520 });			 
+				// Sposto le label dell'asse x più in basso
+				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');					  
+				nv.utils.windowResize(lineChart.update);	
+				return lineChart;
+    		});
+	    });
+	}
+	/* Fine funzioni private */
+	
+	/* Inizio funzioni pubbliche */
+	
+	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
+	grafico.changeStatus = function(newStatus){
+		switch(newStatus){
+			case 1:{
+				setStatus1();
+				break;
+			}
+			case 2:{
+				setStatus2();
+				break;
+			}
+		}
+		fireStateChanged();
+	};
+	
+	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
+	grafico.toMosaic = function(){
+		d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-5,1)scale(0.72,0.725)");	
+	};
+	
+	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
+	grafico.toFull = function(){
+		d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-10,0)scale(0.72,0.68)");		
+	};
+	
+	/* Fine funzioni pubbliche */
+	
+	/* Main */
+	
+	// La funzione principale da chiamare per disegnare il grafico.
+	grafico.draw = function(){		
+	  grafico.changeStatus(1);
 	};
 
 	return grafico;

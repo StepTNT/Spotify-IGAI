@@ -70,9 +70,11 @@
 								$("#header").html(e.detail.track.track_name);
 								console.log("map.trackChanged - " + e.detail.track.track_name); 
 							}, false);
-						document.addEventListener('map.countryChanged', function(e){ 
-								$("#header").html(e.detail.country.id);
-								console.log("map.countryChanged - " + e.detail.country.id); 
+						document.addEventListener('map.countryChanged', function(e){
+								var country = e.detail.country.id;
+								$("#header").html(country);
+								console.log("map.countryChanged - " + country); 
+								lineChart.changeStatus((country) ? 2 : 1);
 							}, false);
 						// Disegno la mappa
 						mapChart.draw();		
@@ -145,7 +147,7 @@
 				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">
 					<link rel="stylesheet" href="charts/distribution/distribution.css"/>
 					<script src="charts/distribution/distribution.js"></script>
-					<div class="popup" id="popup">
+					<div class="popup" id="popup" style="z-index: 1000;">
 				    	<div class="thumb"><img id="thumb" src="thumbnails/loading.gif"></div>
 				      	<div class="popdetails">				
 				        	<div class="poptitle">Ascolti     : </div><div class="popdetail" id="popFocalLength"></div>
