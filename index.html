@@ -51,7 +51,25 @@
 	<body>
 		<div id="wrap">
 			<!-- TODO: sviluppare il widget per l'header invece di cambiare l'html a mano ogni volta -->
-			<div id="header">HEADER</div>
+			<div id="header">
+				<div id="country" style="float: left; margin: 8px; width: 50%;">
+					<img id="countryFlag" src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/1500px-Flag_of_Italy.svg.png" style="max-height: 150px; max-width: 150px; float:left;"/>
+					<div id="countryDetails" style="margin-left:10px; float:left; text-align: justify;">
+						<div id="countryName">Paese: Italia</div>
+						<div id="countryPlays">Ascolti: 304975</div>
+						<div id="countryDate">Data: 23/04/2014</div>
+					</div>					
+				</div>
+				<div id="track" style="float:right; margin: 8	px;">
+					<img id="trackCover" src="http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94" style="max-height: 100px; max-width: 100px; background-color: red; margin: 8px;"/>
+					<div id="trackDetails" style="margin-left:10px; float:left; text-align: justify;">
+						<div id="trackArtist">Artista: Seven Lions</div>
+						<div id="trackTitle">Titolo: Canzone</div>
+						<div id="trackPlays">Ascolti: 34975</div>
+						<div id="trackDate">Data: 23/04/2014</div>
+					</div>	
+				</div>
+			</div>
 			<div id="content">
 				<div id="grafico1" class="graficoContent" style="opacity:1; border: 1px solid red;">
 					<link href="charts/map/map.css" rel="stylesheet" type="text/css">					
@@ -181,6 +199,10 @@
 			</div>
 		</div>
 		<div id="footer">
+			<div id="logo">
+				<img src="images/logo_spotify.png" style="max-width:30px; max-height: 30px; margin: 2px;";/>
+				Spotify Visualizer
+			</div>
 			<a href="#grafico1" id="grafico1-btn" class="scroll">1</a>
 			<a href="#grafico2" id="grafico2-btn" class="scroll">2</a>
 			<a href="#grafico3" id="grafico3-btn" class="scroll">3</a>
