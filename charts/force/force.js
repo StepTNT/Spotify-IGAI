@@ -102,7 +102,10 @@ function Force(){
 	var force               = d3.layout.force()
 											//.charge(-320)
 											.size( [width, height] )
-											.linkStrength( function(d,idx) { return d.weight; } );												
+											.linkStrength( function(d,idx) { return d.weight; } )
+											.on("tick", function(){
+												node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+											});												
 	
 	// La traccia selezionata
 	var selectedTrack       = {};
