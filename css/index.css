@@ -4,6 +4,7 @@ html, body {
 	background-image:url('../images/background.png');
 	background-repeat: repeat;	
 	overflow: hidden;
+	max-width: 1440px;
 }
 #wrap {
 	min-height: 100%;

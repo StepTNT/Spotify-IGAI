@@ -31,13 +31,13 @@ function Controller(){
 	var countryPlays = $("#countryPlays");
 	
 	// L'oggetto DOM che contiene l'immagine di copertina del selezionato
-	var trackCover   = $("trackCover");
+	var trackCover   = $("#trackCover");
 	// L'oggetto DOM che contiene il nome dell'artista del brano selezionato
-	var trackArtist  = $("trackArtist");
+	var trackArtist  = $("#trackArtist");
 	// L'oggetto DOM che contiene il titolo del brano selezionato
-	var trackTitle   = $("trackTitle");
+	var trackTitle   = $("#trackTitle");
 	// L'oggetto DOM che contiene il numero di ascolti del brano selezionato
-	var trackPlays   = $("trackPlays");	
+	var trackPlays   = $("#trackPlays");	
 	
 	/* Fine variaibli private */
 	
@@ -58,20 +58,20 @@ function Controller(){
 	/* Inizio metodi pubblici */
 	
 	// Registra il grafico map in modo da poterci lavorare
-	controller.registerMapChart = function(mapChart){
-		controller.mapChart = mapChart;
+	controller.registerMapChart = function(map){
+		mapChart = map;
 	};
 	// Registra il grafico force in modo da poterci lavorare
-	controller.registerForceChart = function(forceChart){
-		controller.forceChart = forceChart;
+	controller.registerForceChart = function(force){
+		forceChart = force;
 	};
 	// Registra il grafico line in modo da poterci lavorare
-	controller.registerLineChart = function(lineChart){
-		controller.lineChart = lineChart;
+	controller.registerLineChart = function(line){
+		lineChart = line;
 	};
 	// Registra il grafico distribution in modo da poterci lavorare
-	controller.registerDistributionChart = function(distributionChart){
-		controller.distributionChart = distributionChart;
+	controller.registerDistributionChart = function(distribution){
+		distributionChart = distribution;
 	};
 	
 	/* FIne metodi pubblici */
@@ -82,7 +82,7 @@ function Controller(){
 	controller.trackChanged = function(newTrack){
 		controller.selectedTrack = newTrack;
 		// Aggiorno il grafico map
-		mapChart.setSelectedTrack(newTrack); //TODO: da implementare
+		mapChart.setSelectedTrack(newTrack);
 		mapChart.changeStatus(2);
 		// Aggiorno il grafico force
 		forceChart.setSelectedTrack(newTrack); //TODO: da implementare		
@@ -90,7 +90,8 @@ function Controller(){
 		lineChart.setSelectedTrack(newTrack); //TODO: da implementare
 		lineChart.changeStatus(2);
 		// Aggiorno l'header
-		trackTitle.animate().html(newTrack.track_title);
+		$("#trackTitle").animate().html("Titolo: " + newTrack.track_name);
+		$("#trackArtist").animate().html("Artista: " + newTrack.artist_name);
 	};
 	
 	// E' stato selezionato unun nuovo paese

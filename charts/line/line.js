@@ -353,6 +353,10 @@ function Line() {
 		fireStateChanged();
 	};
 	
+	grafico.setSelectedTrack = function(track){
+		
+	};
+	
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function(){
 		d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-5,1)scale(0.72,0.725)");	

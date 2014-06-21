@@ -3,8 +3,10 @@
 		<title>Spotify-IGAI</title>
 		<link rel="stylesheet" type="text/css" href="css/index.css">
 		<script src="common-libs/jquery-2.1.1.min.js"></script>
-		<script src="common-libs/d3.v3.min.js"></script>			
+		<script src="common-libs/d3.v3.min.js"></script>	
+		<script src="controller.js"></script>		
 		<script>
+			var controller = new Controller();
 			var isMosaic = false;
 			var toMosaic = function(){
 				if (isMosaic) return; // Siamo già nella modalità mosaico, non devo fare niente
@@ -46,7 +48,7 @@
 				});	
 				toMosaic(); // La visualizzazione di default è quella con il mosaico dei grafici				
 			});
-		</script>
+		</script>		
 	</head>
 	<body>
 		<div id="wrap">
@@ -80,12 +82,14 @@
 					<script type="text/javascript">
 						// Creo l'oggetto grafico
 						var mapChart = new Map();
+						controller.registerMapChart(mapChart);
 						// Registro i listener per gli eventi
 						document.addEventListener('map.stateChanged', function(e){ 
 								console.log("map.stateChanged - " + e.detail.state); 
 							}, false);
 						document.addEventListener('map.trackChanged', function(e){ 
-								$("#header").html(e.detail.track.track_name);
+								//$("#header").html(e.detail.track.track_name);
+								controller.trackChanged(e.detail.track);
 								console.log("map.trackChanged - " + e.detail.track.track_name); 
 							}, false);
 						document.addEventListener('map.countryChanged', function(e){
@@ -116,6 +120,7 @@
 				    <script type="text/javascript">
 						// Creo l'oggetto grafico
 						var lineChart = new Line();
+						controller.registerLineChart(lineChart);
 						// Registro i listener per gli eventi
 						document.addEventListener('line.stateChanged', function(e){ 
 								console.log("line.stateChanged - " + e.detail.state); 
@@ -146,6 +151,7 @@
 					<script type="text/javascript">
 						// Creo l'oggetto grafico
 						var forceChart = new Force();
+						controller.registerForceChart(forceChart);
 						// Registro i listener per gli eventi
 						document.addEventListener('force.stateChanged', function(e){ 
 								console.log("force.stateChanged - " + e.detail.state); 
@@ -181,6 +187,7 @@
 				<script type="text/javascript">
 					// Creo l'oggetto grafico
 					var distributionChart = new Distribution();
+					controller.registerDistributionChart(distributionChart);
 					// Registro i listener per gli eventi
 					document.addEventListener('distribution.stateChanged', function(e){ 
 							console.log("distribution.stateChanged - " + e.detail.state); 

@@ -101,7 +101,7 @@ function Map() {
 	var selectedTrack         = {};
 	
 	// Lo stato di visualizzazione in cui si trova il grafico
-	var currentStatus         = 1;   
+	var currentStatus         = undefined;   
 					
 	/* Fine variabili private */
 	
@@ -356,8 +356,9 @@ function Map() {
 	
 	// Il click del mouse cambia lo stato del grafico e imposta il brano come selezionato                    
 	function circleMouseClick(d){
-		selectedTrack = d;
-	    grafico.changeStatus(2);
+	   selectedTrack = d;
+	    /*grafico.changeStatus(2);*/
+	   fireTrackChanged();
 	}
 	
 	// Nascondo i cerchi e il tooltip
@@ -405,19 +406,27 @@ function Map() {
 	
 	/* Inizio funzioni pubbliche */
 	
+	// Imposto la traccia selezionata e cambio lo stato del grafico
+	grafico.setSelectedTrack = function(track){
+		selectedTrack = track;
+	};
+	
 	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
 	grafico.changeStatus = function(newStatus){
 		switch(newStatus){
 			case 1:{
+				if(currentStatus == 1) return; // Siamo già nello stato 1
 				setStatus1();
 				break;
 			}
 			case 2:{
+				if(currentStatus == 2) return; // Siamo già nello stato 2
 				exitStatus1();
 				setStatus2();
 				break;
 			}
 		}
+		currentStatus = newStatus;
 		fireStateChanged();
 	};
 	

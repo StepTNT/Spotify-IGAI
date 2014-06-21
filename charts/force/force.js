@@ -50,7 +50,7 @@ function Force(){
 		height              = 550;
 		
 	// Il limite massimo per lo zoom
-	var	show_threshold      = 2.5;
+	var	show_threshold      = 15;
 	
 	var currentOffset       = {x:0, y:0};
 	var currentZoom         = 1.0;
@@ -344,6 +344,21 @@ function Force(){
 			}
 		}
 		fireStateChanged();
+	};
+	
+	// Imposta la traccia come selezionata
+	grafico.setSelectedTrack = function(track){
+		console.log(nodeArray);
+		console.log(track);
+		for(var index = 0; index<nodeArray.length; index++){
+			var currentTrack = nodeArray[index];
+			if(currentTrack.artist_name == track.artist_name && currentTrack.track_name == track.track_name){
+				// Abbiamo trovato la traccia giusta
+				grafico.selectTrack(index, true);
+				selectedTrack = track;
+				return;
+			}
+		}
 	};
 	
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
