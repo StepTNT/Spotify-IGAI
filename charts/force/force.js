@@ -433,7 +433,12 @@ function Force(){
 										   .attr('class', function(d) {return 'node level'+Math.round(Math.random()*10);})
 										   .attr('r', function(d) {return node_size(d.num_streams);})
 										   .attr('pointer-events', 'all')  										   
-										   .on("click", function(d) {showTrackPanel(d);} )
+										   .on("click", function(d) {
+										   		//showTrackPanel(d);
+										   		console.log(d);
+										   		selectedTrack = d;		
+												fireTrackChanged();
+										   	})
 										   .on("mouseover", function(d) {highlightGraphNode(d,true,this);})
 										   .on("mouseout",  function(d) {highlightGraphNode(d,false,this);});
 			graphNodes.attr("class", "forceCircle");	//TODO: la classe non viene applicata e i cerchi restano tutti neri

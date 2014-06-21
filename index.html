@@ -126,7 +126,7 @@
 								console.log("line.stateChanged - " + e.detail.state); 
 							}, false);
 						document.addEventListener('line.trackChanged', function(e){ 
-								$("#header").html(e.detail.track.track_name);
+								controller.trackChanged(e.detail.track);
 								console.log("line.trackChanged - " + e.detail.track.track_name); 
 							}, false);
 						document.addEventListener('line.countryChanged', function(e){ 
@@ -157,7 +157,7 @@
 								console.log("force.stateChanged - " + e.detail.state); 
 							}, false);
 						document.addEventListener('force.trackChanged', function(e){ 
-								$("#header").html(e.detail.track.track_name);
+								controller.trackChanged(e.detail.track);
 								console.log("force.trackChanged - " + e.detail.track.track_name); 
 							}, false);
 						document.addEventListener('force.countryChanged', function(e){ 
@@ -193,7 +193,7 @@
 							console.log("distribution.stateChanged - " + e.detail.state); 
 						}, false);
 					document.addEventListener('distribution.trackChanged', function(e){ 
-							$("#header").html(e.detail.track.track_name);
+							controller.trackChanged(e.detail.track);
 							console.log("distribution.trackChanged - " + e.detail.track.track_name); 
 						}, false);
 					document.addEventListener('distribution.countryChanged', function(e){ 
