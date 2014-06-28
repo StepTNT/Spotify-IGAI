@@ -240,17 +240,18 @@ function Map() {
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){
 		currentStatus = 1;
-		d3.json("sample-data/world-top/latest.json", function(error, data){
+		d3.json("http://192.168.1.41/analisi-immagini/map.php", function(error, data){
 			// Per poter scalare il raggio dei cerchi su ogni stato, ci serve sapere quale sarà il valore massimo degli ascolti
-			var maxStreams = d3.max(data.tracks, function(d){
-				return d.num_streams;
+			maxStreams = d3.max(data, function(d){				
+				return parseInt(d.num_streams);
 			});
+			console.log("maxStreams = " + maxStreams);
 			// Una volta ottenuto il massimo costruisco la funzione per scalare il raggio all'interno del dominio tra 0 e maxStreams
 			var scale = d3.scale.linear()
 									.domain([0, maxStreams])
 									.range([2, 10]); // I nostri cerchi avranno un raggio tra 2 e 10 unità
 			// Per poter utilizzare un'immagine di sfondo per i cerchi, è necessario usare i pattern SVG. Devo quindi definirli in modo dinamico
-			data.tracks.forEach(function(d){
+			data.forEach(function(d){
 				// Devo scorrere tutte le tracce perchè devo creare un pattern per ogni traccia
 				g.append("pattern")
 					.attr("id", d.artwork_url) // Usiamo l'url come id visto che è univoco e non presenta spazi o caratteri vietati
@@ -265,49 +266,53 @@ function Map() {
 	                    .attr("width", scale(d.num_streams))
 	                    .attr("height", scale(d.num_streams));		                 
 	           // Sfrutto questo ciclo per abilitare le interazioni sui paesi per i quali abbiamo dati
-	           var currentCountry = getCountry(d.country);
-	           if($.inArray(enabledCountries, currentCountry.id) == -1){
-	               // Con questo controllo verifico se il paese è stato già abilitato in precedenza
-	               g.selectAll("#" + currentCountry.id)
-	                   .transition()
-	                   .duration(1000)
-	                   .ease("bounce")
-	                   .style("fill", enabledCountryColor);
-	               enabledCountries.push(currentCountry.id);
-	           }	
-	           // Creo i cerchi, uno per ogni brano presente nei dati. (Il formato dei dati non permette cerchi multipli sullo stesso paese!)
-	           var circles = g.selectAll("circle")
-	           					.data(data.tracks)
-	           					.enter()
-	           					.append("circle")
-	           					.on("mouseover", function(d){
-	           						circleMouseOver(d);
-	           						})
-	           					.on("mouseout", function(){
-	           						circleMouseOut();
-	           					})
-	           					.on("mousemove", function(){
-	           						circleMouseMove();
-	           					}) 
-	           					.on("click", function(d){
-	           						circleMouseClick(d);
-	           					})
-	           					.style("stroke", selectedCountryStroke)
-	           					.style("stroke-width", "0.5")
-	           					.style("opacity", 0) // L'opacità iniziale è 0 perchè verrà animata successivamente
-	           					.attr("id", "mapCircle") //TODO: force.css ridefinisce circle e mi colora anche questi di arancione -.-
-	           					.attr("r", 0) // Come sopra, anche il raggio verrà animato
-	           					.attr("cx", function(d){
-	           						var coords = get_xyz(getCountry(d.country));
-	           						return coords[0];
-	           					})
-	           					.attr("cy", function(d){
-	           						var coords = get_xyz(getCountry(d.country));
-	           						return coords[1];
-	           					})
-	           					.attr("fill", function(d){
-	           						return "url(#" + d.artwork_url + ")";
-	           					});
+	           var currentCountry = getCountry(d.countryId);
+	           console.log("Current country = " + currentCountry + " - " + d.countryId);
+	           if(currentCountry){                
+		           if($.inArray(enabledCountries, currentCountry.id) == -1){
+		               // Con questo controllo verifico se il paese è stato già abilitato in precedenza
+		               g.selectAll("#" + currentCountry.id)
+		                   .transition()
+		                   .duration(1000)
+		                   .ease("bounce")
+		                   .style("fill", enabledCountryColor);
+		               enabledCountries.push(currentCountry.id);
+		           }	
+	           
+		           // Creo i cerchi, uno per ogni brano presente nei dati. (Il formato dei dati non permette cerchi multipli sullo stesso paese!)
+		           var circles = g.selectAll("circle")
+		           					.data(data)
+		           					.enter()
+		           					.append("circle")
+		           					.on("mouseover", function(d){
+		           						circleMouseOver(d);
+		           						})
+		           					.on("mouseout", function(){
+		           						circleMouseOut();
+		           					})
+		           					.on("mousemove", function(){
+		           						circleMouseMove();
+		           					}) 
+		           					.on("click", function(d){
+		           						circleMouseClick(d);
+		           					})
+		           					.style("stroke", selectedCountryStroke)
+		           					.style("stroke-width", "0.5")
+		           					.style("opacity", 0) // L'opacità iniziale è 0 perchè verrà animata successivamente
+		           					.attr("id", "mapCircle") //TODO: force.css ridefinisce circle e mi colora anche questi di arancione -.-
+		           					.attr("r", 0) // Come sopra, anche il raggio verrà animato
+		           					.attr("cx", function(d){
+		           						var coords = get_xyz(getCountry(d.countryId));
+		           						return coords[0];
+		           					})
+		           					.attr("cy", function(d){
+		           						var coords = get_xyz(getCountry(d.countryId));
+		           						return coords[1];
+		           					})
+		           					.attr("fill", function(d){
+		           						return "url(#" + d.artwork_url + ")";
+		           					});
+		        }
 			});
 			// Dopo aver creato i cerchi li devo mostrare con un'animazione
 			d3.selectAll("circle")
@@ -321,6 +326,7 @@ function Map() {
 				.attr("r", function (d) { // Il raggio dipende dal numero di ascolti secondo la funzione di scaling definita prima
 	                return scale(d.num_streams);
 	            });
+	     	
 		});
 	}
 	
@@ -393,8 +399,8 @@ function Map() {
                 .domain([0, maxStreams])
                 .range(colorbrewer.Spectral[data.tracks.length]); 
             // Adesso posso colorare ogni paese utilizzando la funzione di quantizzazione
-            data.tracks.forEach(function (d) {                
-                g.selectAll("#" + getCountry(d.country).id)
+            data.forEach(function (d) {                
+                g.selectAll("#" + getCountry(d.countryId).id)
                     .transition()
                     .duration(1000)
                     .ease("bounce")
