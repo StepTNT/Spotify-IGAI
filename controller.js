@@ -80,7 +80,7 @@ function Controller(){
 	
 	// E' stata selezionata una nuova traccia, quindi devo aggiornare i grafici
 	controller.trackChanged = function(newTrack){
-		controller.selectedTrack = newTrack;
+		electedTrack = newTrack;
 		// Aggiorno il grafico map
 		mapChart.setSelectedTrack(newTrack);
 		mapChart.changeStatus(2);
@@ -95,17 +95,22 @@ function Controller(){
 	};
 	
 	// E' stato selezionato unun nuovo paese
-	controller.countryChanged = function(newTrack){
-		controller.selectedTrack = newTrack;
+	controller.countryChanged = function(newCountry){
+		//controller.selectedTrack = newTrack;
+		selectedCountry = newCountry;
 		// Aggiorno il grafico map
-		mapChart.setSelectedTrack(newTrack); //TODO: da implementare
+		/*mapChart.setSelectedTrack(newTrack); //TODO: da implementare
 		mapChart.changeStatus(2);
 		// Aggiorno il grafico force
 		forceChart.setSelectedTrack(newTrack); //TODO: da implementare		
 		// Aggiorno il grafico line
 		lineChart.setSelectedTrack(newTrack); //TODO: da implementare
-		lineChart.changeStatus(2);
+		lineChart.changeStatus(2);*/
 		// Aggiorno l'header
+		if(!$.isEmptyObject(newCountry)){
+			$("#countryFlag").attr("class", "flag-icon flag-icon-" + newCountry.id);
+			$("#countryName").html("Paese : " + newCountry.properties.name);
+		} else console.log("GLOBAL");		
 	};
 	
 	/* Fine gestione eventi */

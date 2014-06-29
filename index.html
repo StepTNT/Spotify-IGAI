@@ -2,6 +2,7 @@
 	<head>
 		<title>Spotify-IGAI</title>
 		<link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" type="text/css" href="css/flag-icon.css">
 		<script src="common-libs/jquery-2.1.1.min.js"></script>
 		<script src="common-libs/d3.v3.min.js"></script>	
 		<script src="controller.js"></script>		
@@ -53,9 +54,9 @@
 	<body>
 		<div id="wrap">
 			<!-- TODO: sviluppare il widget per l'header invece di cambiare l'html a mano ogni volta -->
-			<div id="header">
+			<div id="header">				
 				<div id="country" style="float: left; margin: 8px; width: 50%;">
-					<img id="countryFlag" src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Flag_of_Italy.svg/1500px-Flag_of_Italy.svg.png" style="max-height: 150px; max-width: 150px; float:left;"/>
+					<span id="countryFlag" class="flag-icon flag-icon-ITA" style="height: 150px; width: 125px; float:left; top: -25px"></span>
 					<div id="countryDetails" style="margin-left:10px; float:left; text-align: justify;">
 						<div id="countryName">Paese: Italia</div>
 						<div id="countryPlays">Ascolti: 304975</div>
@@ -93,10 +94,11 @@
 								console.log("map.trackChanged - " + e.detail.track.track_name); 
 							}, false);
 						document.addEventListener('map.countryChanged', function(e){
-								var country = e.detail.country.id;
-								$("#header").html(country);
+								//var country = e.detail.country.id;
+								//$("#header").html(country);
+								controller.countryChanged(e.detail.country);
 								console.log("map.countryChanged - " + country); 
-								lineChart.changeStatus((country) ? 2 : 1);
+								//lineChart.changeStatus((country) ? 2 : 1);
 							}, false);
 						// Disegno la mappa
 						mapChart.draw();		

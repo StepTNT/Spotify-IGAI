@@ -240,7 +240,7 @@ function Map() {
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){
 		currentStatus = 1;
-		d3.json("http://192.168.1.41/analisi-immagini/map.php", function(error, data){
+		d3.json("http://192.168.1.41/analisi-immagini/map.php?state=1", function(error, data){
 			// Per poter scalare il raggio dei cerchi su ogni stato, ci serve sapere quale sarà il valore massimo degli ascolti
 			maxStreams = d3.max(data, function(d){				
 				return parseInt(d.num_streams);
@@ -267,7 +267,6 @@ function Map() {
 	                    .attr("height", scale(d.num_streams));		                 
 	           // Sfrutto questo ciclo per abilitare le interazioni sui paesi per i quali abbiamo dati
 	           var currentCountry = getCountry(d.countryId);
-	           console.log("Current country = " + currentCountry + " - " + d.countryId);
 	           if(currentCountry){                
 		           if($.inArray(enabledCountries, currentCountry.id) == -1){
 		               // Con questo controllo verifico se il paese è stato già abilitato in precedenza
@@ -343,7 +342,7 @@ function Map() {
 	                        "<br/></div>")
 	                        .style("left", (d3.event.pageX) + "px")
 	                        .style("top", (top) + "px"); // Imposto l'HTML da mostrare
-	    console.log("left = " + d3.event.pageX + ", top = " + top);
+	    //console.log("left = " + d3.event.pageX + ", top = " + top);
 	}
 	
 	// Quando il mouse esce dal cerchio nascondo il tooltip
@@ -363,6 +362,7 @@ function Map() {
 	// Il click del mouse cambia lo stato del grafico e imposta il brano come selezionato                    
 	function circleMouseClick(d){
 	   selectedTrack = d;
+	   console.log(selectedTrack);
 	    /*grafico.changeStatus(2);*/
 	   fireTrackChanged();
 	}
@@ -386,25 +386,51 @@ function Map() {
 	}
 	
 	// Imposta il secondo stato di visualizzazione
-	function setStatus2(){
-		currentStatus = 2;
-		d3.json("sample-data/world-top/latest.json", function(error, data){
+	function setStatus2(){		
+		currentStatus = 2;		
+		console.log("http://192.168.1.41/analisi-immagini/map.php?state=2&trackUri="+selectedTrack.track_url);
+		d3.json("http://192.168.1.41/analisi-immagini/map.php?state=2&trackUri="+selectedTrack.track_url, function(error, data){
 			// Per costruire il range dei colori mi serve il numero massimo degli ascolti
-			var maxStreams = d3.max(data.tracks, function (d) {
-                return d.num_streams;
+			var maxStreams = d3.max(data, function (d) {
+                return parseInt(d.num_streams);
             });
-            // Creo la scala con i colori utilizzando la libreria colorbrewer 
-            //TODO: Abbiamo massimo 11 colori, potrebbe dare problemi se mostriamo più di 11 paesi, da verificare.
-            var quantize = d3.scale.ordinal()
+            // Creo la scala con i colori utilizzando la libreria colorbrewer             
+            var quantize = d3.scale.threshold()
                 .domain([0, maxStreams])
-                .range(colorbrewer.Spectral[data.tracks.length]); 
+                .range(colorbrewer.Spectral[11]); 
             // Adesso posso colorare ogni paese utilizzando la funzione di quantizzazione
-            data.forEach(function (d) {                
-                g.selectAll("#" + getCountry(d.countryId).id)
-                    .transition()
-                    .duration(1000)
-                    .ease("bounce")
-                    .style("fill", quantize(d.num_streams));
+            data.forEach(function (d) {      
+            	var country = getCountry(d.countryId);            	
+            	if(country){          	        
+            		console.log("Coloro " + country.id + " con " + quantize(parseInt(d.num_streams)) + " (" + d.num_streams + " ascolti)");
+	                g.selectAll("#" + country.id)
+	                	.on("mouseover", function(d){
+	                		var top = ((d3.event.pageY > height) ? height : d3.event.pageY); // Evitiamo che il tooltip venga disegnato fuori dall'area visibile
+							coverTooltip.transition()
+	                    				.duration(500)
+	                    				.style("opacity", .9); // Inizio l'animazione
+	                    	var countryId = d.id;
+							var countryName = d.properties.name;
+	    					coverTooltip.html("<span id=\"countryFlag\" class=\"flag-icon flag-icon-" + countryId + "\" style=\"height: 150px; width: 150px; float:left; top: -20px;\"></span>" +
+	                        				  "<br/><div style:\"top: -20px;\">Paese   : " + countryName + "</div>")
+	                        .style("left", (d3.event.pageX) + "px")
+	                        .style("top", (top) + "px");
+	                	})
+	                	.on("mousemove", function(){
+	                		var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
+						    coverTooltip.style("left", (d3.event.pageX) + "px")
+					                    .style("top", (top) + "px");
+	                	})
+	                	.on("mouseout", function(){
+	                		coverTooltip.transition()
+					                    .duration(500)
+					                    .style("opacity", 0);
+	                	})	
+	                    .transition()
+	                    .duration(1000)
+	                    .ease("bounce")
+	                    .style("fill", quantize(parseInt(d.num_streams)));
+	            }
             });
 		});
 	}
