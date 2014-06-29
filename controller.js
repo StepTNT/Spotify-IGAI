@@ -92,6 +92,8 @@ function Controller(){
 		// Aggiorno l'header
 		$("#trackTitle").animate().html("Titolo: " + newTrack.track_name);
 		$("#trackArtist").animate().html("Artista: " + newTrack.artist_name);
+		$("#trackPlays").animate().html("Ascolti: " + newTrack.num_streams);
+		$("#trackCover").animate().attr("src", newTrack.artwork_url);
 	};
 	
 	// E' stato selezionato unun nuovo paese
