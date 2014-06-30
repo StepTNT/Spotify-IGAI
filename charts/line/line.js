@@ -211,7 +211,7 @@ function Line() {
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){
 		// Creo il grafico
-	    d3.json("sample-data/line-data.json", function (error, data) {	  	
+	    d3.json("http://192.168.1.41/analisi-immagini/line.php?state=1", function (error, data) {	  	
     		nv.addGraph(function(){
     			// Imposto i margini del grafico
 		    	lineChart.margin({bottom: 40, left:50});
@@ -250,10 +250,11 @@ function Line() {
 				// Definisco il contenuto dei tooltip
 				lineChart.tooltipContent(function(key, y, e, graph) {
 					console.log("TOOLTIP!");
+					console.log(e);
 		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
 		            var y = String(graph.point.y);
 		            var y = String(graph.point.y)  + ' ascolti';				
-		            tooltip_str = '<center><image src="' + getArtworkFromKey(key) + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
+		            tooltip_str = '<center><image style="height:150px; width:150px" src="' + data.filter(function(el){ return el.key == key; })[0].artwork + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
 		            return tooltip_str;
 	    		});    		
 				// Finalizzo il grafico e lo aggiungo alla pagina
