@@ -104,15 +104,17 @@ function Controller(){
 		/*mapChart.setSelectedTrack(newTrack); //TODO: da implementare
 		mapChart.changeStatus(2);
 		// Aggiorno il grafico force
-		forceChart.setSelectedTrack(newTrack); //TODO: da implementare		
+		forceChart.setSelectedTrack(newTrack); //TODO: da implementare*/		
 		// Aggiorno il grafico line
-		lineChart.setSelectedTrack(newTrack); //TODO: da implementare
-		lineChart.changeStatus(2);*/
+		lineChart.setSelectedCountry(newCountry);		
 		// Aggiorno l'header
 		if(!$.isEmptyObject(newCountry)){
+			lineChart.changeStatus(2);
 			$("#countryFlag").attr("class", "flag-icon flag-icon-" + newCountry.id);
 			$("#countryName").html("Paese : " + newCountry.properties.name);
-		} else console.log("GLOBAL");		
+		} else {
+			lineChart.changeStatus(1);
+		}		
 	};
 	
 	/* Fine gestione eventi */
