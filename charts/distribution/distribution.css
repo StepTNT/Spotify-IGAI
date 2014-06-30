@@ -68,18 +68,19 @@ a {
 	opacity: 0.9;
 }
 .thumb {
-	height: 210px;
-	width: 210px;
+	height: 200px;
+	width: 200px;
 	background-color: #333333;
-	text-align: center;
+	text-align: left;
 }
 .popdetails {
-	width: 300px;
+	width: 200px;
 }
 .poptitle, .popdetail {
 	font-size: 15px;
 	position: relative;
 	float: left;
+	text-align: left;
 }
 .poptitle {
 	width: 100px;

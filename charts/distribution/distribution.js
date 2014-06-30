@@ -31,7 +31,7 @@ function Distribution() {
 	
 	/* Inizio variabili private */
 	
-	var mydata;
+	var myData = {};
     var rolleddate;
     var rolledcam;
     var rolledlens;
@@ -60,7 +60,11 @@ function Distribution() {
 	var selectedTrack         = {};
 	
 	// Lo stato di visualizzazione in cui si trova il grafico
-	var currentStatus         = 1;   
+	var currentStatus         = 1;  
+	
+	var selectedDate 		  = {}; 
+	
+	var selectedCountry       = {};
 					
 	/* Fine variabili private */
 	
@@ -118,9 +122,91 @@ function Distribution() {
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){
 		currentStatus = 1;
-		d3.json("sample-data/world-top/latest.json", function(error, data){
+		d3.json("http://192.168.1.41/analisi-immagini/distribution.php", function (error, data) {
+	    	// Formatto le date
+	    	data.forEach(function(d){
+                d.date=new Date(d.DateTimeOriginal.split(":").slice(0,2).join("-"));
+            });
+            // Memorizzo i dati in una variabile
+            myData = data;
+            rolleddate = d3.nest()
+			                .key(function(d) {return d.date;})
+			                .rollup(function(leaves){return leaves.length;})
+			                .entries(data);
+			rolledcam = d3.nest()
+			                .key(function(d) {return d.Artist;})
+			                .rollup(function(leaves){return leaves.length;})
+			                .entries(data);
+			rolledlens = d3.nest()
+			                .key(function(d) {return d.Track;})
+			                .rollup(function(leaves){return leaves.length;})
+			                .entries(data);
+			rolleddate.sort(function(a,b){
+				              a = new Date(a.key);
+				              b = new Date(b.key);
+				              return a<b?-1:a>b?1:0;
+            				});
+           // Creo la scala di colori da utilizzare nel grafico
+           color = d3.scale.ordinal()
+           					.range(["#EDC951","#EB6841","#CC333F","#00A0B0"]);
+           // Creo l'elemento SVG
+           distribution = d3.select("#distributionChart")
+           						.append("svg")
+				                .attr("width",pagewidth)
+				                .attr("height",distheight);
+		   // Creo i range di visualizzazione
+		   distxscale = d3.scale.linear()
+                .range([0,pagewidth-margin.left-margin.right])
+                .domain([0,d3.max(data,function(d){return +d.Plays;})*(4/3)]); // Aumentiamo il range per evitare che i valori più alti siano mostrati quasi fuori dall'area disegnabile
 			
-		});
+            distyscale = d3.scale.linear()
+                .range([distheight-margin.top-margin.bottom,0])
+			    .domain([0,d3.max(data,function(d){return +d.Shares;})*(4/3)]);
+			    
+			radscale = d3.scale.linear()
+	    	    .rangeRound([distrad.min,distrad.max])
+	    	    .domain([d3.min(data,function(d){return +d.Popularity;}),d3.max(data,function(d){return +d.Popularity;})]);
+
+            distxaxis = d3.svg.axis()
+                .scale(distxscale)
+                .orient("bottom")
+                .ticks(5);
+            // Posiziono gli assi
+            var distaxispos = distheight - margin.bottom;
+            distribution.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(" + margin.left + "," + distaxispos + ")")
+                .call(distxaxis);
+            
+            distyaxis = d3.svg.axis()
+                .scale(distyscale)
+                .orient("left")
+                .ticks(5)
+				.tickFormat(d3.format("s")); //Formattiamo le migliaia come "k", quindi 10000 diventa 10k
+				
+			distribution.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .call(distyaxis);
+            // Creo un pallino per ogni brano
+            distribution.selectAll("circle").data(data).enter()
+                .append("circle")
+                .attr("cx",function(d){ return distxscale(d.Plays) + margin.left;})
+                .attr("cy",function(d){ return distyscale(d.Shares) + margin.top;})
+                .attr("r",0)
+                .style("fill-opacity",0.3)
+                .style("fill",function(d){return color(d.Artist);})
+                .on("mouseover", circleMouseOver)
+                .on("mousemove", circleMouseMove)
+	            .on("mouseout", circleMouseOut);
+	        // Dopo aver creato i cerchi li mostro con un'animazione
+			distribution.selectAll("circle")
+						.transition()
+						.duration(1000)
+						.attr("r",function(d){
+							return distrad.max/(d.Popularity*2.5);
+						});
+		});	
 	}
 	
 	function circleMouseOver(){
@@ -151,54 +237,20 @@ function Distribution() {
 	
 	// Nascondo i cerchi e il tooltip
 	function exitStatus1(){
-
+		distribution.selectAll("circle")
+					.data(myData)
+					.exit()
+		            .transition()
+					.duration(1000)
+					.attr("r",function(d){
+						return 0;
+					});
 	}
 	
 	// Imposta il secondo stato di visualizzazione
 	function setStatus2(){
 		currentStatus = 2;
-		d3.json("sample-data/world-top/latest.json", function(error, data){
-
-		});
-	}
-	/* Fine funzioni private */
-	
-	/* Inizio funzioni pubbliche */
-	
-	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
-	grafico.changeStatus = function(newStatus){
-		switch(newStatus){
-			case 1:{
-				setStatus1();
-				break;
-			}
-			case 2:{
-				exitStatus1();
-				setStatus2();
-				break;
-			}
-		}
-		fireStateChanged();
-	};
-	
-	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
-	grafico.toMosaic = function(){
-		d3.select("#distributionChart").transition().duration(250).attr("style", "width: 1200px; height: 520px; transform: translate(-290px, -140px) scale(0.5, 0.5);");		
-	};
-	
-	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
-	grafico.toFull = function(){
-		d3.select("#distributionChart").transition().duration(250).attr("style","width: 1200px; height: 520px; transform: translate(-120px, -10px);");		
-	};
-	
-	/* Fine funzioni pubbliche */
-	
-	/* Main */
-	
-	// La funzione principale da chiamare per disegnare il grafico.
-	grafico.draw = function(){		
-	    // Creo la mappa a partire dai dati topografici
-	    d3.csv("sample-data/data_updated.csv", function (error, data) {
+		d3.json("http://192.168.1.41/analisi-immagini/distribution.php?date=" + selectedDate, function (error, data) {
 	    	// Formatto le date
 	    	data.forEach(function(d){
                 d.date=new Date(d.DateTimeOriginal.split(":").slice(0,2).join("-"));
@@ -282,7 +334,147 @@ function Distribution() {
 						.attr("r",function(d){
 							return distrad.max/(d.Popularity*2.5);
 						});
-		});		
+		});	
+	}
+	
+	// Imposta il primo stato di visualizzazione
+	function setStatus3(){
+		currentStatus = 1;
+		d3.json("http://192.168.1.41/analisi-immagini/distribution.php?country=" + selectedCountry.id, function (error, data) {
+	    	// Formatto le date
+	    	data.forEach(function(d){
+                d.date=new Date(d.DateTimeOriginal.split(":").slice(0,2).join("-"));
+            });
+            // Memorizzo i dati in una variabile
+            myData = data;
+            rolleddate = d3.nest()
+			                .key(function(d) {return d.date;})
+			                .rollup(function(leaves){return leaves.length;})
+			                .entries(data);
+			rolledcam = d3.nest()
+			                .key(function(d) {return d.Artist;})
+			                .rollup(function(leaves){return leaves.length;})
+			                .entries(data);
+			rolledlens = d3.nest()
+			                .key(function(d) {return d.Track;})
+			                .rollup(function(leaves){return leaves.length;})
+			                .entries(data);
+			rolleddate.sort(function(a,b){
+				              a = new Date(a.key);
+				              b = new Date(b.key);
+				              return a<b?-1:a>b?1:0;
+            				});
+           // Creo la scala di colori da utilizzare nel grafico
+           color = d3.scale.ordinal()
+           					.range(["#EDC951","#EB6841","#CC333F","#00A0B0"]);
+           // Creo l'elemento SVG
+           distribution = d3.select("#distributionChart")
+           						.append("svg")
+				                .attr("width",pagewidth)
+				                .attr("height",distheight);
+		   // Creo i range di visualizzazione
+		   distxscale = d3.scale.linear()
+                .range([0,pagewidth-margin.left-margin.right])
+                .domain([0,d3.max(data,function(d){return +d.Plays;})*(4/3)]); // Aumentiamo il range per evitare che i valori più alti siano mostrati quasi fuori dall'area disegnabile
+			
+            distyscale = d3.scale.linear()
+                .range([distheight-margin.top-margin.bottom,0])
+			    .domain([0,d3.max(data,function(d){return +d.Shares;})*(4/3)]);
+			    
+			radscale = d3.scale.linear()
+	    	    .rangeRound([distrad.min,distrad.max])
+	    	    .domain([d3.min(data,function(d){return +d.Popularity;}),d3.max(data,function(d){return +d.Popularity;})]);
+
+            distxaxis = d3.svg.axis()
+                .scale(distxscale)
+                .orient("bottom")
+                .ticks(5);
+            // Posiziono gli assi
+            var distaxispos = distheight - margin.bottom;
+            distribution.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(" + margin.left + "," + distaxispos + ")")
+                .call(distxaxis);
+            
+            distyaxis = d3.svg.axis()
+                .scale(distyscale)
+                .orient("left")
+                .ticks(5)
+				.tickFormat(d3.format("s")); //Formattiamo le migliaia come "k", quindi 10000 diventa 10k
+				
+			distribution.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .call(distyaxis);
+            // Creo un pallino per ogni brano
+            distribution.selectAll("circle").data(data).enter()
+                .append("circle")
+                .attr("cx",function(d){ return distxscale(d.Plays) + margin.left;})
+                .attr("cy",function(d){ return distyscale(d.Shares) + margin.top;})
+                .attr("r",0)
+                .style("fill-opacity",0.3)
+                .style("fill",function(d){return color(d.Artist);})
+                .on("mouseover", circleMouseOver)
+                .on("mousemove", circleMouseMove)
+	            .on("mouseout", circleMouseOut);
+	        // Dopo aver creato i cerchi li mostro con un'animazione
+			distribution.selectAll("circle")
+						.transition()
+						.duration(1000)
+						.attr("r",function(d){
+							return distrad.max/(d.Popularity*2.5);
+						});
+		});	
+	}
+	/* Fine funzioni private */
+	
+	/* Inizio funzioni pubbliche */
+	
+	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
+	grafico.changeStatus = function(newStatus){
+		switch(newStatus){
+			case 1:{
+				setStatus1();
+				break;
+			}
+			case 2:{
+				exitStatus1();
+				setStatus2();
+				break;
+			}
+			case 3:{
+				setStatus3();
+				break;
+			}
+		}
+		fireStateChanged();
+	};
+	
+	grafico.setSelectedDate = function(date){
+		selectedDate = date;
+	};
+	
+	grafico.setSelectedCountry = function(country){
+		selectedCountry = country;
+	};
+	
+	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
+	grafico.toMosaic = function(){
+		d3.select("#distributionChart").transition().duration(250).attr("style", "width: 1200px; height: 520px; transform: translate(-290px, -140px) scale(0.5, 0.5);");		
+	};
+	
+	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
+	grafico.toFull = function(){
+		d3.select("#distributionChart").transition().duration(250).attr("style","width: 1200px; height: 520px; transform: translate(-120px, -10px);");		
+	};
+	
+	/* Fine funzioni pubbliche */
+	
+	/* Main */
+	
+	// La funzione principale da chiamare per disegnare il grafico.
+	grafico.draw = function(){		
+	    grafico.changeStatus(1);	
 	};
 	
 	return grafico;

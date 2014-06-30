@@ -106,15 +106,31 @@ function Controller(){
 		// Aggiorno il grafico force
 		forceChart.setSelectedTrack(newTrack); //TODO: da implementare*/		
 		// Aggiorno il grafico line
-		lineChart.setSelectedCountry(newCountry);		
+		lineChart.setSelectedCountry(newCountry);	
+		distributionChart.setSelectedCountry(newCountry);		
 		// Aggiorno l'header
 		if(!$.isEmptyObject(newCountry)){
 			lineChart.changeStatus(2);
+			distributionChart.changeStatus(3);	
 			$("#countryFlag").attr("class", "flag-icon flag-icon-" + newCountry.id);
 			$("#countryName").html("Paese : " + newCountry.properties.name);
 		} else {
 			lineChart.changeStatus(1);
+			distributionChart.changeStatus(1);	
 		}		
+	};
+	
+	// E' stata selezionata una nuova data
+	controller.dateChanged = function(newDate){
+		var d = newDate;
+	    var curr_date = d.getDate();
+	    var curr_month = d.getMonth() + 1; //Months are zero based
+	    var curr_year = d.getFullYear();							    
+		selectedDate = curr_year + "-" + curr_month + "-" + curr_date;
+		/*mapChart.setSelectedDate(selectedDate);
+		mapChart.changeStatus(1);
+		distributionChart.setSelectedDate(selectedDate);
+		distributionChart.changeStatus(2); */		
 	};
 	
 	/* Fine gestione eventi */

@@ -29,7 +29,7 @@ nv.models.lineWithFocusChart = function() {
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
-               '<p>' +  y + ' at ' + x + '</p>'
+               '<p>' +  y + ' at ' + x + '</p>';
       }
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'brush')
@@ -207,10 +207,10 @@ nv.models.lineWithFocusChart = function() {
         );
 
       g.select('.nv-context')
-          .attr('transform', 'translate(0,' + ( availableHeight1 + margin.bottom + margin2.top) + ')')
+          .attr('transform', 'translate(0,' + ( availableHeight1 + margin.bottom + margin2.top) + ')');
 
       var contextLinesWrap = g.select('.nv-context .nv-linesWrap')
-          .datum(data.filter(function(d) { return !d.disabled }))
+          .datum(data.filter(function(d) { return !d.disabled; }));
 
       d3.transition(contextLinesWrap).call(lines2);
 
@@ -380,6 +380,16 @@ nv.models.lineWithFocusChart = function() {
         }
 
         dispatch.brush({extent: extent, brush: brush});
+        
+        var brushChangedEvent = new CustomEvent('line.brushChanged', {
+	            detail: {
+	                'brush': brush,
+	                'extent': extent
+	            },
+	            bubbles: true,
+	            cancelable: true
+	        });
+	    document.dispatchEvent(brushChangedEvent);
 
 
         updateBrushBG();
@@ -388,7 +398,7 @@ nv.models.lineWithFocusChart = function() {
         var focusLinesWrap = g.select('.nv-focus .nv-linesWrap')
             .datum(
               data
-                .filter(function(d) { return !d.disabled })
+                .filter(function(d) { return !d.disabled; })
                 .map(function(d,i) {
                   return {
                     key: d.key,
@@ -396,7 +406,7 @@ nv.models.lineWithFocusChart = function() {
                     values: d.values.filter(function(d,i) {
                       return lines.x()(d,i) >= extent[0] && lines.x()(d,i) <= extent[1];
                     })
-                  }
+                  };
                 })
             );
         focusLinesWrap.transition().duration(transitionDuration).call(lines);
@@ -572,4 +582,4 @@ nv.models.lineWithFocusChart = function() {
 
 
   return chart;
-}
+};

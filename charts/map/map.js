@@ -100,6 +100,8 @@ function Map() {
 	// Il brano selezionato
 	var selectedTrack         = {};
 	
+	var selectedDate		  = {};
+	
 	// Lo stato di visualizzazione in cui si trova il grafico
 	var currentStatus         = undefined;   
 					
@@ -434,6 +436,8 @@ function Map() {
             });
 		});
 	}
+	
+	
 	/* Fine funzioni private */
 	
 	/* Inizio funzioni pubbliche */
@@ -443,16 +447,20 @@ function Map() {
 		selectedTrack = track;
 	};
 	
+	grafico.setSelectedDate = function(date){
+		selectedDate = date;
+	};
+	
 	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
 	grafico.changeStatus = function(newStatus){
 		switch(newStatus){
 			case 1:{
-				if(currentStatus == 1) return; // Siamo già nello stato 1
+				//if(currentStatus == 1) return; // Siamo già nello stato 1
 				setStatus1();
 				break;
 			}
 			case 2:{
-				if(currentStatus == 2) return; // Siamo già nello stato 2
+				//if(currentStatus == 2) return; // Siamo già nello stato 2
 				exitStatus1();
 				setStatus2();
 				break;

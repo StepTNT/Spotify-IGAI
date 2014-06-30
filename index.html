@@ -135,6 +135,10 @@
 								$("#header").html(e.detail.country.id);
 								console.log("line.countryChanged - " + e.detail.country.id); 
 							}, false);
+							document.addEventListener('line.brushChanged', function(e){ 								
+								console.log("line.brushChanged - ");							    
+								controller.dateChanged(e.detail.extent[1]); 
+							}, false);
 						// Disegno il grafo
 						lineChart.draw();
 					  </script>								  		 
@@ -173,8 +177,8 @@
 				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">
 					<link rel="stylesheet" href="charts/distribution/distribution.css"/>
 					<script src="charts/distribution/distribution.js"></script>
-					<div class="popup" id="popup" style="z-index: 1000;">
-				    	<div class="thumb"><img id="thumb" src="thumbnails/loading.gif"></div>
+					<div class="popup" id="popup" style="z-index: 1000; width:200px">
+				    	<div class="thumb"><img id="thumb" src="thumbnails/loading.gif" style="height:200px; width:200px"></div>
 				      	<div class="popdetails">				
 				        	<div class="poptitle">Ascolti     : </div><div class="popdetail" id="popFocalLength"></div>
 				          	<div class="poptitle">Condivisioni: </div><div class="popdetail" id="popIso"></div>

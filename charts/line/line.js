@@ -23,15 +23,6 @@
 *         - Il click su una linea/etichetta imposta il brano collegato come selezionato. 
 *           I grafici mostreranno quindi le statistiche relative al brano nello stato 
 *           selezionato.
-* 3)  Mostriamo le statistiche dello stato 1 con la possibilità di confrontare l'andamento 
-*     di brani scelti dall'utente e non presi dalla top 5.
-*     Eventi:
-*         - Il passaggio del mouse su una linea mostra la finestra di stato con il numero 
-*           di ascolti nella data selezionata.
-*         - Il click su una linea/etichetta imposta il brano collegato come selezionato. 
-*           I grafici mostreranno quindi le statistiche relative allo stato selezionato.
-*         - Il click su un brano in lista lo rimuove dal grafico, se invece il brano non 
-*           è in lista allora lo aggiungo.
 ---------------------------------------------------------------------------------------- */
 /**
  * Oggetto di base per il nostro grafico di tipo Map.
