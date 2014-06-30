@@ -116,7 +116,8 @@ function Controller(){
 			$("#countryName").html("Paese : " + newCountry.properties.name);
 		} else {
 			lineChart.changeStatus(1);
-			distributionChart.changeStatus(1);	
+			distributionChart.changeStatus(1);
+			mapChart.changeStatus(1);	
 		}		
 	};
 	
