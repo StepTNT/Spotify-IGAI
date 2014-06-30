@@ -203,126 +203,30 @@ function Line() {
 	
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){
-		// Creo il grafico
-	    d3.json("http://192.168.1.41/analisi-immagini/line.php", function (error, data) {	  	
-    		nv.addGraph(function(){
-    			// Imposto i margini del grafico
-		    	lineChart.margin({bottom: 40, left:50});
-		    	// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
-		    	var maxStreams = d3.extent(data, function(d,i){ 
-		    										return d.values[i].y;
-		    									 })[1];
-		    	// Adesso posso impostare il dominio su y
-		    	lineChart.yDomain([0, maxStreams*(6/5)]); // Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
-		    	// Imposto il formato dell'asse x utilizzando delle date
-		    	lineChart.lines.xScale(d3.time.scale());
-		    	// Formatto i tick dell'asse x e scelgo i valori da mostrare
-		    	lineChart.xAxis.tickFormat(function(d) {
-						        return d3.time.format("%d-%m-%Y")(new Date(d)); 
-						   })
-						   .tickValues(function(d,i){
-								var tmp = d[i].values.map(function(el){ return el.x;});
-								var res = [];					
-								res.concat.apply(res, tmp);					
-								return res;
-						   });
-				// Imposto l'asse x per il secondo grafico
-				lineChart.lines2.xScale(d3.time.scale());
-				lineChart.x2Axis.tickFormat(function(d) { 
-								return d3.time.format("%d-%m-%Y")(new Date(d)); 
-							})
-							.tickValues(function(d,i){
-								var tmp = d[i].values.map(function(el){ return el.x;});
-								var res = [];
-								res.concat.apply(res, tmp);
-								return res; 
-				   			});
-				// Imposto il formato dei tick per gli assi y
-				lineChart.yAxis.tickFormat(d3.format(".2s"));
-				lineChart.y2Axis.tickFormat(d3.format(".2s"));
-				// Definisco il contenuto dei tooltip
-				lineChart.tooltipContent(function(key, y, e, graph) {					
-		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
-		            var y = String(graph.point.y);
-		            var y = String(graph.point.y)  + ' ascolti';				
-		            tooltip_str = '<center><image style="height:150px; width:150px" src="' + data.filter(function(el){ return el.key == key; })[0].artwork + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
-		            return tooltip_str;
-	    		});    		
-				// Finalizzo il grafico e lo aggiungo alla pagina
-				d3.select('#lineChart svg')
+		d3.json("http://192.168.1.41/analisi-immagini/line.php", function (error, data) {
+			d3.select('#lineChart svg')
 				  .datum(data)
 				  .transition()
 				  .duration(500)
-				  .call(lineChart)
-				  .style({ 'width': 1200, 'height': 520 });			 
+				  .call(lineChart);
+				  //.style({ 'width': 1200, 'height': 520 });			 
 				// Sposto le label dell'asse x più in basso
 				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');					  
-				nv.utils.windowResize(lineChart.update);	
-				return lineChart;
-    		});
-	    });
-	}
+		});
+	};
 	
 	// Imposta il secondo stato di visualizzazione
 	function setStatus2(){
 		// Creo il grafico
-	    d3.json("http://192.168.1.41/analisi-immagini/line.php?country=" + selectedCountry.id, function (error, data) {
-	    	if(error) alert(error);	  	
-    		nv.addGraph(function(){
-    			// Imposto i margini del grafico
-		    	lineChart.margin({bottom: 40, left:50});
-		    	// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
-		    	var maxStreams = d3.extent(data, function(d,i){ 
-		    										return d.values[i].y;
-		    									 })[1];
-		    	// Adesso posso impostare il dominio su y
-		    	lineChart.yDomain([0, maxStreams*(6/5)]); // Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
-		    	// Imposto il formato dell'asse x utilizzando delle date
-		    	lineChart.lines.xScale(d3.time.scale());
-		    	// Formatto i tick dell'asse x e scelgo i valori da mostrare
-		    	lineChart.xAxis.tickFormat(function(d) {
-						        return d3.time.format("%d-%m-%Y")(new Date(d)); 
-						   })
-						   .tickValues(function(d,i){
-								var tmp = d[i].values.map(function(el){ return el.x;});
-								var res = [];					
-								res.concat.apply(res, tmp);					
-								return res;
-						   });
-				// Imposto l'asse x per il secondo grafico
-				lineChart.lines2.xScale(d3.time.scale());
-				lineChart.x2Axis.tickFormat(function(d) { 
-								return d3.time.format("%d-%m-%Y")(new Date(d)); 
-							})
-							.tickValues(function(d,i){
-								var tmp = d[i].values.map(function(el){ return el.x;});
-								var res = [];
-								res.concat.apply(res, tmp);
-								return res; 
-				   			});
-				// Imposto il formato dei tick per gli assi y
-				lineChart.yAxis.tickFormat(d3.format(".2s"));
-				lineChart.y2Axis.tickFormat(d3.format(".2s"));
-				// Definisco il contenuto dei tooltip
-				lineChart.tooltipContent(function(key, y, e, graph) {					
-		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
-		            var y = String(graph.point.y);
-		            var y = String(graph.point.y)  + ' ascolti';				
-		            tooltip_str = '<center><image style="height:150px; width:150px" src="' + data.filter(function(el){ return el.key == key; })[0].artwork + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
-		            return tooltip_str;
-	    		});    		
-				// Finalizzo il grafico e lo aggiungo alla pagina
-				d3.select('#lineChart svg')
+	    d3.json("http://192.168.1.41/analisi-immagini/line.php?country=" + selectedCountry.id, function (error, data) {	
+	    	d3.select('#lineChart svg')
 				  .datum(data)
 				  .transition()
 				  .duration(500)
 				  .call(lineChart)
 				  .style({ 'width': 1200, 'height': 520 });			 
 				// Sposto le label dell'asse x più in basso
-				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');					  
-				nv.utils.windowResize(lineChart.update);	
-				return lineChart;
-    		});
+				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');					      		
 	    });
 	}
 	/* Fine funzioni private */
@@ -331,6 +235,7 @@ function Line() {
 	
 	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
 	grafico.changeStatus = function(newStatus){
+		currentStatus = newStatus;
 		switch(newStatus){
 			case 1:{
 				setStatus1();
@@ -368,7 +273,64 @@ function Line() {
 	
 	// La funzione principale da chiamare per disegnare il grafico.
 	grafico.draw = function(){		
-	  grafico.changeStatus(1);
+		// Creo il grafico
+	    d3.json("http://192.168.1.41/analisi-immagini/line.php", function (error, data) {	  	
+    		nv.addGraph(function(){
+    			// Imposto i margini del grafico
+		    	lineChart.margin({bottom: 40, left:50});
+		    	// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
+		    	var maxStreams = d3.extent(data, function(d,i){ 
+		    										return d.values[i].y;
+		    							   })[1];
+		    	// Adesso posso impostare il dominio su y
+		    	lineChart.yDomain([0, maxStreams*(6/5)]); // Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
+		    	// Imposto il formato dell'asse x utilizzando delle date
+		    	lineChart.lines.xScale(d3.time.scale());
+		    	// Formatto i tick dell'asse x e scelgo i valori da mostrare
+		    	lineChart.xAxis.tickFormat(function(d) {
+						        return d3.time.format("%d-%m-%Y")(new Date(d)); 
+						   })
+						   .tickValues(function(d,i){
+								var tmp = d[i].values.map(function(el){ return el.x;});
+								var res = [];					
+								res.concat.apply(res, tmp);					
+								return res;
+						   });
+				// Imposto l'asse x per il secondo grafico
+				lineChart.lines2.xScale(d3.time.scale());
+				lineChart.x2Axis.tickFormat(function(d) { 
+								return d3.time.format("%d-%m-%Y")(new Date(d)); 
+							})
+							.tickValues(function(d,i){
+								var tmp = d[i].values.map(function(el){ return el.x;});
+								var res = [];
+								res.concat.apply(res, tmp);
+								return res; 
+				   			});
+				// Imposto il formato dei tick per gli assi y
+				lineChart.yAxis.tickFormat(d3.format(".2s"));
+				lineChart.y2Axis.tickFormat(d3.format(".2s"));
+				// Definisco il contenuto dei tooltip
+				lineChart.tooltipContent(function(key, y, e, graph) {					
+		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
+		            var y = String(graph.point.y);
+		            var y = String(graph.point.y)  + ' ascolti';				
+		            tooltip_str = '<center><image style="height:150px; width:150px" src="' + data.filter(function(el){ return el.key == key; })[0].artwork + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
+		            return tooltip_str;
+	    		});    		
+				// Finalizzo il grafico e lo aggiungo alla pagina
+				d3.select('#lineChart svg')
+				  .datum(data)
+				  .transition()
+				  .duration(500)
+				  .call(lineChart)
+				  .style({ 'width': 1200, 'height': 520 });			 
+				// Sposto le label dell'asse x più in basso
+				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');					  
+				nv.utils.windowResize(lineChart.update);	
+				return lineChart;
+    		});
+	    });
 	};
 
 	return grafico;
