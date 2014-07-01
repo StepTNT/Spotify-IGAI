@@ -1,226 +1,291 @@
 <!DOCTYPE HTML>
-	<head>
-		<title>Spotify-IGAI</title>
-		<link rel="stylesheet" type="text/css" href="css/index.css">
-		<link rel="stylesheet" type="text/css" href="css/flag-icon.css">
-		<script src="common-libs/jquery-2.1.1.min.js"></script>
-		<script src="common-libs/d3.v3.min.js"></script>	
-		<script src="controller.js"></script>		
-		<script>
-			var controller = new Controller();
-			var isMosaic = false;
-			var toMosaic = function(){
-				if (isMosaic) return; // Siamo già nella modalità mosaico, non devo fare niente
-					$("#grafico1").animate({ height: $("#grafico1").height()/2-70, width: $("#grafico1").width()/2-25, opacity:1}, 500);
-					$("#grafico2").animate({ height: $("#grafico2").height()/2-70, width: $("#grafico2").width()/2-25, left:"47%", opacity:1}, 500);				
-					$("#grafico3").animate({ height: $("#grafico3").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", opacity:1}, 500);				
-					$("#grafico4").animate({ height: $("#grafico4").height()/2-70, width: $("#grafico3").width()/2-25, top:"58%", left: "47%", opacity:1}, 500);				
-					isMosaic = true;
-					// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
-					mapChart.toMosaic();
-					lineChart.toMosaic();
-					forceChart.toMosaic();
-					distributionChart.toMosaic();
-			};
-			var toFull = function(grafico){
-				if(isMosaic){ // Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti						
-					$(".graficoContent").animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:0, "z-index":0}, 500);
-					$(grafico).animate({ height: "50%", left: 5, top: "21%", width: "90%", opacity:1, "z-index":1}, 500);
-					isMosaic = false;
-				} else {
-					$(".graficoContent").animate({opacity:0, "z-index":0});
-					$(grafico).delay(250).animate({opacity:1, "z-index":1});
-				}	
-				// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
-				mapChart.toFull();
-				lineChart.toFull();
-				forceChart.toFull();
-				distributionChart.toFull();
-			};
-			jQuery(document).ready(function($) {			
-				$(".scroll").click(function(event) {
-					event.preventDefault();						
-					var grafico = "#" + event.currentTarget.id.replace("-btn", "");
-					toFull(grafico);				
+<head>
+	<title>Spotify-IGAI</title>
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+	<link rel="stylesheet" type="text/css" href="css/flag-icon.css">
+	<script src="common-libs/jquery-2.1.1.min.js"></script>
+	<script src="common-libs/d3.v3.min.js"></script>
+	<script src="controller.js"></script>
+	<script>
+		var controller = new Controller();
+		var isMosaic = false;
+		var toMosaic = function() {
+			if (isMosaic)
+				return;
+			// Siamo già nella modalità mosaico, non devo fare niente
+			$("#grafico1").animate({
+				height : $("#grafico1").height() / 2 - 70,
+				width : $("#grafico1").width() / 2 - 25,
+				opacity : 1
+			}, 500);
+			$("#grafico2").animate({
+				height : $("#grafico2").height() / 2 - 70,
+				width : $("#grafico2").width() / 2 - 25,
+				left : "47%",
+				opacity : 1
+			}, 500);
+			$("#grafico3").animate({
+				height : $("#grafico3").height() / 2 - 70,
+				width : $("#grafico3").width() / 2 - 25,
+				top : "58%",
+				opacity : 1
+			}, 500);
+			$("#grafico4").animate({
+				height : $("#grafico4").height() / 2 - 70,
+				width : $("#grafico3").width() / 2 - 25,
+				top : "58%",
+				left : "47%",
+				opacity : 1
+			}, 500);
+			isMosaic = true;
+			// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
+			mapChart.toMosaic();
+			lineChart.toMosaic();
+			forceChart.toMosaic();
+			distributionChart.toMosaic();
+		};
+		var toFull = function(grafico) {
+			if (isMosaic) {// Sto parendo dal mosaico, quindi devo ripristinare i valori precedenti
+				$(".graficoContent").animate({
+					height : "50%",
+					left : 5,
+					top : "21%",
+					width : "90%",
+					opacity : 0,
+					"z-index" : 0
+				}, 500);
+				$(grafico).animate({
+					height : "50%",
+					left : 5,
+					top : "21%",
+					width : "90%",
+					opacity : 1,
+					"z-index" : 1
+				}, 500);
+				isMosaic = false;
+			} else {
+				$(".graficoContent").animate({
+					opacity : 0,
+					"z-index" : 0
 				});
-				$(".mosaic").click(function(event) {
-					event.preventDefault();								
-					toMosaic();					
-				});	
-				toMosaic(); // La visualizzazione di default è quella con il mosaico dei grafici				
+				$(grafico).delay(250).animate({
+					opacity : 1,
+					"z-index" : 1
+				});
+			}
+			// Segnalo ai grafici che ho cambiato la modalità di visualizzazione
+			mapChart.toFull();
+			lineChart.toFull();
+			forceChart.toFull();
+			distributionChart.toFull();
+		};
+		jQuery(document).ready(function($) {
+			$(".scroll").click(function(event) {
+				event.preventDefault();
+				var grafico = "#" + event.currentTarget.id.replace("-btn", "");
+				toFull(grafico);
 			});
-		</script>		
-	</head>
-	<body>
-		<div id="wrap">
-			<!-- TODO: sviluppare il widget per l'header invece di cambiare l'html a mano ogni volta -->
-			<div id="header">				
-				<div id="country" style="float: left; margin: 8px; width: 50%;">
-					<span id="countryFlag" class="flag-icon flag-icon-ITA" style="height: 150px; width: 125px; float:left; top: -25px"></span>
-					<div id="countryDetails" style="margin-left:10px; float:left; text-align: justify;">
-						<div id="countryName">Paese: Italia</div>
-						<div id="countryPlays">Ascolti: 304975</div>
-						<div id="countryDate">Data: 23/04/2014</div>
-					</div>					
-				</div>
-				<div id="track" style="float:right; margin: 8	px;">
-					<img id="trackCover" src="http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94" style="max-height: 100px; max-width: 100px; background-color: red; margin: 8px;"/>
-					<div id="trackDetails" style="margin-left:10px; float:left; text-align: justify;">
-						<div id="trackArtist">Artista: Seven Lions</div>
-						<div id="trackTitle">Titolo: Canzone</div>
-						<div id="trackPlays">Ascolti: 34975</div>
-						<div id="trackDate">Data: 23/04/2014</div>
-					</div>	
+			$(".mosaic").click(function(event) {
+				event.preventDefault();
+				toMosaic();
+			});
+			toMosaic();
+			// La visualizzazione di default è quella con il mosaico dei grafici
+		});
+	</script>
+</head>
+<body>
+	<div id="wrap">
+		<!-- TODO: sviluppare il widget per l'header invece di cambiare l'html a mano ogni volta -->
+		<div id="header">
+			<div id="country" style="float: left; margin: 8px; width: 50%;">
+				<span id="countryFlag" class="flag-icon flag-icon-ITA" style="height: 150px; width: 125px; float:left; top: -25px"></span>
+				<div id="countryDetails" style="margin-left:10px; float:left; text-align: justify;">
+					<div id="countryName">
+						Paese: Italia
+					</div>
+					<div id="countryPlays">
+						Ascolti: 304975
+					</div>
+					<div id="countryDate">
+						Data: 23/04/2014
+					</div>
 				</div>
 			</div>
-			<div id="content">
-				<div id="grafico1" class="graficoContent" style="opacity:1; border: 1px solid red;">
-					<link href="charts/map/map.css" rel="stylesheet" type="text/css">					
-					<script src="charts/map/libs/topojson.v1.min.js"></script>
-					<script src="charts/map/libs/colorbrewer.js"></script>
-					<script src="charts/map/map.js"></script>
-					<div id="mapChart" style="margin :5px; height: 520px;"></div>
-					<script type="text/javascript">
-						// Creo l'oggetto grafico
-						var mapChart = new Map();
-						controller.registerMapChart(mapChart);
-						// Registro i listener per gli eventi
-						document.addEventListener('map.stateChanged', function(e){ 
-								console.log("map.stateChanged - " + e.detail.state); 
-							}, false);
-						document.addEventListener('map.trackChanged', function(e){ 
-								//$("#header").html(e.detail.track.track_name);
-								controller.trackChanged(e.detail.track);
-								console.log("map.trackChanged - " + e.detail.track.track_name); 
-							}, false);
-						document.addEventListener('map.countryChanged', function(e){
-								//var country = e.detail.country.id;
-								//$("#header").html(country);
-								controller.countryChanged(e.detail.country);
-								console.log("map.countryChanged - " + country); 
-								//lineChart.changeStatus((country) ? 2 : 1);
-							}, false);
-						// Disegno la mappa
-						mapChart.draw();		
-					</script>
-				</div>
-				<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">
-					<link href="charts/line/line.css" rel="stylesheet" type="text/css">
-					<link href="charts/line/libs/nv.d3.css" rel="stylesheet" type="text/css">
-					<script src="charts/line/libs/nv.d3.js"></script>
-					<script src="charts/line/libs/tooltip.js"></script>
-					<script src="charts/line/libs/utils.js"></script>
-					<script src="charts/line/libs/models/legend.js"></script>
-					<script src="charts/line/libs/models/axis.js"></script>
-					<script src="charts/line/libs/models/lineWithFocusChart.js"></script>					
-					<script src="charts/line/libs/models/line.js"></script>
-					<script src="charts/line/libs/models/scatter.js"></script>					
-					<script src="charts/line/line.js"></script>				
-					<div id="lineChart" class='with-3d-shadow with-transitions'>
-				    	<svg transform="translate(10,10)scale(0.72,0.68)" height="NaN" width="NaN" viewBox="0 0 940 400" preserveAspectRatio="xMidYMid meet" style="">
-				    </div>
-				    <script type="text/javascript">
-						// Creo l'oggetto grafico
-						var lineChart = new Line();
-						controller.registerLineChart(lineChart);
-						// Registro i listener per gli eventi
-						document.addEventListener('line.stateChanged', function(e){ 
-								console.log("line.stateChanged - " + e.detail.state); 
-							}, false);
-						document.addEventListener('line.trackChanged', function(e){ 
-								controller.trackChanged(e.detail.track);
-								console.log("line.trackChanged - " + e.detail.track.track_name); 
-							}, false);
-						document.addEventListener('line.countryChanged', function(e){ 
-								$("#header").html(e.detail.country.id);
-								console.log("line.countryChanged - " + e.detail.country.id); 
-							}, false);
-							document.addEventListener('line.brushChanged', function(e){ 								
-								console.log("line.brushChanged - ");							    
-								controller.dateChanged(e.detail.extent[1]); 
-							}, false);
-						// Disegno il grafo
-						lineChart.draw();
-					  </script>								  		 
-				</div>
-				<div id="grafico3" class="graficoContent" style="border: 1px solid green; opacity:0">
-					<link rel="stylesheet" href="charts/force/force.css"/>
-					<script src="charts/force/force.js"></script>
-					<div id="forceChart"></div>
-					<div id="sidepanel">
-						<div id="title">
-						</div>
-						<div id="trackInfo" class="panel_off">
-							<div id="cover" height="100"></div>
-						</div>
+			<div id="track" style="float:right; margin: 8	px;">
+				<img id="trackCover" src="http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94" style="max-height: 100px; max-width: 100px; background-color: red; margin: 8px;"/>
+				<div id="trackDetails" style="margin-left:10px; float:left; text-align: justify;">
+					<div id="trackArtist">
+						Artista: Seven Lions
 					</div>
-					<script type="text/javascript">
-						// Creo l'oggetto grafico
-						var forceChart = new Force();
-						controller.registerForceChart(forceChart);
-						// Registro i listener per gli eventi
-						document.addEventListener('force.stateChanged', function(e){ 
-								console.log("force.stateChanged - " + e.detail.state); 
-							}, false);
-						document.addEventListener('force.trackChanged', function(e){ 
-								controller.trackChanged(e.detail.track);
-								console.log("force.trackChanged - " + e.detail.track.track_name); 
-							}, false);
-						document.addEventListener('force.countryChanged', function(e){ 
-								$("#header").html(e.detail.country.id);
-								console.log("force.countryChanged - " + e.detail.country.id); 
-							}, false);
-						// Disegno il grafo
-						forceChart.draw();
-					  </script>
+					<div id="trackTitle">
+						Titolo: Canzone
+					</div>
+					<div id="trackPlays">
+						Ascolti: 34975
+					</div>
+					<div id="trackDate">
+						Data: 23/04/2014
+					</div>
 				</div>
-				<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">
-					<link rel="stylesheet" href="charts/distribution/distribution.css"/>
-					<script src="charts/distribution/distribution.js"></script>
-					<div class="popup" id="popup" style="z-index: 1000; width:200px">
-				    	<div class="thumb"><img id="thumb" src="thumbnails/loading.gif" style="height:200px; width:200px"></div>
-				      	<div class="popdetails">				
-				        	<div class="poptitle">Ascolti     : </div><div class="popdetail" id="popFocalLength"></div>
-				          	<div class="poptitle">Condivisioni: </div><div class="popdetail" id="popIso"></div>
-				         	<div class="poptitle">Artista     : </div><div class="popdetail" id="popCamera"></div>
-				          	<div class="poptitle">Brano       : </div><div class="popdetail" id="popLens"></div>
-				      	</div>
-				  </div>
-				  <div class="container">
-      		          <div id="distributionChart" class="svgcontainer" style="width: 1200px; height: 520px; transform: translate(-120px, -10px);"></div>
-      		      </div>
-				</div>	
+			</div>
+		</div>
+		<div id="content">
+			<div id="grafico1" class="graficoContent" style="opacity:1; border: 1px solid red;">
+				<link href="charts/map/map.css" rel="stylesheet" type="text/css">
+				<script src="charts/map/libs/topojson.v1.min.js"></script>
+				<script src="charts/map/libs/colorbrewer.js"></script>
+				<script src="charts/map/map.js"></script>
+				<div id="mapChart" style="margin :5px; height: 520px;"></div>
 				<script type="text/javascript">
 					// Creo l'oggetto grafico
-					var distributionChart = new Distribution();
-					controller.registerDistributionChart(distributionChart);
+					var mapChart = new Map();
+					controller.registerMapChart(mapChart);
 					// Registro i listener per gli eventi
-					document.addEventListener('distribution.stateChanged', function(e){ 
-							console.log("distribution.stateChanged - " + e.detail.state); 
-						}, false);
-					document.addEventListener('distribution.trackChanged', function(e){ 
-							controller.trackChanged(e.detail.track);
-							console.log("distribution.trackChanged - " + e.detail.track.track_name); 
-						}, false);
-					document.addEventListener('distribution.countryChanged', function(e){ 
-							$("#header").html(e.detail.country.id);
-							console.log("distribution.countryChanged - " + e.detail.country.id); 
-						}, false);
+					document.addEventListener('map.stateChanged', function(e) {
+						console.log("map.stateChanged - " + e.detail.state);
+					}, false);
+					document.addEventListener('map.trackChanged', function(e) {
+						//$("#header").html(e.detail.track.track_name);
+						controller.trackChanged(e.detail.track);
+						console.log("map.trackChanged - " + e.detail.track.track_name);
+					}, false);
+					document.addEventListener('map.countryChanged', function(e) {
+						//var country = e.detail.country.id;
+						//$("#header").html(country);
+						controller.countryChanged(e.detail.country);
+						console.log("map.countryChanged - " + country);
+						//lineChart.changeStatus((country) ? 2 : 1);
+					}, false);
+					// Disegno la mappa
+					mapChart.draw();
+				</script>
+			</div>
+			<div id="grafico2" class="graficoContent" style="border: 1px solid blue; opacity:0">
+				<link href="charts/line/line.css" rel="stylesheet" type="text/css">
+				<link href="charts/line/libs/nv.d3.css" rel="stylesheet" type="text/css">
+				<script src="charts/line/libs/nv.d3.js"></script>
+				<script src="charts/line/libs/tooltip.js"></script>
+				<script src="charts/line/libs/utils.js"></script>
+				<script src="charts/line/libs/models/legend.js"></script>
+				<script src="charts/line/libs/models/axis.js"></script>
+				<script src="charts/line/libs/models/lineWithFocusChart.js"></script>
+				<script src="charts/line/libs/models/line.js"></script>
+				<script src="charts/line/libs/models/scatter.js"></script>
+				<script src="charts/line/line.js"></script>
+				<div id="lineChart" class='with-3d-shadow with-transitions'>
+					<svg transform="translate(10,10)scale(0.72,0.68)" height="NaN" width="NaN" viewBox="0 0 940 400" preserveAspectRatio="xMidYMid meet" style="">
+				</div>
+				<script type="text/javascript">
+					// Creo l'oggetto grafico
+					var lineChart = new Line();
+					controller.registerLineChart(lineChart);
+					// Registro i listener per gli eventi
+					document.addEventListener('line.stateChanged', function(e) {
+						console.log("line.stateChanged - " + e.detail.state);
+					}, false);
+					document.addEventListener('line.trackChanged', function(e) {
+						controller.trackChanged(e.detail.track);
+						console.log("line.trackChanged - " + e.detail.track.track_name);
+					}, false);
+					document.addEventListener('line.countryChanged', function(e) {
+						$("#header").html(e.detail.country.id);
+						console.log("line.countryChanged - " + e.detail.country.id);
+					}, false);
+					document.addEventListener('line.brushChanged', function(e) {
+						console.log("line.brushChanged - ");
+						controller.dateChanged(e.detail.extent[1]);
+					}, false);
 					// Disegno il grafo
-					distributionChart.draw();
-				</script>			
+					lineChart.draw();
+				</script>
 			</div>
-		</div>
-		<div id="footer">
-			<div id="logo">
-				<img src="images/logo_spotify.png" style="max-width:30px; max-height: 30px; margin: 2px;";/>
-				Spotify Visualizer
+			<div id="grafico3" class="graficoContent" style="border: 1px solid green; opacity:0">
+				<link rel="stylesheet" href="charts/force/force.css"/>
+				<script src="charts/force/force.js"></script>
+				<div id="forceChart"></div>
+				<div id="sidepanel">
+					<div id="title"></div>
+					<div id="trackInfo" class="panel_off">
+						<div id="cover" height="100"></div>
+					</div>
+				</div>
+				<script type="text/javascript">
+					// Creo l'oggetto grafico
+					var forceChart = new Force();
+					controller.registerForceChart(forceChart);
+					// Registro i listener per gli eventi
+					document.addEventListener('force.stateChanged', function(e) {
+						console.log("force.stateChanged - " + e.detail.state);
+					}, false);
+					document.addEventListener('force.trackChanged', function(e) {
+						controller.trackChanged(e.detail.track);
+						console.log("force.trackChanged - " + e.detail.track.track_name);
+					}, false);
+					document.addEventListener('force.countryChanged', function(e) {
+						$("#header").html(e.detail.country.id);
+						console.log("force.countryChanged - " + e.detail.country.id);
+					}, false);
+					// Disegno il grafo
+					forceChart.draw();
+				</script>
 			</div>
-			<a href="#grafico1" id="grafico1-btn" class="scroll">1</a>
-			<a href="#grafico2" id="grafico2-btn" class="scroll">2</a>
-			<a href="#grafico3" id="grafico3-btn" class="scroll">3</a>
-			<a href="#grafico4" id="grafico4-btn" class="scroll">4</a>
-			<a href="#mosaic" id="mosaic-btn" class="mosaic" style="float: right; margin: 5px 5px 0px 0px;">Mosaic</a>
+			<div id="grafico4" class="graficoContent" style="border: 1px solid yellow; opacity:0">
+				<link rel="stylesheet" href="charts/distribution/distribution.css"/>
+				<script src="charts/distribution/distribution.js"></script>
+				<div class="popup" id="popup" style="z-index: 1000; width:200px">
+					<div class="thumb"><img id="thumb" src="thumbnails/loading.gif" style="height:200px; width:200px">
+					</div>
+					<div class="popdetails">
+						<div class="poptitle">
+							Ascolti     :
+						</div><div class="popdetail" id="popFocalLength"></div>
+						<div class="poptitle">
+							Condivisioni:
+						</div><div class="popdetail" id="popIso"></div>
+						<div class="poptitle">
+							Artista     :
+						</div><div class="popdetail" id="popCamera"></div>
+						<div class="poptitle">
+							Brano       :
+						</div><div class="popdetail" id="popLens"></div>
+					</div>
+				</div>
+				<div class="container">
+					<div id="distributionChart" class="svgcontainer" style="width: 1200px; height: 520px; transform: translate(-120px, -10px);"></div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				// Creo l'oggetto grafico
+				var distributionChart = new Distribution();
+				controller.registerDistributionChart(distributionChart);
+				// Registro i listener per gli eventi
+				document.addEventListener('distribution.stateChanged', function(e) {
+					console.log("distribution.stateChanged - " + e.detail.state);
+				}, false);
+				document.addEventListener('distribution.trackChanged', function(e) {
+					controller.trackChanged(e.detail.track);
+					console.log("distribution.trackChanged - " + e.detail.track.track_name);
+				}, false);
+				document.addEventListener('distribution.countryChanged', function(e) {
+					$("#header").html(e.detail.country.id);
+					console.log("distribution.countryChanged - " + e.detail.country.id);
+				}, false);
+				// Disegno il grafo
+				distributionChart.draw();
+			</script>
 		</div>
-	</body>
+	</div>
+	<div id="footer">
+		<div id="logo">
+			<img src="images/logo_spotify.png" style="max-width:30px; max-height: 30px; margin: 2px;";/>
+			Spotify Visualizer
+		</div>
+		<a href="#grafico1" id="grafico1-btn" class="scroll">1</a>
+		<a href="#grafico2" id="grafico2-btn" class="scroll">2</a>
+		<a href="#grafico3" id="grafico3-btn" class="scroll">3</a>
+		<a href="#grafico4" id="grafico4-btn" class="scroll">4</a>
+		<a href="#mosaic" id="mosaic-btn" class="mosaic" style="float: right; margin: 5px 5px 0px 0px;">Mosaic</a>
+	</div>
+</body>
 </html>

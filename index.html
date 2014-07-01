@@ -97,7 +97,7 @@
 							width : 1266,
 							top : 0
 						}, {
-							complete: function(){
+							complete : function() {
 								lineChart.toFull();
 							}
 						});
@@ -116,7 +116,7 @@
 							width : 620,
 							top : 317.5
 						}, {
-							complete: function(){
+							complete : function() {
 								lineChart.toMosaic();
 							}
 						});
@@ -124,7 +124,7 @@
 							right : "0"
 						});
 						$(".grafico2 .overlay-resize").fadeOut();
-						
+
 					},
 					animation : 'zoomIn',
 					delayClose : 250
@@ -308,9 +308,49 @@
 								<img class="resize-icon" src="images/resize.png"/>
 							</div>
 						</div>
+
+						<link rel="stylesheet" href="charts/distribution/distribution.css"/>
+						<script src="charts/distribution/distribution.js"></script>
+						<div class="popup" id="popup" style="z-index: 1000; width:200px">
+							<div class="thumb"><img id="thumb" src="thumbnails/loading.gif" style="height:200px; width:200px">
+							</div>
+							<div class="popdetails">
+								<div class="poptitle">
+									Ascolti     :
+								</div><div class="popdetail" id="popFocalLength"></div>
+								<div class="poptitle">
+									Condivisioni:
+								</div><div class="popdetail" id="popIso"></div>
+								<div class="poptitle">
+									Artista     :
+								</div><div class="popdetail" id="popCamera"></div>
+								<div class="poptitle">
+									Brano       :
+								</div><div class="popdetail" id="popLens"></div>
+							</div>
+						</div>
 						<svg id="distributionChart" width="100%" height="100%">
 							<rect width="100%" height="100%" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 						</svg>
+						<script type="text/javascript">
+							// Creo l'oggetto grafico
+							var distributionChart = new Distribution();
+							controller.registerDistributionChart(distributionChart);
+							// Registro i listener per gli eventi
+							document.addEventListener('distribution.stateChanged', function(e) {
+								console.log("distribution.stateChanged - " + e.detail.state);
+							}, false);
+							document.addEventListener('distribution.trackChanged', function(e) {
+								controller.trackChanged(e.detail.track);
+								console.log("distribution.trackChanged - " + e.detail.track.track_name);
+							}, false);
+							document.addEventListener('distribution.countryChanged', function(e) {
+								$("#header").html(e.detail.country.id);
+								console.log("distribution.countryChanged - " + e.detail.country.id);
+							}, false);
+							// Disegno il grafo
+							distributionChart.draw();
+						</script>
 					</div>
 				</li>
 				<li class="footer" data-row="6" data-col="1" data-sizex="12" data-sizey="1" data-max-sizex="13" data-max-sizey="1" data-min-sizex="13" data-min-sizey="1">

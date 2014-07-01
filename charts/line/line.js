@@ -305,7 +305,8 @@ function Line() {
 		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
 		            var y = String(graph.point.y);
 		            var y = String(graph.point.y)  + ' ascolti';				
-		            tooltip_str = '<center><image style="height:150px; width:150px" src="' + data.filter(function(el){ return el.key == key; })[0].artwork + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
+		            var artworks = data.filter(function(el){ return el.key == key; });
+		            tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? artworks[0].artwork : "") + '"/><br/><b>'+key+'</b></br>' + y + ' il ' + x + '</center>';
 		            return tooltip_str;
 	    		});    		
 				// Finalizzo il grafico e lo aggiungo alla pagina

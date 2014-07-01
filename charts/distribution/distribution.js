@@ -150,10 +150,7 @@ function Distribution() {
            color = d3.scale.ordinal()
            					.range(["#EDC951","#EB6841","#CC333F","#00A0B0"]);
            // Creo l'elemento SVG
-           distribution = d3.select("#distributionChart")
-           						.append("svg")
-				                .attr("width",pagewidth)
-				                .attr("height",distheight);
+           distribution = d3.select("#distributionChart");
 		   // Creo i range di visualizzazione
 		   distxscale = d3.scale.linear()
                 .range([0,pagewidth-margin.left-margin.right])
