@@ -111,7 +111,7 @@ function Controller(){
 		// Aggiorno l'header
 		if(!$.isEmptyObject(newCountry)){
 			lineChart.changeStatus(2);
-			distributionChart.changeStatus(3);	
+			distributionChart.changeStatus(2);	
 			$("#countryFlag").attr("class", "flag-icon flag-icon-" + newCountry.id);
 			$("#countryName").html("Paese : " + newCountry.properties.name);
 		} else {
