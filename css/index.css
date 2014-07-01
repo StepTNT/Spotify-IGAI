@@ -51,3 +51,8 @@
 	background-color: rgba(255,255,255, 1);
 	cursor: ne-resize;
 }
+/*
+#distributionChart > g{
+	transform: translate(55px,30px);
+}
+*/

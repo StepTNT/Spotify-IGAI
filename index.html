@@ -341,7 +341,7 @@
 								console.log("distribution.countryChanged - " + e.detail.country.id);
 							}, false);
 							// Disegno il grafo
-							distributionChart.draw();
+							distributionChart.draw();							
 						</script>
 					</div>
 				</li>
@@ -350,5 +350,8 @@
 				</li>
 			</ul>
 		</div>
+		<script>
+			$("#distributionChart > g").attr("transform", "translate(55,30)")
+		</script>
 	</body>
 </html>

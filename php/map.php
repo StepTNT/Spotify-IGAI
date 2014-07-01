@@ -16,23 +16,44 @@
 	if($state == 1){
 		//Stato 1
 		$country = (isset($_GET["country"])) ? $_GET["country"] : "gl";
-		$query = "(SELECT * 
-				FROM chart as c1
-				INNER JOIN (
-					SELECT countryId, max(plays) as num_streams
-					FROM chart
-					where date in (select max(date) from chart)
-					GROUP BY (countryId)
-				) as c2
-				INNER JOIN (
-					SELECT uri as track_url, artist as artist_name, title as track_name, album as album_name, artwork as artwork_url
-					FROM track
-				) as t
-				ON c1.countryId = c2.countryId
-				and c1.plays = num_streams
-				and t.track_url = c1.trackUri
-				WHERE c1.countryId <> 'gl'
-				ORDER BY c1.countryId desc)";
+		$date = (isset($_GET["date"])) ? $_GET["date"] : "max";
+		if($date == "max"){
+			$query = "(SELECT * 
+					FROM chart as c1
+					INNER JOIN (
+						SELECT countryId, max(plays) as num_streams
+						FROM chart
+						where date in (select max(date) from chart)
+						GROUP BY (countryId)
+					) as c2
+					INNER JOIN (
+						SELECT uri as track_url, artist as artist_name, title as track_name, album as album_name, artwork as artwork_url
+						FROM track
+					) as t
+					ON c1.countryId = c2.countryId
+					and c1.plays = num_streams
+					and t.track_url = c1.trackUri
+					WHERE c1.countryId <> 'gl'
+					ORDER BY c1.countryId desc)";
+		} else {
+			$query = "(SELECT * 
+					FROM chart as c1
+					INNER JOIN (
+						SELECT countryId, max(plays) as num_streams
+						FROM chart
+						where date = '" . $date . "'
+						GROUP BY (countryId)
+					) as c2
+					INNER JOIN (
+						SELECT uri as track_url, artist as artist_name, title as track_name, album as album_name, artwork as artwork_url
+						FROM track
+					) as t
+					ON c1.countryId = c2.countryId
+					and c1.plays = num_streams
+					and t.track_url = c1.trackUri
+					WHERE c1.countryId <> 'gl'
+					ORDER BY c1.countryId desc)"; 
+		}
 	} else {
 		//Stato 2
 		$trackUri = (isset($_GET["trackUri"])) ? $_GET["trackUri"] : "null";
