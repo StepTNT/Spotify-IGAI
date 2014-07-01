@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Spotify Visualizer</title>
+		<link rel="stylesheet" type="text/css" href="css/jquery.gridster.min.css">
+		<link rel="stylesheet" type="text/css" href="css/gridster-demo.css">
+		<script type="text/javascript" src="common-libs/jquery-2.1.1.min.js"></script>
+		<script src="common-libs/jquery.gridster.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="common-libs/jBox.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/jBox.css">
+		<style type="text/css">
+			#main-container {
+				width: 90%;
+				margin: auto;
+			}
+			.header {
+				background: rgb(135, 199, 135);
+				height: 80px;
+			}
+			.item.grafico2 {
+				background: rgb(135, 199, 135);
+				width: 100% !important;
+				height: 252px;
+			}
+			.item.grafico3 {
+				background: rgb(135, 199, 135);
+				width: 100% !important;
+				height: 252px;
+				left: 647px !important;
+			}
+			.item.grafico1 {
+				background: rgb(135, 199, 135);
+				width: 100% !important;
+				height: 252px;
+			}
+			.footer {
+				background: rgb(135, 199, 135);
+				height: 40px;
+				top: -2px;
+			}
+			.overlay-resize {
+				background-color: rgba(0,0,0,0.6);				
+				height: 40px;
+				display: none;
+				position: absolute;
+				right: 0;
+			}
+			.resize-icon {
+				height: 32px;
+			}
+			.overlay-background {
+				background-color: rgba(255,255,255, 0);
+				float: right;
+				height: 32px;
+				width: 32px;
+				margin: 4px;
+			}
+			.overlay-background:hover {
+				background-color: rgba(255,255,255, 1);
+			}
+		</style>
+		<script type="text/javascript">
+			var gridster;
+			$(function() {
+				gridster = $(".gridster ul").gridster({
+					widget_base_dimensions : [100, 55],
+					widget_margins : [5, 5],
+					helper : 'clone',
+					resize : {
+						enabled : false,
+						max_size : [4, 4],
+						min_size : [1, 1]
+					},
+					max_cols : 13
+				}).data('gridster').disable();
+			});
+			$(function() {
+				var fullscreenG1 = false, fullscreenG2 = false, fullscreenG3 = false;
+				$(".grafico1").mouseenter(function() {
+					$(".grafico1 .overlay-resize").fadeIn();
+				});
+				$(".grafico1").mouseleave(function() {
+					$(".grafico1 .overlay-resize").fadeOut();
+				});
+				$(".grafico2").mouseenter(function() {
+					$(".grafico2 .overlay-resize").fadeIn();
+				});
+				$(".grafico2").mouseleave(function() {
+					$(".grafico2 .overlay-resize").fadeOut();
+				});
+				$(".grafico3").mouseenter(function() {
+					$(".grafico3 .overlay-resize").fadeIn();
+				});
+				$(".grafico3").mouseleave(function() {
+					$(".grafico3 .overlay-resize").fadeOut();
+				});
+				var modalG1 = $('#myModal').jBox('Modal', {
+					title : 'Map',
+					content : $('.grafico1'),
+					width : 1350,
+					height : 600,
+					closeOnClick : "body",
+					closeButton : false,
+					onOpen : function() {
+						$(".grafico1").appendTo(".jBox-content");
+						$(".grafico1").animate({
+							height : 600
+						});
+					},
+					onClose : function() {
+						if($("#grafico1-container > div").length == 0)
+							$(".grafico1").appendTo("#grafico1-container");
+						if($("#grafico1-container > div").length > 1)
+							$("#grafico1-container > div:nth-child(n + " + 2 + ")").remove();;
+						$(".grafico1").animate({
+							height : 250
+						});
+					}
+				});
+				$(".grafico1 .overlay-resize").click(function() {
+					modalG1.toggle();
+				});
+				var modalG2 = $('#myModal').jBox('Modal', {
+					title : 'Line',
+					content : $('.grafico2'),
+					width : 1350,
+					height : 600,
+					closeOnClick : "body",
+					closeButton : false,
+					onOpen : function() {
+						$(".grafico2").appendTo(".jBox-content");
+						$(".grafico2").animate({
+							height : 600,
+							width : 1266,
+							top : 0
+						});
+					},
+					onClose : function() {
+						if($("#grafico2-container > div").length == 0)
+							$(".grafico2").appendTo("#grafico2-container");
+						if($("#grafico2-container > div").length > 1)
+							$("#grafico2-container > div:nth-child(n + " + 2 + ")").remove();
+						$(".grafico2").animate({
+							height : 250,
+							width : 620,
+							top : 317.5
+						});
+					}
+				});
+				$(".grafico2 .overlay-resize").click(function() {
+					modalG2.toggle();
+				});
+				var modalG3 = $('#myModal').jBox('Modal', {
+					title : 'Distribution',
+					content : $('.grafico3'),
+					width : 1350,
+					height : 600,
+					closeOnClick : "body",
+					closeButton : false,
+					onOpen : function() {
+						$(".grafico3").appendTo(".jBox-content");
+						$(".grafico3").animate({
+							height : 600,
+							width : 1266,
+							top : 0,
+							left : 0
+						});
+					},
+					onClose : function() {
+						if($("#grafico3-container > div").length == 0)
+							$(".grafico3").appendTo("#grafico3-container");
+						if($("#grafico3-container > div").length > 1)
+							$("#grafico3-container > div:nth-child(n + " + 2 + ")").remove();
+						$(".grafico3").animate({
+							height : 250,
+							width : 620,
+							top : 317.5,
+							left : 635
+						});						
+					}
+				});
+				$(".grafico3 .overlay-resize").click(function() {
+					modalG3.toggle();
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+		<div class="gridster">
+			<ul>
+				<li data-row="1" data-col="1" data-sizex="12" data-sizey="2" data-max-sizex="13" data-max-sizey="2" data-min-sizex="13" data-min-sizey="2">
+					Header
+				</li>
+				<li id="grafico1-container" data-row="1" data-col="1" data-sizex="12" data-sizey="4" data-max-sizex="12" data-max-sizey="4" data-min-sizex="12" data-min-sizey="4">
+					<div class="item grafico1" id="grafico1">
+						<div class="overlay-resize">
+							<div class="overlay-background">
+								<img class="resize-icon" src="images/resize.png"/>
+							</div>
+						</div>
+						Grafico 1
+					</div>
+				</li>
+				<li id="grafico2-container" data-row="4" data-col="1" data-sizex="6" data-sizey="4" data-max-sizex="6" data-max-sizey="4" data-min-sizex="6" data-min-sizey="4">
+					<div class="item grafico2">
+						<div class="overlay-resize">
+							<div class="overlay-background">
+								<img class="resize-icon" src="images/resize.png"/>
+							</div>
+						</div>
+						Grafico 2
+					</div>
+				</li>
+				<li id="grafico3-container" data-row="8" data-col="4" data-sizex="6" data-sizey="4" data-max-sizex="6" data-max-sizey="4" data-min-sizex="6" data-min-sizey="4">
+					<div class="item grafico3">
+						<div class="overlay-resize">
+							<div class="overlay-background">
+								<img class="resize-icon" src="images/resize.png"/>
+							</div>
+						</div>
+						Grafico 3
+					</div>
+				</li>
+				<li data-row="6" data-col="1" data-sizex="12" data-sizey="1" data-max-sizex="13" data-max-sizey="1" data-min-sizex="13" data-min-sizey="1">
+					Footer
+				</li>
+			</ul>
+		</div>
+	</body>
+</html>
