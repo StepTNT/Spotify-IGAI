@@ -7,18 +7,21 @@
 	height: 80px;
 }
 .item.grafico2 {
-	background: rgb(135, 199, 135);
+	/*background: rgb(135, 199, 135);*/
+	background: rgba(0, 0, 0, 0.5);
 	width: 100% !important;
 	height: 252px;
 }
 .item.grafico3 {
-	background: rgb(135, 199, 135);
+	/*background: rgb(135, 199, 135);*/
+	background: rgba(0, 0, 0, 0.5);
 	width: 100% !important;
 	height: 252px;
 	left: 647px !important;
 }
 .item.grafico1 {
-	background: rgb(135, 199, 135);
+	/*background: rgb(135, 199, 135);*/
+	background: rgba(0, 0, 0, 0.5);
 	width: 100% !important;
 	height: 252px;
 }

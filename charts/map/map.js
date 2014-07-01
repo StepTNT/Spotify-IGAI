@@ -364,7 +364,6 @@ function Map() {
 	// Il click del mouse cambia lo stato del grafico e imposta il brano come selezionato                    
 	function circleMouseClick(d){
 	   selectedTrack = d;
-	   console.log(selectedTrack);
 	    /*grafico.changeStatus(2);*/
 	   fireTrackChanged();
 	}
@@ -404,7 +403,7 @@ function Map() {
             data.forEach(function (d) {      
             	var country = getCountry(d.countryId);            	
             	if(country){          	        
-            		console.log("Coloro " + country.id + " con " + quantize(parseInt(d.num_streams)) + " (" + d.num_streams + " ascolti)");
+//            		console.log("Coloro " + country.id + " con " + quantize(parseInt(d.num_streams)) + " (" + d.num_streams + " ascolti)");
 	                g.selectAll("#" + country.id)
 	                	.on("mouseover", function(d){
 	                		var top = ((d3.event.pageY > height) ? height : d3.event.pageY); // Evitiamo che il tooltip venga disegnato fuori dall'area visibile

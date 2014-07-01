@@ -1,19 +1,19 @@
 text {
   font: 12px sans-serif;
-  fill:#6fbe44;
+  /*fill:#6fbe44;*/
 }
 
 svg {
   display: block;
 }
-
+/*
 #line svg {
   min-width: 989px;
   min-height: 600px;
   
   .nv-context {
 	margin: 0, 100, 0, 0;
-  }
+  }*/
 /*
   margin: 50px;
   Minimum height and width is a good idea to prevent negative SVG dimensions...
