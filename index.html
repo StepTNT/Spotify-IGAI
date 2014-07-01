@@ -4,61 +4,14 @@
 		<title>Spotify Visualizer</title>
 		<link rel="stylesheet" type="text/css" href="css/jquery.gridster.min.css">
 		<link rel="stylesheet" type="text/css" href="css/gridster-demo.css">
+		<link rel="stylesheet" type="text/css" href="css/jBox.css">
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" type="text/css" href="css/flag-icon.css">
 		<script type="text/javascript" src="common-libs/jquery-2.1.1.min.js"></script>
+		<script src="common-libs/d3.v3.min.js"></script>
 		<script src="common-libs/jquery.gridster.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="common-libs/jBox.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/jBox.css">
-		<style type="text/css">
-			#main-container {
-				width: 90%;
-				margin: auto;
-			}
-			.header {
-				background: rgb(135, 199, 135);
-				height: 80px;
-			}
-			.item.grafico2 {
-				background: rgb(135, 199, 135);
-				width: 100% !important;
-				height: 252px;
-			}
-			.item.grafico3 {
-				background: rgb(135, 199, 135);
-				width: 100% !important;
-				height: 252px;
-				left: 647px !important;
-			}
-			.item.grafico1 {
-				background: rgb(135, 199, 135);
-				width: 100% !important;
-				height: 252px;
-			}
-			.footer {
-				background: rgb(135, 199, 135);
-				height: 40px;
-				top: -2px;
-			}
-			.overlay-resize {
-				background-color: rgba(0,0,0,0.6);
-				height: 40px;
-				display: none;
-				position: absolute;
-				right: 0;
-			}
-			.resize-icon {
-				height: 32px;
-			}
-			.overlay-background {
-				background-color: rgba(255,255,255, 0);
-				float: right;
-				height: 32px;
-				width: 32px;
-				margin: 4px;
-			}
-			.overlay-background:hover {
-				background-color: rgba(255,255,255, 1);
-			}
-		</style>
+		<script src="controller.js"></script>
 		<script type="text/javascript">
 			var gridster;
 			$(function() {
@@ -106,6 +59,9 @@
 						$(".grafico1").animate({
 							height : 600
 						});
+						$(".grafico1 .overlay-resize").animate({
+							right : "1.1%"
+						});
 					},
 					onClose : function() {
 						if ($("#grafico1-container > div").length == 0)
@@ -116,7 +72,13 @@
 						$(".grafico1").animate({
 							height : 250
 						});
-					}
+						$(".grafico1 .overlay-resize").animate({
+							right : "0"
+						});
+						$(".grafico1 .overlay-resize").fadeOut();
+					},
+					animation : 'zoomIn',
+					delayClose : 250
 				});
 				$(".grafico1 .overlay-resize").click(function() {
 					modalG1.toggle();
@@ -134,7 +96,15 @@
 							height : 600,
 							width : 1266,
 							top : 0
+						}, {
+							complete: function(){
+								lineChart.toFull();
+							}
 						});
+						$(".grafico2 .overlay-resize").animate({
+							right : "1.1%"
+						});
+						lineChart.toFull();
 					},
 					onClose : function() {
 						if ($("#grafico2-container > div").length == 0)
@@ -145,8 +115,19 @@
 							height : 250,
 							width : 620,
 							top : 317.5
+						}, {
+							complete: function(){
+								lineChart.toMosaic();
+							}
 						});
-					}
+						$(".grafico2 .overlay-resize").animate({
+							right : "0"
+						});
+						$(".grafico2 .overlay-resize").fadeOut();
+						
+					},
+					animation : 'zoomIn',
+					delayClose : 250
 				});
 				$(".grafico2 .overlay-resize").click(function() {
 					modalG2.toggle();
@@ -166,6 +147,9 @@
 							top : 0,
 							left : 0
 						});
+						$(".grafico3 .overlay-resize").animate({
+							right : "1.1%"
+						});
 					},
 					onClose : function() {
 						if ($("#grafico3-container > div").length == 0)
@@ -178,12 +162,19 @@
 							top : 317.5,
 							left : 635
 						});
-					}
+						$(".grafico3 .overlay-resize").animate({
+							right : "0"
+						});
+						$(".grafico3 .overlay-resize").fadeOut();
+					},
+					animation : 'zoomIn',
+					delayClose : 250
 				});
 				$(".grafico3 .overlay-resize").click(function() {
 					modalG3.toggle();
 				});
 			});
+			var controller = new Controller();
 		</script>
 	</head>
 
@@ -191,7 +182,39 @@
 		<div class="gridster">
 			<ul>
 				<li class="header" data-row="1" data-col="1" data-sizex="12" data-sizey="2" data-max-sizex="13" data-max-sizey="2" data-min-sizex="13" data-min-sizey="2">
-					Header
+					<div id="header">
+						<div id="country" style="float: left; margin: 8px; width: 50%;">
+							<span id="countryFlag" class="flag-icon flag-icon-ITA" style="height: 150px; width: 125px; float:left; top: -25px"></span>
+							<div id="countryDetails" style="margin-left:10px; float:left; text-align: justify;">
+								<div id="countryName">
+									Paese: Italia
+								</div>
+								<div id="countryPlays">
+									Ascolti: 304975
+								</div>
+								<div id="countryDate">
+									Data: 23/04/2014
+								</div>
+							</div>
+						</div>
+						<div id="track" style="float:right; margin: 8px;">
+							<img id="trackCover" src="http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94" style="max-height: 100px; max-width: 100px; background-color: red;"/>
+							<div id="trackDetails" style="margin-right:10px; float:left; text-align: justify;">
+								<div id="trackArtist">
+									Artista: Seven Lions
+								</div>
+								<div id="trackTitle">
+									Titolo: Canzone
+								</div>
+								<div id="trackPlays">
+									Ascolti: 34975
+								</div>
+								<div id="trackDate">
+									Data: 23/04/2014
+								</div>
+							</div>
+						</div>
+					</div>
 				</li>
 				<li id="grafico1-container" data-row="1" data-col="1" data-sizex="12" data-sizey="4" data-max-sizex="12" data-max-sizey="4" data-min-sizex="12" data-min-sizey="4">
 					<div class="item grafico1" id="grafico1">
@@ -200,9 +223,36 @@
 								<img class="resize-icon" src="images/resize.png"/>
 							</div>
 						</div>
-						<svg width="100%" height="100%">
+						<link href="charts/map/map.css" rel="stylesheet" type="text/css">
+						<script src="charts/map/libs/topojson.v1.min.js"></script>
+						<script src="charts/map/libs/colorbrewer.js"></script>
+						<script src="charts/map/map.js"></script>
+						<svg id="mapChart" width="100%" height="100%">
 							<rect width="100%" height="100%" style="fill:rgb(255,0,0);stroke-width:3;stroke:rgb(0,0,0)" />
 						</svg>
+						<script type="text/javascript">
+							// Creo l'oggetto grafico
+							var mapChart = new Map();
+							controller.registerMapChart(mapChart);
+							// Registro i listener per gli eventi
+							document.addEventListener('map.stateChanged', function(e) {
+								console.log("map.stateChanged - " + e.detail.state);
+							}, false);
+							document.addEventListener('map.trackChanged', function(e) {
+								//$("#header").html(e.detail.track.track_name);
+								controller.trackChanged(e.detail.track);
+								console.log("map.trackChanged - " + e.detail.track.track_name);
+							}, false);
+							document.addEventListener('map.countryChanged', function(e) {
+								//var country = e.detail.country.id;
+								//$("#header").html(country);
+								controller.countryChanged(e.detail.country);
+								console.log("map.countryChanged - " + country);
+								//lineChart.changeStatus((country) ? 2 : 1);
+							}, false);
+							// Disegno la mappa
+							mapChart.draw();
+						</script>
 					</div>
 				</li>
 				<li id="grafico2-container" data-row="4" data-col="1" data-sizex="6" data-sizey="4" data-max-sizex="6" data-max-sizey="4" data-min-sizex="6" data-min-sizey="4">
@@ -212,9 +262,43 @@
 								<img class="resize-icon" src="images/resize.png"/>
 							</div>
 						</div>
-						<svg width="100%" height="100%">
+						<link href="charts/line/line.css" rel="stylesheet" type="text/css">
+						<link href="charts/line/libs/nv.d3.css" rel="stylesheet" type="text/css">
+						<script src="charts/line/libs/nv.d3.js"></script>
+						<script src="charts/line/libs/tooltip.js"></script>
+						<script src="charts/line/libs/utils.js"></script>
+						<script src="charts/line/libs/models/legend.js"></script>
+						<script src="charts/line/libs/models/axis.js"></script>
+						<script src="charts/line/libs/models/lineWithFocusChart.js"></script>
+						<script src="charts/line/libs/models/line.js"></script>
+						<script src="charts/line/libs/models/scatter.js"></script>
+						<script src="charts/line/line.js"></script>
+						<svg id="lineChart" width="100%" height="100%">
 							<rect width="100%" height="100%" style="fill:rgb(0,255,0);stroke-width:3;stroke:rgb(0,0,0)" />
 						</svg>
+						<script type="text/javascript">
+							// Creo l'oggetto grafico
+							var lineChart = new Line();
+							controller.registerLineChart(lineChart);
+							// Registro i listener per gli eventi
+							document.addEventListener('line.stateChanged', function(e) {
+								console.log("line.stateChanged - " + e.detail.state);
+							}, false);
+							document.addEventListener('line.trackChanged', function(e) {
+								controller.trackChanged(e.detail.track);
+								console.log("line.trackChanged - " + e.detail.track.track_name);
+							}, false);
+							document.addEventListener('line.countryChanged', function(e) {
+								$("#header").html(e.detail.country.id);
+								console.log("line.countryChanged - " + e.detail.country.id);
+							}, false);
+							document.addEventListener('line.brushChanged', function(e) {
+								console.log("line.brushChanged - ");
+								controller.dateChanged(e.detail.extent[1]);
+							}, false);
+							// Disegno il grafo
+							lineChart.draw();
+						</script>
 					</div>
 				</li>
 				<li id="grafico3-container" data-row="8" data-col="4" data-sizex="6" data-sizey="4" data-max-sizex="6" data-max-sizey="4" data-min-sizex="6" data-min-sizey="4">
@@ -224,7 +308,7 @@
 								<img class="resize-icon" src="images/resize.png"/>
 							</div>
 						</div>
-						<svg width="100%" height="100%">
+						<svg id="distributionChart" width="100%" height="100%">
 							<rect width="100%" height="100%" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
 						</svg>
 					</div>

@@ -36,7 +36,7 @@ function Line() {
 	/* Inizio variabili private */
 	
 	// L'oggetto che rappresenta il grafico di tipo line
-	var lineChart           = nv.models.lineWithFocusChart()
+	var lineChart           = nv.models.lineChart()
 											.x(function(d){
 												return new Date(d.x);
 											});
@@ -204,7 +204,7 @@ function Line() {
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){
 		d3.json("http://192.168.1.41/analisi-immagini/line.php", function (error, data) {
-			d3.select('#lineChart svg')
+			d3.select('#lineChart')
 				  .datum(data)
 				  .transition()
 				  .duration(500)
@@ -219,7 +219,7 @@ function Line() {
 	function setStatus2(){
 		// Creo il grafico
 	    d3.json("http://192.168.1.41/analisi-immagini/line.php?country=" + selectedCountry.id, function (error, data) {	
-	    	d3.select('#lineChart svg')
+	    	d3.select('#lineChart')
 				  .datum(data)
 				  .transition()
 				  .duration(500)
@@ -259,12 +259,14 @@ function Line() {
 	
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function(){
-		d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-5,1)scale(0.72,0.725)");	
+		//d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-5,1)scale(0.72,0.725)");
+		lineChart.update();	
 	};
 	
 	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
 	grafico.toFull = function(){
-		d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-10,0)scale(0.72,0.68)");		
+		//d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-10,0)scale(0.72,0.68)");	
+		lineChart.update();	
 	};
 	
 	/* Fine funzioni pubbliche */
@@ -296,20 +298,8 @@ function Line() {
 								res.concat.apply(res, tmp);					
 								return res;
 						   });
-				// Imposto l'asse x per il secondo grafico
-				lineChart.lines2.xScale(d3.time.scale());
-				lineChart.x2Axis.tickFormat(function(d) { 
-								return d3.time.format("%d-%m-%Y")(new Date(d)); 
-							})
-							.tickValues(function(d,i){
-								var tmp = d[i].values.map(function(el){ return el.x;});
-								var res = [];
-								res.concat.apply(res, tmp);
-								return res; 
-				   			});
-				// Imposto il formato dei tick per gli assi y
+				// Imposto il formato dei tick per l'asse y
 				lineChart.yAxis.tickFormat(d3.format(".2s"));
-				lineChart.y2Axis.tickFormat(d3.format(".2s"));
 				// Definisco il contenuto dei tooltip
 				lineChart.tooltipContent(function(key, y, e, graph) {					
 		            var x = d3.time.format("%d-%m-%Y")(new Date(graph.point.x));
@@ -319,7 +309,7 @@ function Line() {
 		            return tooltip_str;
 	    		});    		
 				// Finalizzo il grafico e lo aggiungo alla pagina
-				d3.select('#lineChart svg')
+				d3.select('#lineChart')
 				  .datum(data)
 				  .transition()
 				  .duration(500)

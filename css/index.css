@@ -1,60 +1,50 @@
-html, body {
-	height: 99%;
-	background-color: #333333;
-	background-image:url('../images/background.png');
-	background-repeat: repeat;	
-	overflow: hidden;
-	max-width: 1440px;
-}
-#wrap {
-	min-height: 100%;
-}
-
-#logo {
-	float: left;
-	vertical-align: middle;
-}
-
-.nvtooltip { margin-top: 150px; } 
-
-.graficoContent {
-	margin-left: 5%;
-	background-color: #555555;
-	overflow: hidden;
-	padding-bottom: 150px; /* must be same height as the footer */
-	position: fixed;
-	height: 50%;
-	top: 21%;
+#main-container {
 	width: 90%;
-	text-align: center;
-	/*display:none;*/
-	opacity: 0;
+	margin: auto;
 }
-#footer {
-	width: 90%;
-	margin-left: 5%;
-	background-color: #555555;
-	position: fixed;
-	margin-top: -2%; /* negative value of footer height */
-	height: 4%;
-	clear: both;
-	text-align: center;
+.header {
+	background: rgb(135, 199, 135);
+	height: 80px;
 }
-#header {
-	width: 90%;
-	margin-left: 5%;
-	height: 15%;
-	margin-top: 1%;
-	position: fixed; /*--Fix the sidenav to stay in one spot--*/
-	float: top; /*--Keeps sidenav into place when Fixed positioning fails--*/
-	background-color: #555555;
-	text-align: center;
+.item.grafico2 {
+	background: rgb(135, 199, 135);
+	width: 100% !important;
+	height: 252px;
 }
-/*Opera Fix*/
-body:before {
-	content: "";
-	height: 100%;
-	float: left;
-	width: 0;
-	margin-top: -32767px;
+.item.grafico3 {
+	background: rgb(135, 199, 135);
+	width: 100% !important;
+	height: 252px;
+	left: 647px !important;
+}
+.item.grafico1 {
+	background: rgb(135, 199, 135);
+	width: 100% !important;
+	height: 252px;
+}
+.footer {
+	background: rgb(135, 199, 135);
+	height: 40px;
+	top: -2px;
+}
+.overlay-resize {
+	background-color: rgba(0,0,0,0.6);
+	height: 24px;
+	display: none;
+	position: absolute;
+	right: 0;
+}
+.resize-icon {
+	height: 16px;
+}
+.overlay-background {
+	background-color: rgba(255,255,255, 0);
+	float: right;
+	height: 16px;
+	width: 16px;
+	margin: 4px;
+}
+.overlay-background:hover {
+	background-color: rgba(255,255,255, 1);
+	cursor: ne-resize;
 }
