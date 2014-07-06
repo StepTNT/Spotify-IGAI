@@ -12,11 +12,11 @@
 	}
 	
 	$state = (isset($_GET["state"])) ? $_GET["state"] : 1;
+	$date = (isset($_GET["date"])) ? $_GET["date"] : "max";
 	$query = "";
 	if($state == 1){
 		//Stato 1
-		$country = (isset($_GET["country"])) ? $_GET["country"] : "gl";
-		$date = (isset($_GET["date"])) ? $_GET["date"] : "max";
+		$country = (isset($_GET["country"])) ? $_GET["country"] : "gl";		
 		if($date == "max"){
 			$query = "(SELECT * 
 					FROM chart as c1
@@ -57,10 +57,19 @@
 	} else {
 		//Stato 2
 		$trackUri = (isset($_GET["trackUri"])) ? $_GET["trackUri"] : "null";
-		$query = "select t.uri as track_url, artist as artist_name, title as track_name, countryId, sum(plays) as num_streams
+		if($date == "max"){
+			$query = "select t.uri as track_url, artist as artist_name, title as track_name, countryId, sum(plays) as num_streams, c.date as date
 					from chart c, track t
 					where c.trackUri = \"" . $trackUri . "\" and countryId <> 'gl' and c.trackUri = t.uri
+					and c.date in (select max(date) from chart)
 					group by countryId";
+		} else {
+			$query = "select t.uri as track_url, artist as artist_name, title as track_name, countryId, sum(plays) as num_streams, c.date as date
+					from chart c, track t
+					where c.trackUri = \"" . $trackUri . "\" and countryId <> 'gl' and c.trackUri = t.uri
+					and c.date = \"" . $date . "\"
+					group by countryId";	
+		}
 	}		
 	
 	$result = $mysqli->query($query);

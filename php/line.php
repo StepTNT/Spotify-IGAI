@@ -16,7 +16,9 @@
 	$count = 0;
 	//Stato 1
 	$country = (isset($_GET["country"])) ? $_GET["country"] : "GL";
-	$query = "select distinct c1.trackUri
+	$trackUri = (isset($_GET["trackUri"])) ? $_GET["trackUri"] : "null";
+	if($trackUri == "null"){
+		$query = "select distinct c1.trackUri
 			  from chart c1
 			  inner join (
 				select *
@@ -26,6 +28,19 @@
 			  ) as top
 			  on c1.trackUri = top.trackUri
 			  limit 50";
+	} else {
+		$query = "select distinct c1.trackUri
+			  from chart c1
+			  inner join (
+				select *
+				from chart c2, track t2
+				where c2.countryId = '" . $country . "' and t2.uri = c2.trackUri
+				order by c2.plays desc
+			  ) as top
+			  on c1.trackUri = top.trackUri
+			  where c1.trackUri = \"" . $trackUri . "\"
+			  limit 50";
+	}
 	$result = $mysqli->query($query);
 	$res = "[";
 	$rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -49,7 +64,7 @@
 				$res .= "},";
 			}
 			$res .= "],";
-			$res .= "\"artwork\": \"" . $newRows[0]['artwork'] . "\"},";
+			$res .= "\"artwork\": \"" . $newRows[0]['artwork'] . "\", \"track_url\": \"" . $newRow['uri'] . "\"},";
 			$count += 1;
 			//$res .= json_encode($row) . ",";	
 		}
