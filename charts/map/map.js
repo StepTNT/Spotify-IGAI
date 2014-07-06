@@ -241,7 +241,7 @@ function Map() {
 	
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){
-		currentStatus = 1;
+		currentStatus = 1;		
 		d3.json("http://192.168.1.41/analisi-immagini/map.php?state=1", function(error, data){
 			// Per poter scalare il raggio dei cerchi su ogni stato, ci serve sapere quale sarà il valore massimo degli ascolti
 			maxStreams = d3.max(data, function(d){				
@@ -388,9 +388,10 @@ function Map() {
 	
 	// Imposta il secondo stato di visualizzazione
 	function setStatus2(){		
-		currentStatus = 2;		
-		console.log("http://192.168.1.41/analisi-immagini/map.php?state=2&trackUri="+selectedTrack.track_url);
-		d3.json("http://192.168.1.41/analisi-immagini/map.php?state=2&trackUri="+selectedTrack.track_url, function(error, data){
+		currentStatus = 2;
+		if($.isEmptyObject(selectedDate))
+			selectedDate = "max";
+		d3.json("http://192.168.1.41/analisi-immagini/map.php?state=2&trackUri="+selectedTrack.track_url+"&date="+selectedDate, function(error, data){
 			// Per costruire il range dei colori mi serve il numero massimo degli ascolti
 			var maxStreams = d3.max(data, function (d) {
                 return parseInt(d.num_streams);
@@ -452,6 +453,7 @@ function Map() {
 	
 	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
 	grafico.changeStatus = function(newStatus){
+		//if(newStatus == 0) newStatus = currentStatus; //Se passo 0 vuol dire che devo semplicemente aggiornare lo stato corrente
 		switch(newStatus){
 			case 1:{
 				//if(currentStatus == 1) return; // Siamo già nello stato 1

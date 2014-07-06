@@ -47,7 +47,11 @@ function Line() {
 	// Lo stato di visualizzazione attuale
 	var currentStatus        = 1;
 	
-	var currentCountry       = {};
+	var selectedCountry       = {};
+	
+	var selectedTrack         = {};
+	
+	var selectedDate          = {};
 	
 	/* Fine variabili private */
 	
@@ -61,6 +65,8 @@ function Line() {
 	
 	// Evento lanciato quando cambiamo lo stato di visualizzazione del grafico
 	var stateChangedEvent   = {};
+	
+	var dateChangedEvent    = {};
 	
 	// Lancia l'evento relativo al cambio dello stato di visualizzazione del grafico
 	function fireStateChanged(){
@@ -98,112 +104,25 @@ function Line() {
 	    document.dispatchEvent(countryChangedEvent); // Lancio l'evento relativo al cambio del paese selezionato
 	}
 	
+	// Lancia l'evento relativo al cambio della data selezionata
+	function fireDateChanged(){
+	    dateChangedEvent = new CustomEvent('line.dateChanged', {
+	        detail: {
+	            'date': selectedDate
+	        },
+	        bubbles: true,
+	        cancelable: true
+	    });	    
+	    document.dispatchEvent(dateChangedEvent); // Lancio l'evento relativo al cambio del paese selezionato
+	}
 	/* Fine eventi */
 	
 	/* Inizio funzioni private */
 	
-	// Recupera l'artwork del brano a partire dall'oggetto che mostro sul grafico
-	function getArtworkFromKey(key){
-		return testData().filter(function(el){ return el.key == key; })[0].artwork;
-	}
-		
-		
-	function testData() {
-		return [
-				{
-					key: "Clean Bandit - Rather Be",
-					values: [
-						{
-							x: "2014-04-27",
-							y: 2504054
-						},
-						{
-							x: "2014-04-20",
-							y: 1905117
-						},
-						{
-							x: "2014-04-13",
-							y: 1513407
-						},
-						{
-							x: "2014-04-06",
-							y: 893984
-						}
-					],
-					artwork: "http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94"
-				},
-				{
-					key: "Calvin Harris - Summer",
-					values: [
-						{
-							x: "2014-04-27",
-							y: 1504054
-						},
-						{
-							x: "2014-04-20",
-							y: 805117
-						},
-						{
-							x: "2014-04-13",
-							y: 713407
-						},
-						{
-							x: "2014-04-06",
-							y: 593984
-						}
-					],
-					artwork: "http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94"
-				},
-				{
-					key: "David Guetta - Bad",
-					values: [
-						{
-							x: "2014-04-27",
-							y: 1504054
-						},
-						{
-							x: "2014-04-20",
-							y: 505117
-						},
-						{
-							x: "2014-04-13",
-							y: 213407
-						},
-						{
-							x: "2014-04-06",
-							y: 93984
-						}
-					],
-					artwork: "http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94"
-				},
-				{
-					key: "Iggy Azalea - Fancy",
-					values: [
-						{
-							x: "2014-04-27",
-							y: 2504054
-						},
-						{
-							x: "2014-04-20",
-							y: 1405117
-						},
-						{
-							x: "2014-04-13",
-							y: 513407
-						},
-						{
-							x: "2014-04-06",
-							y: 293984
-						}
-					],
-					artwork: "http://o.scdn.co/300/d71d05ded1704bcf849465dd5e76e196847d1c0a"
-				}
-		];
-	}
-	
 	// Imposta il primo stato di visualizzazione
-	function setStatus1(){
-		d3.json("http://192.168.1.41/analisi-immagini/line.php", function (error, data) {
+	function setStatus1(){		
+		var trackUri = ($.isEmptyObject(selectedTrack)) ? "null" : selectedTrack.track_url;
+		d3.json("http://192.168.1.41/analisi-immagini/line.php?trackUri="+trackUri, function (error, data) {
 			d3.select('#lineChart')
 				  .datum(data)
 				  .transition()
@@ -250,7 +169,7 @@ function Line() {
 	};
 	
 	grafico.setSelectedTrack = function(track){
-		
+		selectedTrack = track;
 	};
 	
 	grafico.setSelectedCountry = function(country){
@@ -259,13 +178,11 @@ function Line() {
 	
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function(){
-		//d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-5,1)scale(0.72,0.725)");
 		lineChart.update();	
 	};
 	
 	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
 	grafico.toFull = function(){
-		//d3.selectAll("#lineChart").transition().duration(250).style("transform", "translate(-10,0)scale(0.72,0.68)");	
 		lineChart.update();	
 	};
 	
@@ -290,14 +207,8 @@ function Line() {
 		    	lineChart.lines.xScale(d3.time.scale());
 		    	// Formatto i tick dell'asse x e scelgo i valori da mostrare
 		    	lineChart.xAxis.tickFormat(function(d) {
-						        return d3.time.format("%d-%m-%Y")(new Date(d)); 
-						   })
-						   .tickValues(function(d,i){
-								var tmp = d[i].values.map(function(el){ return el.x;});
-								var res = [];					
-								res.concat.apply(res, tmp);					
-								return res;
-						   });
+						        	return d3.time.format("%b %d")(new Date(d)); 
+						  		});
 				// Imposto il formato dei tick per l'asse y
 				lineChart.yAxis.tickFormat(d3.format(".2s"));
 				// Definisco il contenuto dei tooltip
@@ -319,6 +230,20 @@ function Line() {
 				// Sposto le label dell'asse x più in basso
 				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');					  
 				nv.utils.windowResize(lineChart.update);	
+				
+				  lineChart.lines.dispatch.on('elementClick', function(e) {
+				  	// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto				  	
+				     selectedTrack = e.series;				     
+				     var data = e.series.key.split(" - ");
+				     selectedTrack.track_name = data[1];
+					 selectedTrack.artist_name = data[0];
+					 selectedTrack.num_streams = e.point.y;
+					 selectedTrack.artwork_url = e.series.artwork;
+					 selectedDate = e.point.x;				     	
+				     fireDateChanged();		  
+				     fireTrackChanged();   
+				 });
+				 				
 				return lineChart;
     		});
 	    });

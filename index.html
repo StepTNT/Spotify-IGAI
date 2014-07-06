@@ -209,12 +209,12 @@
 								<div id="countryName">
 									Paese: Italia
 								</div>
-								<div id="countryPlays">
+								<!--<div id="countryPlays">
 									Ascolti: 304975
-								</div>
-								<!--<div id="countryDate">
-									Data: 23/04/2014
 								</div>-->
+								<div id="countryDate">
+									Data: 23/04/2014
+								</div>
 							</div>
 						</div>
 						<div id="track" style="float:right; margin: 8px;">
@@ -260,13 +260,13 @@
 							}, false);
 							document.addEventListener('map.trackChanged', function(e) {
 								//$("#header").html(e.detail.track.track_name);
-								controller.trackChanged(e.detail.track);
+								controller.trackChanged(e.detail.track, "red");
 								console.log("map.trackChanged - " + e.detail.track.track_name);
 							}, false);
 							document.addEventListener('map.countryChanged', function(e) {
 								//var country = e.detail.country.id;
 								//$("#header").html(country);
-								controller.countryChanged(e.detail.country);
+								controller.countryChanged(e.detail.country, "red");
 								console.log("map.countryChanged - " + country);
 								//lineChart.changeStatus((country) ? 2 : 1);
 							}, false);
@@ -296,16 +296,20 @@
 								console.log("line.stateChanged - " + e.detail.state);
 							}, false);
 							document.addEventListener('line.trackChanged', function(e) {
-								controller.trackChanged(e.detail.track);
+								controller.trackChanged(e.detail.track, "green");
 								console.log("line.trackChanged - " + e.detail.track.track_name);
 							}, false);
 							document.addEventListener('line.countryChanged', function(e) {
 								$("#header").html(e.detail.country.id);
 								console.log("line.countryChanged - " + e.detail.country.id);
 							}, false);
+							document.addEventListener('line.dateChanged', function(e) {
+								console.log("line.dateChanged - " + e.detail.date);
+								controller.dateChanged(e.detail.date, "green");
+							}, false);
 							document.addEventListener('line.brushChanged', function(e) {
 								console.log("line.brushChanged - ");
-								controller.dateChanged(e.detail.extent[1]);
+								controller.dateChanged(e.detail.extent[1], "green");
 							}, false);
 							// Disegno il grafo
 							lineChart.draw();
@@ -333,7 +337,7 @@
 								console.log("distribution.stateChanged - " + e.detail.state);
 							}, false);
 							document.addEventListener('distribution.trackChanged', function(e) {
-								controller.trackChanged(e.detail.track);
+								controller.trackChanged(e.detail.track, "blue");
 								console.log("distribution.trackChanged - " + e.detail.track.track_name);
 							}, false);
 							document.addEventListener('distribution.countryChanged', function(e) {

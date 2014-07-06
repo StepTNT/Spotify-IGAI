@@ -74,30 +74,44 @@ function Controller() {
 	/* Inizio gestione eventi */
 
 	// E' stata selezionata una nuova traccia, quindi devo aggiornare i grafici
-	controller.trackChanged = function(newTrack) {
+	controller.trackChanged = function(newTrack, color) {
+		notice = new jBox('Notice', {
+			content : 'Selezionata nuova traccia: ' + newTrack.artist_name + " - " + newTrack.track_name,
+			autoClose : 1000,
+			color : color
+		});
+		notice.toggle();
 		selectedTrack = newTrack;
 		// Aggiorno il grafico map
 		mapChart.setSelectedTrack(newTrack);
 		mapChart.changeStatus(2);
+		// Aggiorno il grafico line
+		lineChart.setSelectedTrack(newTrack);
+		lineChart.changeStatus(1);
 		// Aggiorno l'header
 		$("#track").fadeOut(function() {
-			$("#trackTitle").html("Titolo: " + newTrack.track_name);
-			$("#trackArtist").html("Artista: " + newTrack.artist_name);
-			$("#trackPlays").html("Ascolti: " + newTrack.num_streams);
+			$("#trackTitle").html(newTrack.track_name);
+			$("#trackArtist").html(newTrack.artist_name);
+			$("#trackPlays").html(newTrack.num_streams);
 			$("#trackCover").attr("src", newTrack.artwork_url);
 			$("#track").fadeIn();
 		});
 	};
 
 	// E' stato selezionato unun nuovo paese
-	controller.countryChanged = function(newCountry) {
+	controller.countryChanged = function(newCountry, color) {
+		notice = new jBox('Notice', {
+			content : 'Selezionato nuovo paese: ' + (($.isEmptyObject(newCountry)) ? "Global" : newCountry.properties.name),
+			autoClose : 1000,
+			color : color
+		});
+		notice.toggle();
+		console.log($.isEmptyObject(selectedTrack));
 		//controller.selectedTrack = newTrack;
 		selectedCountry = newCountry;
-		// Aggiorno il grafico map
-		/*mapChart.setSelectedTrack(newTrack); //TODO: da implementare
-		mapChart.changeStatus(2);
-		// Aggiorno il grafico force
-		forceChart.setSelectedTrack(newTrack); //TODO: da implementare*/
+		// Aggiorno il grafico line per rimuovere l'eventuale traccia selezionata in precedenza
+		lineChart.setSelectedTrack({});
+		lineChart.changeStatus(1);
 		// Aggiorno il grafico line
 		lineChart.setSelectedCountry(newCountry);
 		distributionChart.setSelectedCountry(newCountry);
@@ -106,7 +120,7 @@ function Controller() {
 			lineChart.changeStatus(2);
 			distributionChart.changeStatus(2);
 			$("#countryFlag").attr("class", "flag-icon flag-icon-" + newCountry.id);
-			$("#countryName").html("Paese : " + newCountry.properties.name);
+			$("#countryName").html(newCountry.properties.name);
 		} else {
 			lineChart.changeStatus(1);
 			distributionChart.changeStatus(1);
@@ -115,20 +129,25 @@ function Controller() {
 	};
 
 	// E' stata selezionata una nuova data
-	controller.dateChanged = function(newDate) {
-		var d = newDate;
-		var curr_date = d.getDate();
-		var curr_month = d.getMonth() + 1;
-		//Months are zero based
-		var curr_year = d.getFullYear();
-		selectedDate = curr_year + "-" + curr_month + "-" + curr_date;
-		/*mapChart.setSelectedDate(selectedDate);
-		 mapChart.changeStatus(1);
-		 distributionChart.setSelectedDate(selectedDate);
-		 distributionChart.changeStatus(2); */
+	controller.dateChanged = function(newDate, color) {
+		notice = new jBox('Notice', {
+			content : 'Selezionata nuova data: ' + newDate,
+			autoClose : 1000,
+			color : color
+		});
+		notice.toggle();
+		selectedDate = newDate;
+		mapChart.setSelectedDate(selectedDate);
+		distributionChart.setSelectedDate(selectedDate);
+		distributionChart.changeStatus(0);
+		$("#countryDate").html(newDate);
 	};
 
 	/* Fine gestione eventi */
+
+	/* Notice */
+	// Usiamo questo oggetto per mostrare le notifiche ogni volta che succede qualcosa
+	var notice = $('.tooltip').jBox('Notice');
 
 	return controller;
 }

@@ -315,7 +315,6 @@ nv.models.lineChart = function() {
 
         chart.update();
       });
-
       //============================================================
 
     });
@@ -336,7 +335,7 @@ nv.models.lineChart = function() {
   lines.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
-
+  
   dispatch.on('tooltipHide', function() {
     if (tooltips) nv.tooltip.cleanup();
   });

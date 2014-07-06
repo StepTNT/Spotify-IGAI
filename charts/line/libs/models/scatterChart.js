@@ -413,6 +413,7 @@ nv.models.scatterChart = function() {
         dispatch.tooltipShow(e);
       });
 
+	
       dispatch.on('tooltipShow', function(e) {
         if (tooltips) showTooltip(e, that.parentNode);
       });
