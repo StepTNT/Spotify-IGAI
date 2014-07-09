@@ -11,6 +11,7 @@
 	background: rgba(0, 0, 0, 0.5);
 	width: 100% !important;
 	height: 252px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
 }
 .item.grafico3 {
 	/*background: rgb(135, 199, 135);*/
@@ -18,12 +19,23 @@
 	width: 100% !important;
 	height: 252px;
 	left: 647px !important;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
 }
 .item.grafico1 {
 	/*background: rgb(135, 199, 135);*/
 	background: rgba(0, 0, 0, 0.5);
 	width: 100% !important;
 	height: 252px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+.item.tabella1 {
+	background: rgb(255, 0, 0);
+}
+.item.tabella2 {
+	background: rgb(0, 255, 0);
+}
+.item.tabella3 {
+	background: rgb(0, 0, 255);
 }
 .footer {
 	background: rgb(135, 199, 135);
@@ -40,6 +52,9 @@
 .resize-icon {
 	height: 16px;
 }
+.table-icon {
+	height: 16px;
+}
 .overlay-background {
 	background-color: rgba(255,255,255, 0);
 	float: right;
@@ -50,6 +65,10 @@
 .overlay-background:hover {
 	background-color: rgba(255,255,255, 1);
 	cursor: ne-resize;
+}
+
+.tabella-overlay-resize:hover {	
+	cursor: pointer;
 }
 /*
 #distributionChart > g{

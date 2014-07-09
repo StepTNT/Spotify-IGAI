@@ -122,7 +122,7 @@ function Line() {
 	// Imposta il primo stato di visualizzazione
 	function setStatus1(){		
 		var trackUri = ($.isEmptyObject(selectedTrack)) ? "null" : selectedTrack.track_url;
-		d3.json("http://192.168.1.41/analisi-immagini/line.php?trackUri="+trackUri, function (error, data) {
+		d3.json("http://stefano-pc/analisi-immagini/line.php?trackUri="+trackUri, function (error, data) {
 			d3.select('#lineChart')
 				  .datum(data)
 				  .transition()
@@ -137,7 +137,7 @@ function Line() {
 	// Imposta il secondo stato di visualizzazione
 	function setStatus2(){
 		// Creo il grafico
-	    d3.json("http://192.168.1.41/analisi-immagini/line.php?country=" + selectedCountry.id, function (error, data) {	
+	    d3.json("http://stefano-pc/analisi-immagini/line.php?country=" + selectedCountry.id, function (error, data) {	
 	    	d3.select('#lineChart')
 				  .datum(data)
 				  .transition()
@@ -193,7 +193,7 @@ function Line() {
 	// La funzione principale da chiamare per disegnare il grafico.
 	grafico.draw = function(){		
 		// Creo il grafico
-	    d3.json("http://192.168.1.41/analisi-immagini/line.php", function (error, data) {	  	
+	    d3.json("http://stefano-pc/analisi-immagini/line.php", function (error, data) {	  	
     		nv.addGraph(function(){
     			// Imposto i margini del grafico
 		    	lineChart.margin({bottom: 40, left:50});

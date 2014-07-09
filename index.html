@@ -8,11 +8,12 @@
 		<link rel="stylesheet" type="text/css" href="css/index.css">
 		<link rel="stylesheet" type="text/css" href="css/flag-icon.css">
 		<link href="charts/line/libs/nv.d3.css" rel="stylesheet" type="text/css">
-		<link href="charts/line/libs/nv.d3.css" rel="stylesheet" type="text/css">
+		<link href="css/jquery.dynatable.css" rel="stylesheet" type="text/css">
+		<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 		<script type="text/javascript" src="common-libs/jquery-2.1.1.min.js"></script>
 		<script src="common-libs/d3.v3.min.js"></script>
 		<script src="common-libs/jquery.gridster.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="common-libs/jBox.min.js"></script>		
+		<script src="common-libs/jBox.min.js"></script>
 		<script src="charts/line/libs/nv.d3.js"></script>
 		<script src="charts/line/libs/tooltip.js"></script>
 		<script src="charts/line/libs/utils.js"></script>
@@ -20,14 +21,17 @@
 		<script src="charts/line/libs/models/axis.js"></script>
 		<script src="charts/line/libs/models/lineWithFocusChart.js"></script>
 		<script src="charts/line/libs/models/line.js"></script>
-		<script src="charts/line/libs/models/scatter.js"></script>		
+		<script src="charts/line/libs/models/scatter.js"></script>
 		<script src="charts/line/libs/models/distribution.js"></script>
 		<script src="charts/line/libs/models/scatterChart.js"></script>
+		<script src="common-libs/jsonTable.js"></script>
+		<script src="common-libs/jquery.jqGrid.js"></script>
+		<script src="common-libs/jquery.dynatable.js"></script>
 		<script src="controller.js"></script>
 		<script type="text/javascript">
-			var gridster;
+			var gridster = [];
 			$(function() {
-				gridster = $(".gridster ul").gridster({
+				gridster[0] = $("#mainGrid ul").gridster({
 					widget_base_dimensions : [100, 55],
 					widget_margins : [5, 5],
 					helper : 'clone',
@@ -38,6 +42,19 @@
 					},
 					max_cols : 13
 				}).data('gridster').disable();
+
+				/*gridster[1] = $("#tabellaGrid ul").gridster({
+				 widget_base_dimensions : [100, 55],
+				 widget_margins : [5, 5],
+				 helper : 'clone',
+				 resize : {
+				 enabled : false,
+				 max_size : [4, 4],
+				 min_size : [1, 1]
+				 },
+				 max_cols : 13
+				 }).data('gridster').disable();
+				 */
 			});
 			$(function() {
 				var fullscreenG1 = false, fullscreenG2 = false, fullscreenG3 = false;
@@ -92,8 +109,20 @@
 					animation : 'zoomIn',
 					delayClose : 250
 				});
-				$(".grafico1 .overlay-resize").click(function() {
+				$(".grafico1 .resize-icon").click(function() {
 					modalG1.toggle();
+				});
+				var modalTabella1 = $('#myModal').jBox('Modal', {
+					title : 'Tabella Map',
+					content : $('#tabella1'),
+					width : 1350,
+					height : 600,
+					closeButton : true,
+					animation : 'zoomIn',
+					delayClose : 250
+				});
+				$(".grafico1 .table-icon").click(function() {
+					modalTabella1.toggle();
 				});
 				var modalG2 = $('#myModal').jBox('Modal', {
 					title : 'Line',
@@ -199,7 +228,7 @@
 	</head>
 
 	<body>
-		<div class="gridster">
+		<div class="gridster" id="mainGrid">
 			<ul>
 				<li class="header" data-row="1" data-col="1" data-sizex="12" data-sizey="2" data-max-sizex="13" data-max-sizey="2" data-min-sizex="13" data-min-sizey="2">
 					<div id="header">
@@ -207,13 +236,13 @@
 							<span id="countryFlag" class="flag-icon flag-icon-ITA" style="height: 150px; width: 125px; float:left; top: -25px"></span>
 							<div id="countryDetails" style="margin-left:10px; float:left; text-align: justify;">
 								<div id="countryName">
-									Paese: Italia
+
 								</div>
 								<!--<div id="countryPlays">
-									Ascolti: 304975
+								Ascolti: 304975
 								</div>-->
 								<div id="countryDate">
-									Data: 23/04/2014
+
 								</div>
 							</div>
 						</div>
@@ -221,16 +250,16 @@
 							<img id="trackCover" src="http://o.scdn.co/300/f6c9e55802a1dbf3c4a346dd58097ad0cafe9a94" style="max-height: 100px; max-width: 100px; background-color: red;"/>
 							<div id="trackDetails" style="margin-right:10px; float:left; text-align: justify;">
 								<div id="trackArtist">
-									Artista: Seven Lions
+
 								</div>
 								<div id="trackTitle">
-									Titolo: Canzone
+
 								</div>
 								<div id="trackPlays">
-									Ascolti: 34975
+
 								</div>
 								<!--<div id="trackDate">
-									Data: 23/04/2014
+								Data: 23/04/2014
 								</div>-->
 							</div>
 						</div>
@@ -242,6 +271,10 @@
 							<div class="overlay-background">
 								<img class="resize-icon" src="images/resize.png"/>
 							</div>
+							<div class="overlay-background">
+								<img class="table-icon" src="images/table.png"/>
+							</div>
+
 						</div>
 						<link href="charts/map/map.css" rel="stylesheet" type="text/css">
 						<script src="charts/map/libs/topojson.v1.min.js"></script>
@@ -257,6 +290,39 @@
 							// Registro i listener per gli eventi
 							document.addEventListener('map.stateChanged', function(e) {
 								console.log("map.stateChanged - " + e.detail.state);
+								// Per i dati di default abbiamo un problema: devono essere caricati SOLO quando la pagina ha terminato il caricamento, e quindi serve usare jQuery
+								var status = e.detail.state;
+								var jsonData = e.detail.data;
+								$(function() {
+									console.log(jsonData);
+									var keys = Object.keys(jsonData[0]);
+									var result = "<thead>";
+									for (var i = 0; i < keys.length; i++) {
+										result += "<th>" + keys[i] + "</th>";
+									}
+									result += "</thead>";
+									console.log(result);
+									$("#contenutoTabella1").html(result);
+									$('#contenutoTabella1').dynatable({
+										dataset : {
+											records : jsonData
+										}
+									});
+								});
+								console.log(jsonData);
+								var keys = Object.keys(jsonData[0]);
+								var result = "<thead>";
+								for (var i = 0; i < keys.length; i++) {
+									result += "<th>" + keys[i] + "</th>";
+								}
+								result += "</thead>";
+								console.log(result);
+								$("#contenutoTabella1").html(result);
+								$('#contenutoTabella1').dynatable({
+									dataset : {
+										records : jsonData
+									}
+								});
 							}, false);
 							document.addEventListener('map.trackChanged', function(e) {
 								//$("#header").html(e.detail.track.track_name);
@@ -345,17 +411,20 @@
 								console.log("distribution.countryChanged - " + e.detail.country.id);
 							}, false);
 							// Disegno il grafo
-							distributionChart.draw();							
+							distributionChart.draw();
 						</script>
 					</div>
 				</li>
-				<li class="footer" data-row="6" data-col="1" data-sizex="12" data-sizey="1" data-max-sizex="13" data-max-sizey="1" data-min-sizex="13" data-min-sizey="1">
-					Footer
-				</li>
 			</ul>
 		</div>
-		<script>
-			$("#distributionChart > g").attr("transform", "translate(55,30)")
-		</script>
+		<div style="display: none; width:100% !important;" id="tabella1">
+			<table id="contenutoTabella1" style="color: red;" class="table table-bordered"></table>
+		</div>
+		<div style="display: none; width:100% !important;" id="tabella2">
+			<table id="contenutoTabella2" style="color: green;"></table>
+		</div>
+		<div style="display: none; width:100% !important;" id="tabella3">
+			<table id="contenutoTabella3" style="color: blue;"></table>
+		</div>
 	</body>
 </html>

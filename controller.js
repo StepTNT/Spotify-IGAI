@@ -86,6 +86,7 @@ function Controller() {
 		mapChart.setSelectedTrack(newTrack);
 		mapChart.changeStatus(2);
 		// Aggiorno il grafico line
+		$(".nvtooltip").fadeOut();
 		lineChart.setSelectedTrack(newTrack);
 		lineChart.changeStatus(1);
 		// Aggiorno l'header
