@@ -30,8 +30,8 @@
 		<script src="controller.js"></script>
 		<script type="text/javascript">
 			var gridster = [];
-			var controller = new Controller();			
-			$(function() {				
+			var controller = new Controller();
+			$(function() {
 				gridster[0] = $("#mainGrid ul").gridster({
 					widget_base_dimensions : [100, 55],
 					widget_margins : [5, 5],
@@ -42,7 +42,7 @@
 						min_size : [1, 1]
 					},
 					max_cols : 13
-				}).data('gridster').disable();			
+				}).data('gridster').disable();
 				var fullscreenG1 = false, fullscreenG2 = false, fullscreenG3 = false;
 				$(".grafico1").mouseenter(function() {
 					$(".grafico1 .overlay-resize").fadeIn();
@@ -209,7 +209,7 @@
 					modalG3.toggle();
 				});
 				controller.notifyPageReady();
-			});			
+			});
 		</script>
 	</head>
 
@@ -251,8 +251,9 @@
 						</div>
 					</div>
 				</li>
-				<li id="grafico1-container" data-row="1" data-col="1" data-sizex="12" data-sizey="4" data-max-sizex="12" data-max-sizey="4" data-min-sizex="12" data-min-sizey="4">
+				<li id="grafico1-container" data-row="1" data-col="1" data-sizex="12" data-sizey="4" data-max-sizex="12" data-max-sizey="4" data-min-sizex="12" data-min-sizey="4">					
 					<div class="item grafico1" id="grafico1">
+						<div id="overlay" style="z-index: 10000"><img id="loading" src="images/loading4.gif"></div>
 						<div class="overlay-resize">
 							<div class="overlay-background">
 								<img class="resize-icon" src="images/resize.png"/>
@@ -276,9 +277,9 @@
 							// Registro i listener per gli eventi
 							document.addEventListener('map.stateChanged', function(e) {
 								console.log("map.stateChanged - " + e.detail.state);
-								// Per i dati di default abbiamo un problema: devono essere caricati SOLO quando la pagina ha terminato il caricamento, e quindi serve usare jQuery								
-								//TODO: Creare una funzione che prende in ingresso il selettore jQuery relativo alla tabella e i dati JSON, e crea/popola la tabella utilizzando il codice scritto qua sotto
+								// Per i dati di default abbiamo un problema: devono essere caricati SOLO quando la pagina ha terminato il caricamento, e quindi serve usare jQuery
 								var jsonData = e.detail.data;
+								// In questo modo possiamo ritardare la chiamata alla funzione fino a quando non è pronta la pagina, per evitare di popolare la tabella prima ancora che esistano i div necessari
 								var wrappedFunction = controller.wrapFunction(controller.updateTable, this, [1, jsonData]);
 								controller.executeFunction(wrappedFunction);
 							}, false);
@@ -294,6 +295,12 @@
 								console.log("map.countryChanged - " + country);
 								//lineChart.changeStatus((country) ? 2 : 1);
 							}, false);
+							document.addEventListener('map.dataLoadingStarted', function(e) {
+								$("#grafico1-container #grafico1 > #overlay").fadeIn();
+							}, false);
+							document.addEventListener('map.dataLoadingFinished', function(e) {
+								$("#grafico1-container #grafico1 > #overlay").fadeOut();
+							}, false);
 							// Disegno la mappa
 							mapChart.draw();
 						</script>
@@ -301,6 +308,7 @@
 				</li>
 				<li id="grafico2-container" data-row="4" data-col="1" data-sizex="6" data-sizey="4" data-max-sizex="6" data-max-sizey="4" data-min-sizex="6" data-min-sizey="4">
 					<div class="item grafico2">
+						<div id="overlay" style="z-index: 10000"><img id="loading" src="images/loading4.gif"></div>
 						<div class="overlay-resize">
 							<div class="overlay-background">
 								<img class="resize-icon" src="images/resize.png"/>
@@ -335,6 +343,12 @@
 								console.log("line.brushChanged - ");
 								controller.dateChanged(e.detail.extent[1], "green");
 							}, false);
+							document.addEventListener('line.dataLoadingStarted', function(e) {
+								$("#grafico2-container .grafico2 > #overlay").fadeIn();
+							}, false);
+							document.addEventListener('line.dataLoadingFinished', function(e) {
+								$("#grafico2-container .grafico2 > #overlay").fadeOut();
+							}, false);
 							// Disegno il grafo
 							lineChart.draw();
 						</script>
@@ -342,6 +356,7 @@
 				</li>
 				<li id="grafico3-container" data-row="8" data-col="4" data-sizex="6" data-sizey="4" data-max-sizex="6" data-max-sizey="4" data-min-sizex="6" data-min-sizey="4">
 					<div class="item grafico3">
+						<div id="overlay" style="z-index: 10000"><img id="loading" src="images/loading4.gif"></div>
 						<div class="overlay-resize">
 							<div class="overlay-background">
 								<img class="resize-icon" src="images/resize.png"/>
@@ -367,6 +382,12 @@
 							document.addEventListener('distribution.countryChanged', function(e) {
 								$("#header").html(e.detail.country.id);
 								console.log("distribution.countryChanged - " + e.detail.country.id);
+							}, false);
+							document.addEventListener('distribution.dataLoadingStarted', function(e) {
+								$("#grafico3-container .grafico3 > #overlay").fadeIn();
+							}, false);
+							document.addEventListener('distribution.dataLoadingFinished', function(e) {
+								$("#grafico3-container .grafico3 > #overlay").fadeOut();
 							}, false);
 							// Disegno il grafo
 							distributionChart.draw();

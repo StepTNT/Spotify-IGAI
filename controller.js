@@ -175,8 +175,10 @@ function Controller() {
 		};
 	};
 
+	// Coda con le funzioni da eseguire
 	var funcQueue = [];
 
+	// Esegue la funzione passata come parametro se la pagina è pronta, altrimenti la mette in coda
 	controller.executeFunction = function(fn) {
 		if (!isPageReady) {// La pagina non è pronta, funzione messa in coda
 			funcQueue.push(fn);
@@ -185,6 +187,7 @@ function Controller() {
 		}
 	};
 
+	// Se ho ricevuto il messaggio che indica il completamento della pagina, allora devo eseguire anche le funzioni che erano in coda
 	controller.notifyPageReady = function() {
 		isPageReady = true;
 		while (funcQueue.length > 0) {

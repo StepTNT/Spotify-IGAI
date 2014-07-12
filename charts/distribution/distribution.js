@@ -41,8 +41,8 @@ function Distribution() {
 	var currentStatus = 1;
 
 	var currentCountry = {};
-	
-	var selectedDate   = {};
+
+	var selectedDate = {};
 
 	/* Fine variabili private */
 
@@ -56,6 +56,8 @@ function Distribution() {
 
 	// Evento lanciato quando cambiamo lo stato di visualizzazione del grafico
 	var stateChangedEvent = {};
+
+	var dataLoadingEvent = {};
 
 	// Lancia l'evento relativo al cambio dello stato di visualizzazione del grafico
 	function fireStateChanged() {
@@ -94,7 +96,27 @@ function Distribution() {
 		document.dispatchEvent(countryChangedEvent);
 		// Lancio l'evento relativo al cambio del paese selezionato
 	}
-	
+
+	// Lancia l'evento relativo all'inizio del caricamento dei dati
+	function fireDataLoadingEvent(started) {
+		if (started) {
+			dataLoadingEvent = new CustomEvent('distribution.dataLoadingStarted', {
+				detail : {
+				},
+				bubbles : true,
+				cancelable : true
+			});
+		} else {
+			dataLoadingEvent = new CustomEvent('distribution.dataLoadingFinished', {
+				detail : {
+				},
+				bubbles : true,
+				cancelable : true
+			});
+		}
+		document.dispatchEvent(dataLoadingEvent);
+		// Lancio l'evento relativo alla selezione del brano
+	}
 
 	/* Fine eventi */
 
@@ -103,7 +125,8 @@ function Distribution() {
 	// Imposta il primo stato di visualizzazione
 	function setStatus1() {
 		var date = ($.isEmptyObject(selectedDate)) ? "max" : selectedDate;
-		d3.json("http://stefano-pc/analisi-immagini/distribution.php?date="+date, function(error, data) {
+		fireDataLoadingEvent(true);
+		d3.json("http://stefano-pc/analisi-immagini/distribution.php?date=" + date, function(error, data) {
 			// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
 			var maxStreams = d3.extent(data, function(d,i){
 			return d.values[0].y;
@@ -122,6 +145,7 @@ function Distribution() {
 			//.style({ 'width': 1200, 'height': 520 });
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
+			fireDataLoadingEvent(false);
 		});
 	};
 
@@ -129,6 +153,7 @@ function Distribution() {
 	function setStatus2() {
 		// Creo il grafico
 		var date = ($.isEmptyObject(selectedDate)) ? "max" : selectedDate;
+		fireDataLoadingEvent(true);
 		d3.json("http://stefano-pc/analisi-immagini/distribution.php?country=" + selectedCountry.id + "&date=" + date, function(error, data) {
 			// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
 			var maxStreams = d3.extent(data, function(d,i){
@@ -150,6 +175,7 @@ function Distribution() {
 			});
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
+			fireDataLoadingEvent(false);
 		});
 	}
 
@@ -159,7 +185,9 @@ function Distribution() {
 
 	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
 	grafico.changeStatus = function(newStatus) {
-		if(newStatus == 0) newStatus = currentStatus; // Se è 0 vuol dire che devo aggiornare lo stato corrente perchè è stata cambiata la data
+		if (newStatus == 0)
+			newStatus = currentStatus;
+		// Se è 0 vuol dire che devo aggiornare lo stato corrente perchè è stata cambiata la data
 		currentStatus = newStatus;
 		switch(newStatus) {
 			case 1: {
@@ -181,8 +209,8 @@ function Distribution() {
 	grafico.setSelectedCountry = function(country) {
 		selectedCountry = country;
 	};
-	
-	grafico.setSelectedDate = function(date){
+
+	grafico.setSelectedDate = function(date) {
 		selectedDate = date;
 	};
 
@@ -207,6 +235,7 @@ function Distribution() {
 	// La funzione principale da chiamare per disegnare il grafico.
 	grafico.draw = function() {
 		// Creo il grafico
+		fireDataLoadingEvent(true);
 		d3.json("http://stefano-pc/analisi-immagini/distribution.php", function(error, data) {
 			nv.addGraph(function() {
 
@@ -237,20 +266,21 @@ function Distribution() {
 				d3.select('#distributionChart').datum(data).call(distributionChart);
 
 				nv.utils.windowResize(distributionChart.update);
-				
+
 				distributionChart.scatter.dispatch.on('elementClick', function(e) {
 					console.log(e);
-				  	// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto				  	
-				     selectedTrack = e.series;				     
-				     var data = e.series.key.split(" - ");
-				     selectedTrack.track_name = data[1];
-					 selectedTrack.artist_name = data[0];					 
-					 selectedTrack.num_streams = e.point.y;
-					 selectedTrack.artwork_url = e.series.artwork;
-					 selectedDate = e.point.x;			
-					 console.log(selectedTrack);	  
-				     fireTrackChanged();  				     				    
-				 });
+					// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto
+					selectedTrack = e.series;
+					var data = e.series.key.split(" - ");
+					selectedTrack.track_name = data[1];
+					selectedTrack.artist_name = data[0];
+					selectedTrack.num_streams = e.point.y;
+					selectedTrack.artwork_url = e.series.artwork;
+					selectedDate = e.point.x;
+					console.log(selectedTrack);
+					fireTrackChanged();
+				});
+				fireDataLoadingEvent(false);
 				return distributionChart;
 			});
 		});
