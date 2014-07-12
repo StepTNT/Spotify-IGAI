@@ -30,7 +30,8 @@
 		<script src="controller.js"></script>
 		<script type="text/javascript">
 			var gridster = [];
-			$(function() {
+			var controller = new Controller();			
+			$(function() {				
 				gridster[0] = $("#mainGrid ul").gridster({
 					widget_base_dimensions : [100, 55],
 					widget_margins : [5, 5],
@@ -41,22 +42,7 @@
 						min_size : [1, 1]
 					},
 					max_cols : 13
-				}).data('gridster').disable();
-
-				/*gridster[1] = $("#tabellaGrid ul").gridster({
-				 widget_base_dimensions : [100, 55],
-				 widget_margins : [5, 5],
-				 helper : 'clone',
-				 resize : {
-				 enabled : false,
-				 max_size : [4, 4],
-				 min_size : [1, 1]
-				 },
-				 max_cols : 13
-				 }).data('gridster').disable();
-				 */
-			});
-			$(function() {
+				}).data('gridster').disable();			
 				var fullscreenG1 = false, fullscreenG2 = false, fullscreenG3 = false;
 				$(".grafico1").mouseenter(function() {
 					$(".grafico1 .overlay-resize").fadeIn();
@@ -222,8 +208,8 @@
 				$(".grafico3 .overlay-resize").click(function() {
 					modalG3.toggle();
 				});
-			});
-			var controller = new Controller();
+				controller.notifyPageReady();
+			});			
 		</script>
 	</head>
 
@@ -290,39 +276,11 @@
 							// Registro i listener per gli eventi
 							document.addEventListener('map.stateChanged', function(e) {
 								console.log("map.stateChanged - " + e.detail.state);
-								// Per i dati di default abbiamo un problema: devono essere caricati SOLO quando la pagina ha terminato il caricamento, e quindi serve usare jQuery
-								var status = e.detail.state;
+								// Per i dati di default abbiamo un problema: devono essere caricati SOLO quando la pagina ha terminato il caricamento, e quindi serve usare jQuery								
+								//TODO: Creare una funzione che prende in ingresso il selettore jQuery relativo alla tabella e i dati JSON, e crea/popola la tabella utilizzando il codice scritto qua sotto
 								var jsonData = e.detail.data;
-								$(function() {
-									console.log(jsonData);
-									var keys = Object.keys(jsonData[0]);
-									var result = "<thead>";
-									for (var i = 0; i < keys.length; i++) {
-										result += "<th>" + keys[i] + "</th>";
-									}
-									result += "</thead>";
-									console.log(result);
-									$("#contenutoTabella1").html(result);
-									$('#contenutoTabella1').dynatable({
-										dataset : {
-											records : jsonData
-										}
-									});
-								});
-								console.log(jsonData);
-								var keys = Object.keys(jsonData[0]);
-								var result = "<thead>";
-								for (var i = 0; i < keys.length; i++) {
-									result += "<th>" + keys[i] + "</th>";
-								}
-								result += "</thead>";
-								console.log(result);
-								$("#contenutoTabella1").html(result);
-								$('#contenutoTabella1').dynatable({
-									dataset : {
-										records : jsonData
-									}
-								});
+								var wrappedFunction = controller.wrapFunction(controller.updateTable, this, [1, jsonData]);
+								controller.executeFunction(wrappedFunction);
 							}, false);
 							document.addEventListener('map.trackChanged', function(e) {
 								//$("#header").html(e.detail.track.track_name);

@@ -34,6 +34,8 @@ function Controller() {
 	// L'oggetto DOM che contiene il numero di ascolti del brano selezionato
 	var trackPlays = $("#trackPlays");
 
+	var isPageReady = false;
+
 	/* Fine variaibli private */
 
 	/* Inizio metodi privati */
@@ -144,6 +146,51 @@ function Controller() {
 		$("#countryDate").html(newDate);
 	};
 
+	controller.updateTable = function(target, data) {
+		var keys = Object.keys(data[0]);
+		var result = "<thead>";
+		for (var i = 0; i < keys.length; i++) {
+			result += "<th>" + keys[i] + "</th>";
+		}
+		result += "</thead>";
+		console.log(result);
+		$("#tabella" + target).empty();
+		$("#tabella" + target).append("<table id=\"contenutoTabella1\" style=\"color: red;\" class=\"table table-bordered\"></table>");
+		$("#contenutoTabella" + target).html(result);
+		console.log($("#contenutoTabella" + target).html());
+		$("#contenutoTabella" + target).dynatable({
+			dataset : {
+				records : data
+			}
+		});
+	};
+
+	// Function wrapping code.
+	// fn - reference to function.
+	// context - what you want "this" to be.
+	// params - array of parameters to pass to function.
+	controller.wrapFunction = function(fn, context, params) {
+		return function() {
+			fn.apply(context, params);
+		};
+	};
+
+	var funcQueue = [];
+
+	controller.executeFunction = function(fn) {
+		if (!isPageReady) {// La pagina non è pronta, funzione messa in coda
+			funcQueue.push(fn);
+		} else {
+			fn();
+		}
+	};
+
+	controller.notifyPageReady = function() {
+		isPageReady = true;
+		while (funcQueue.length > 0) {
+			(funcQueue.shift())();
+		}
+	};
 	/* Fine gestione eventi */
 
 	/* Notice */
