@@ -99,6 +99,7 @@ function Controller() {
 			$("#trackCover").attr("src", newTrack.artwork_url);
 			$("#track").fadeIn();
 		});
+		$("#country").fadeOut();
 	};
 
 	// E' stato selezionato unun nuovo paese
@@ -113,8 +114,7 @@ function Controller() {
 		//controller.selectedTrack = newTrack;
 		selectedCountry = newCountry;
 		// Aggiorno il grafico line per rimuovere l'eventuale traccia selezionata in precedenza
-		lineChart.setSelectedTrack({});
-		lineChart.changeStatus(1);
+		lineChart.setSelectedTrack({});		
 		// Aggiorno il grafico line
 		lineChart.setSelectedCountry(newCountry);
 		distributionChart.setSelectedCountry(newCountry);
@@ -122,13 +122,18 @@ function Controller() {
 		if (!$.isEmptyObject(newCountry)) {
 			lineChart.changeStatus(2);
 			distributionChart.changeStatus(2);
+			mapChart.changeStatus(1);
 			$("#countryFlag").attr("class", "flag-icon flag-icon-" + newCountry.id);
-			$("#countryName").html(newCountry.properties.name);
+			$("#countryName").html(newCountry.properties.name);			
 		} else {
 			lineChart.changeStatus(1);
 			distributionChart.changeStatus(1);
 			mapChart.changeStatus(1);
+			$("#countryFlag").attr("class", "flag-icon flag-icon-global");
+			$("#countryName").html("Global");
 		}
+		$("#track").fadeOut();
+		$("#country").fadeIn();
 	};
 
 	// E' stata selezionata una nuova data
@@ -147,20 +152,26 @@ function Controller() {
 	};
 
 	controller.updateTable = function(target, data) {
+		var finalData = jQuery.extend(true, {}, data); // Ne faccio una copia altrimenti rischio di modificare i dati da visualizzare nel grafico
 		var keys = Object.keys(data[0]);
 		var result = "<thead>";
 		for (var i = 0; i < keys.length; i++) {
 			result += "<th>" + keys[i] + "</th>";
 		}
 		result += "</thead>";
-		console.log(result);
+		//console.log(result);
 		$("#tabella" + target).empty();
-		$("#tabella" + target).append("<table id=\"contenutoTabella1\" style=\"color: red;\" class=\"table table-bordered\"></table>");
+		$("#tabella" + target).append("<table id=\"contenutoTabella" + target + "\" class=\"table table-bordered\"></table>");
 		$("#contenutoTabella" + target).html(result);
-		console.log($("#contenutoTabella" + target).html());
+		//console.log($("#contenutoTabella" + target).html());
+		if(target != 1){
+			for(var i = 0; i<data.length; i++){
+				finalData[i].values = JSON.stringify(data[i].values);
+			}
+		}
 		$("#contenutoTabella" + target).dynatable({
 			dataset : {
-				records : data
+				records : finalData
 			}
 		});
 	};

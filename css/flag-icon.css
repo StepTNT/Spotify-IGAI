@@ -18,6 +18,11 @@
 	background-position: 50%;
 	background-repeat: no-repeat;
 }
+
+.flag-icon-global {
+	background-image: url(../flags/4x3/global.png);
+}
+
 .flag-icon-AND {
 	background-image: url(../flags/4x3/ad.svg);
 }

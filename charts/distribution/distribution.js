@@ -43,6 +43,9 @@ function Distribution() {
 	var currentCountry = {};
 
 	var selectedDate = {};
+	
+	// I dati json che stiamo utilizzando al momento per il nostro grafico
+	var currentData = {};
 
 	/* Fine variabili private */
 
@@ -63,7 +66,8 @@ function Distribution() {
 	function fireStateChanged() {
 		stateChangedEvent = new CustomEvent('distribution.stateChanged', {
 			detail : {
-				'state' : currentStatus
+				'state' : currentStatus,
+				'data' : currentData
 			},
 			bubbles : true,
 			cancelable : true
@@ -127,6 +131,7 @@ function Distribution() {
 		var date = ($.isEmptyObject(selectedDate)) ? "max" : selectedDate;
 		fireDataLoadingEvent(true);
 		d3.json("http://stefano-pc/analisi-immagini/distribution.php?date=" + date, function(error, data) {
+			currentData = data;
 			// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
 			var maxStreams = d3.extent(data, function(d,i){
 			return d.values[0].y;
@@ -146,6 +151,7 @@ function Distribution() {
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 			fireDataLoadingEvent(false);
+			fireStateChanged();
 		});
 	};
 
@@ -155,6 +161,7 @@ function Distribution() {
 		var date = ($.isEmptyObject(selectedDate)) ? "max" : selectedDate;
 		fireDataLoadingEvent(true);
 		d3.json("http://stefano-pc/analisi-immagini/distribution.php?country=" + selectedCountry.id + "&date=" + date, function(error, data) {
+			currentData = data;
 			// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
 			var maxStreams = d3.extent(data, function(d,i){
 			return d.values[0].y;
@@ -176,6 +183,7 @@ function Distribution() {
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 			fireDataLoadingEvent(false);
+			fireStateChanged();
 		});
 	}
 
@@ -199,7 +207,7 @@ function Distribution() {
 				break;
 			}
 		}
-		fireStateChanged();
+		//fireStateChanged();
 	};
 
 	grafico.setSelectedTrack = function(track) {
@@ -237,6 +245,7 @@ function Distribution() {
 		// Creo il grafico
 		fireDataLoadingEvent(true);
 		d3.json("http://stefano-pc/analisi-immagini/distribution.php", function(error, data) {
+			currentData = data;
 			nv.addGraph(function() {
 
 				// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
@@ -281,6 +290,7 @@ function Distribution() {
 					fireTrackChanged();
 				});
 				fireDataLoadingEvent(false);
+				fireStateChanged();
 				return distributionChart;
 			});
 		});

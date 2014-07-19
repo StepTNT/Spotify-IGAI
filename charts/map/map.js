@@ -57,7 +57,7 @@ function Map() {
 	var g = svg.append("g");
 
 	// Il tooltip da mostrare quando passo il mouse su una copertina
-	var coverTooltip = d3.select("body").append("div").attr("class", "mapTooltip").style("opacity", 0).style("z-index", 1000);
+	var coverTooltip = d3.select("body").append("div").attr("class", "mapTooltip").style("opacity", 0).style("z-index", 100000);
 
 	var country = {};
 
@@ -216,7 +216,8 @@ function Map() {
 
 		} else {// Deseleziono un paese
 			selectedCountry = {};
-			// Imposto il paese come selezionato
+			// Imposto global come paese selezionato ma solo se non c'è una traccia attiva
+			//if(!$.isEmptyObject(selectedTrack))
 			fireCountryChanged();
 			if(country){
 				var xyz = [width / 2, height / 1.5, 1];
@@ -335,8 +336,11 @@ function Map() {
 			return Math.random() * Math.sqrt(d.num_streams / 10);
 		}).duration(1000).style("opacity", 0).attr("r", 0);
 		// Devo resettare lo zoom e lo stato selezionato
-		if (country)
-			country_clicked(country);
+		if (country){
+			var xyz = [width / 2, height / 1.5, 1];
+			zoom(xyz);
+		}
+			//country_clicked(country);
 	}
 
 	// Imposta il secondo stato di visualizzazione
