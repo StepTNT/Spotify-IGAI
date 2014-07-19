@@ -247,7 +247,7 @@ function Map() {
 			});
 			console.log("maxStreams = " + maxStreams);
 			// Una volta ottenuto il massimo costruisco la funzione per scalare il raggio all'interno del dominio tra 0 e maxStreams
-			var scale = d3.scale.linear().domain([0, maxStreams]).range([2, 10]);
+			var scale = d3.scale.linear().domain([0, maxStreams]).range([2, 10]);			
 			// I nostri cerchi avranno un raggio tra 2 e 10 unità
 			// Per poter utilizzare un'immagine di sfondo per i cerchi, è necessario usare i pattern SVG. Devo quindi definirli in modo dinamico
 			data.forEach(function(d) {
@@ -352,12 +352,15 @@ function Map() {
 				return parseInt(d.num_streams);
 			});
 			// Creo la scala con i colori utilizzando la libreria colorbrewer
-			var quantize = d3.scale.threshold().domain([0, maxStreams]).range(colorbrewer.Spectral[11]);
+			var domain = d3.range(0, Math.sqrt(maxStreams));
+			var quantize = d3.scale.quantize().domain(domain).range(colorbrewer.Spectral[11]);
+			//console.log("DOMINIO:");
+			//console.log(quantize.domain());
 			// Adesso posso colorare ogni paese utilizzando la funzione di quantizzazione
 			data.forEach(function(d) {
 				var country = getCountry(d.countryId);
 				if (country) {
-					//            		console.log("Coloro " + country.id + " con " + quantize(parseInt(d.num_streams)) + " (" + d.num_streams + " ascolti)");
+					//console.log("Coloro " + country.id + " con " + quantize(Math.sqrt(parseInt(d.num_streams))) + " (" + d.num_streams + " ascolti)");
 					g.selectAll("#" + country.id).on("mouseover", function(d) {
 						var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
 						// Evitiamo che il tooltip venga disegnato fuori dall'area visibile
@@ -371,7 +374,7 @@ function Map() {
 						coverTooltip.style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
 					}).on("mouseout", function() {
 						coverTooltip.transition().duration(500).style("opacity", 0);
-					}).transition().duration(1000).ease("bounce").style("fill", quantize(parseInt(d.num_streams)));
+					}).transition().duration(1000).ease("bounce").style("fill", quantize(Math.sqrt(parseInt(d.num_streams))));
 				}
 			});
 			fireDataLoadingEvent(false);
