@@ -18,7 +18,7 @@
 		//Stato 1
 		$country = (isset($_GET["country"])) ? $_GET["country"] : "gl";		
 		if($date == "max"){
-			$query = "(SELECT * 
+			$query = "(SELECT t.track_url, t.artist_name, t.track_name, t.album_name, c1.countryId, t.artwork_url, c2.num_streams
 					FROM chart as c1
 					INNER JOIN (
 						SELECT countryId, max(plays) as num_streams
