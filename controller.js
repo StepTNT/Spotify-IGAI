@@ -18,22 +18,6 @@ function Controller() {
 	// Le variabili che rappresentano i dati selezionati dall'utente
 	var selectedDate, selectedCountry, selectedTrack;
 
-	// L'oggetto DOM che contiene l'immagine della bandiera del paese selezionato
-	var countryFlag = $("#countryFlag");
-	// L'oggetto DOM che contiene il nome del paese selezionato
-	var countryName = $("#countryName");
-	// L'oggetto DOM che contiene il numero di ascolti per il paese selezionato
-	var countryPlays = $("#countryPlays");
-
-	// L'oggetto DOM che contiene l'immagine di copertina del selezionato
-	var trackCover = $("#trackCover");
-	// L'oggetto DOM che contiene il nome dell'artista del brano selezionato
-	var trackArtist = $("#trackArtist");
-	// L'oggetto DOM che contiene il titolo del brano selezionato
-	var trackTitle = $("#trackTitle");
-	// L'oggetto DOM che contiene il numero di ascolti del brano selezionato
-	var trackPlays = $("#trackPlays");
-
 	var isPageReady = false;
 
 	/* Fine variaibli private */
@@ -151,21 +135,21 @@ function Controller() {
 		$("#countryDate").html(newDate);
 	};
 
+	// Aggiorna la tabaella target con i nuovi dati contenuti in data
 	controller.updateTable = function(target, data) {
 		var finalData = jQuery.extend(true, {}, data); // Ne faccio una copia altrimenti rischio di modificare i dati da visualizzare nel grafico
 		var keys = Object.keys(data[0]);
 		var result = "<thead>";
 		for (var i = 0; i < keys.length; i++) {
 			result += "<th>" + keys[i] + "</th>";
-		}
-		result += "</thead>";
-		//console.log(result);
-		$("#tabella" + target).empty();
+		} // Genero i nomi delle colonne a partire dal contenuto del JSON
+		result += "</thead>";		
+		$("#tabella" + target).empty(); // Svuoto il div dal codice html precedente e poi aggiungo quello aggiornato
 		$("#tabella" + target).append("<table id=\"contenutoTabella" + target + "\" class=\"table table-bordered\"></table>");
-		$("#contenutoTabella" + target).html(result);
-		//console.log($("#contenutoTabella" + target).html());
+		$("#contenutoTabella" + target).html(result);		
 		if(target != 1){
 			for(var i = 0; i<data.length; i++){
+				// Il plugin non si comporta bene con i JSON che contengono array, quindi li dobbiamo convertire in stringhe per avere una visualizzazione accettabile
 				finalData[i].values = JSON.stringify(data[i].values);
 			}
 		}

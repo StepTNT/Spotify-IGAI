@@ -146,8 +146,7 @@ function Distribution() {
 			distributionChart.xDomain([0, maxPlays * (6 / 5)]);
 			// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
 
-			d3.select('#distributionChart').datum(data).transition().duration(500).call(distributionChart);
-			//.style({ 'width': 1200, 'height': 520 });
+			d3.select('#distributionChart').datum(data).transition().duration(500).call(distributionChart);			
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 			fireDataLoadingEvent(false);
@@ -223,15 +222,13 @@ function Distribution() {
 	};
 
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
-	grafico.toMosaic = function() {
-		//d3.selectAll("#distributionChart").transition().duration(250).style("transform", "translate(-5,1)scale(0.72,0.725)");
+	grafico.toMosaic = function() {		
 		distributionChart.showLegend(false);
 		distributionChart.update();
 	};
 
 	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
-	grafico.toFull = function() {
-		//d3.selectAll("#distributionChart").transition().duration(250).style("transform", "translate(-10,0)scale(0.72,0.68)");
+	grafico.toFull = function() {		
 		distributionChart.showLegend(true);
 		distributionChart.update();
 	};

@@ -156,7 +156,6 @@ function Line() {
 		d3.json("http://stefano-pc/analisi-immagini/line.php?trackUri=" + trackUri, function(error, data) {
 			currentData = data;			
 			d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart);
-			//.style({ 'width': 1200, 'height': 520 });
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 			fireDataLoadingEvent(false);
@@ -169,8 +168,6 @@ function Line() {
 		// Creo il grafico
 		fireDataLoadingEvent(true);
 		d3.json("http://stefano-pc/analisi-immagini/line.php?country=" + selectedCountry.id, function(error, data) {
-			/*console.log("Chiamo http://stefano-pc/analisi-immagini/line.php?country=" + selectedCountry.id);
-			console.log(data);*/
 			currentData = data;			
 			d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart);
 			// Sposto le label dell'asse x più in basso

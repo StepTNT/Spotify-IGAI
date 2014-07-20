@@ -215,9 +215,7 @@ function Map() {
 			.transition().delay((grafico.statoCorrente != 1) ? 500 : 0).duration(500).style("stroke", selectedCountryStroke);
 
 		} else {// Deseleziono un paese
-			selectedCountry = {};
-			// Imposto global come paese selezionato ma solo se non c'è una traccia attiva
-			//if(!$.isEmptyObject(selectedTrack))
+			selectedCountry = {};			
 			fireCountryChanged();
 			if(country){
 				var xyz = [width / 2, height / 1.5, 1];
@@ -254,7 +252,7 @@ function Map() {
 			data.forEach(function(d) {
 				// Devo scorrere tutte le tracce perchè devo creare un pattern per ogni traccia
 				g.append("pattern").attr("id", d.artwork_url)// Usiamo l'url come id visto che è univoco e non presenta spazi o caratteri vietati
-				.attr("patternUnits", "userSpaceOnUse")//TODO: trovare un modo per spalmare l'immagine senza che sia ripetuta
+				.attr("patternUnits", "userSpaceOnUse")
 				.attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams)).append("image").attr("xlink:href", d.artwork_url).attr("src", d.artwork_url)//TODO: potrebbe essere anche rimosso, da verificare
 				.attr("x", 0).attr("y", 0).attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams));
 				// Sfrutto questo ciclo per abilitare le interazioni sui paesi per i quali abbiamo dati
@@ -265,7 +263,6 @@ function Map() {
 						g.selectAll("#" + currentCountry.id).transition().duration(1000).ease("bounce").style("fill", enabledCountryColor);
 						enabledCountries.push(currentCountry.id);
 					}
-
 					// Creo i cerchi, uno per ogni brano presente nei dati. (Il formato dei dati non permette cerchi multipli sullo stesso paese!)
 					var circles = g.selectAll("circle").data(data).enter().append("circle").on("mouseover", function(d) {
 						circleMouseOver(d);
@@ -276,7 +273,7 @@ function Map() {
 					}).on("click", function(d) {
 						circleMouseClick(d);
 					}).style("stroke", selectedCountryStroke).style("stroke-width", "0.5").style("opacity", 0)// L'opacità iniziale è 0 perchè verrà animata successivamente
-					.attr("id", "mapCircle")//TODO: force.css ridefinisce circle e mi colora anche questi di arancione -.-
+					.attr("id", "mapCircle")
 					.attr("r", 0)// Come sopra, anche il raggio verrà animato
 					.attr("cx", function(d) {
 						var coords = get_xyz(getCountry(d.countryId));
@@ -308,7 +305,6 @@ function Map() {
 		// Inizio l'animazione
 		coverTooltip.html("<div style='background-image:url(" + d.artwork_url + "); background-size: 100%; height: 150px; width: 150px;'></div>" + "<br/><div>" + "Artista   : " + d.artist_name + "<br/>" + "Album     : " + d.album_name + "<br/>" + "Titolo    : " + d.track_name + "<br/>" + "Ascolti   : " + d.num_streams + "<br/></div>").style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
 		// Imposto l'HTML da mostrare
-		//console.log("left = " + d3.event.pageX + ", top = " + top);
 	}
 
 	// Quando il mouse esce dal cerchio nascondo il tooltip
@@ -325,7 +321,6 @@ function Map() {
 	// Il click del mouse cambia lo stato del grafico e imposta il brano come selezionato
 	function circleMouseClick(d) {
 		selectedTrack = d;
-		/*grafico.changeStatus(2);*/
 		fireTrackChanged();
 	}
 
@@ -340,7 +335,6 @@ function Map() {
 			var xyz = [width / 2, height / 1.5, 1];
 			zoom(xyz);
 		}
-			//country_clicked(country);
 	}
 
 	// Imposta il secondo stato di visualizzazione
@@ -358,13 +352,10 @@ function Map() {
 			// Creo la scala con i colori utilizzando la libreria colorbrewer
 			var domain = d3.range(0, Math.sqrt(maxStreams));
 			var quantize = d3.scale.quantize().domain(domain).range(colorbrewer.Spectral[11]);
-			//console.log("DOMINIO:");
-			//console.log(quantize.domain());
 			// Adesso posso colorare ogni paese utilizzando la funzione di quantizzazione
 			data.forEach(function(d) {
 				var country = getCountry(d.countryId);
-				if (country) {
-					//console.log("Coloro " + country.id + " con " + quantize(Math.sqrt(parseInt(d.num_streams))) + " (" + d.num_streams + " ascolti)");
+				if (country) {					
 					g.selectAll("#" + country.id).on("mouseover", function(d) {
 						var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
 						// Evitiamo che il tooltip venga disegnato fuori dall'area visibile
@@ -400,17 +391,14 @@ function Map() {
 	};
 
 	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
-	grafico.changeStatus = function(newStatus) {
-		//if(newStatus == 0) newStatus = currentStatus; //Se passo 0 vuol dire che devo semplicemente aggiornare lo stato corrente
+	grafico.changeStatus = function(newStatus) {		
 		currentStatus = newStatus;
 		switch(newStatus) {
-			case 1: {
-				//if(currentStatus == 1) return; // Siamo già nello stato 1
+			case 1: {				
 				setStatus1();
 				break;
 			}
-			case 2: {
-				//if(currentStatus == 2) return; // Siamo già nello stato 2
+			case 2: {				
 				exitStatus1();
 				setStatus2();
 				break;
@@ -420,19 +408,12 @@ function Map() {
 
 	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function() {
-		$("#mapChart").animate({
-			"style" : "margin: 5px; height: 260px;"
-		}, 250);
-		svg.transition().duration(250).attr("transform", "translate(30,0) scale(0.9,0.9)");
+
 	};
 
 	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
 	grafico.toFull = function() {
-		$("#mapChart").animate({
-			"style" : "margin: 5px; height: 520px;"
-		}, 250);
-		svg.transition().duration(250).attr("transform", "translate(140,35) scale(0.8, 0.8)");
-		//Questo dovrebbe sistemare il problema del taglio dell'Argentina
+
 	};
 
 	/* Fine funzioni pubbliche */
