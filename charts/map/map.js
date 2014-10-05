@@ -238,7 +238,7 @@ function Map() {
 	function setStatus1() {
 		currentStatus = 1;
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/map.php?state=1", function(error, data) {
+		d3.json("../map.php?state=1", function(error, data) {
 			currentData = data;
 			// Per poter scalare il raggio dei cerchi su ogni stato, ci serve sapere quale sarà il valore massimo degli ascolti
 			maxStreams = d3.max(data, function(d) {
@@ -343,7 +343,7 @@ function Map() {
 		if ($.isEmptyObject(selectedDate))
 			selectedDate = "max";
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/map.php?state=2&trackUri=" + selectedTrack.track_url + "&date=" + selectedDate, function(error, data) {
+		d3.json("../map.php?state=2&trackUri=" + selectedTrack.track_url + "&date=" + selectedDate, function(error, data) {
 			currentData = data;
 			// Per costruire il range dei colori mi serve il numero massimo degli ascolti
 			var maxStreams = d3.max(data, function(d) {

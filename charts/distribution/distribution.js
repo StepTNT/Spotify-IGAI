@@ -130,7 +130,7 @@ function Distribution() {
 	function setStatus1() {
 		var date = ($.isEmptyObject(selectedDate)) ? "max" : selectedDate;
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/distribution.php?date=" + date, function(error, data) {
+		d3.json("../distribution.php?date=" + date, function(error, data) {
 			currentData = data;
 			// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
 			var maxStreams = d3.extent(data, function(d,i){
@@ -159,7 +159,7 @@ function Distribution() {
 		// Creo il grafico
 		var date = ($.isEmptyObject(selectedDate)) ? "max" : selectedDate;
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/distribution.php?country=" + selectedCountry.id + "&date=" + date, function(error, data) {
+		d3.json("../distribution.php?country=" + selectedCountry.id + "&date=" + date, function(error, data) {
 			currentData = data;
 			// Mi serve il massimo degli ascolti per impostare il dominio di visualizzazione su y
 			var maxStreams = d3.extent(data, function(d,i){
@@ -241,7 +241,7 @@ function Distribution() {
 	grafico.draw = function() {
 		// Creo il grafico
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/distribution.php", function(error, data) {
+		d3.json("../distribution.php", function(error, data) {
 			currentData = data;
 			nv.addGraph(function() {
 

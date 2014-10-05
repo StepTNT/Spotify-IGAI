@@ -153,7 +153,7 @@ function Line() {
 	function setStatus1() {
 		var trackUri = ($.isEmptyObject(selectedTrack)) ? "null" : selectedTrack.track_url;
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/line.php?trackUri=" + trackUri, function(error, data) {
+		d3.json("../line.php?trackUri=" + trackUri, function(error, data) {
 			currentData = data;			
 			d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart);
 			// Sposto le label dell'asse x più in basso
@@ -167,7 +167,7 @@ function Line() {
 	function setStatus2() {
 		// Creo il grafico
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/line.php?country=" + selectedCountry.id, function(error, data) {
+		d3.json("../line.php?country=" + selectedCountry.id, function(error, data) {
 			currentData = data;			
 			d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart);
 			// Sposto le label dell'asse x più in basso
@@ -222,7 +222,7 @@ function Line() {
 	grafico.draw = function() {
 		// Creo il grafico
 		fireDataLoadingEvent(true);
-		d3.json("http://stefano-pc/analisi-immagini/line.php", function(error, data) {
+		d3.json("../line.php", function(error, data) {
 			currentData = data;
 			nv.addGraph(function() {
 				// Imposto i margini del grafico

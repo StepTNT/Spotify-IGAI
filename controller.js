@@ -60,6 +60,8 @@ function Controller() {
 	/* Inizio gestione eventi */
 
 	// E' stata selezionata una nuova traccia, quindi devo aggiornare i grafici
+	
+	
 	controller.trackChanged = function(newTrack, color) {
 		notice = new jBox('Notice', {
 			content : 'Selezionata nuova traccia: ' + newTrack.artist_name + " - " + newTrack.track_name,
