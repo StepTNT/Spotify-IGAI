@@ -86,6 +86,12 @@ function Map() {
 
 	// Lo stato di visualizzazione in cui si trova il grafico
 	var currentStatus = undefined;
+	
+	// L'URL di base per accedere alla cache delle immagini
+	var imageCacheBaseUrl = "../image_cache.php?image=";
+	
+	// L'URL di base che Sptoify usa per le immagini
+	var spotifyImageBaseUrl = "http://o.scdn.co/300/";
 
 	/* Fine variabili private */
 
@@ -168,6 +174,11 @@ function Map() {
 	/* Fine eventi */
 
 	/* Inizio funzioni private */
+	
+	// Converte l'URI di un'immagine nell'URI relativo alla cache
+	function convertURIToCache(uri){
+		return uri.replace(spotifyImageBaseUrl, imageCacheBaseUrl);
+	}
 
 	// Recupera l'oggetto country a partire dal suo ID
 	function getCountry(id) {
@@ -244,18 +255,17 @@ function Map() {
 			maxStreams = d3.max(data, function(d) {
 				return parseInt(d.num_streams);
 			});
-			console.log("maxStreams = " + maxStreams);
 			// Una volta ottenuto il massimo costruisco la funzione per scalare il raggio all'interno del dominio tra 0 e maxStreams
 			var scale = d3.scale.linear().domain([0, maxStreams]).range([2, 10]);			
 			// I nostri cerchi avranno un raggio tra 2 e 10 unità
 			// Per poter utilizzare un'immagine di sfondo per i cerchi, è necessario usare i pattern SVG. Devo quindi definirli in modo dinamico
 			data.forEach(function(d) {
 				// Devo scorrere tutte le tracce perchè devo creare un pattern per ogni traccia
-				g.append("pattern").attr("id", d.artwork_url)// Usiamo l'url come id visto che è univoco e non presenta spazi o caratteri vietati
+				g.append("pattern").attr("id", convertURIToCache(d.artwork_url))// Usiamo l'url come id visto che è univoco e non presenta spazi o caratteri vietati
 				.attr("patternUnits", "userSpaceOnUse")
-				.attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams)).append("image").attr("xlink:href", d.artwork_url).attr("src", d.artwork_url)//TODO: potrebbe essere anche rimosso, da verificare
+				.attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams)).append("image").attr("xlink:href", convertURIToCache(d.artwork_url)).attr("src", convertURIToCache(d.artwork_url))//TODO: potrebbe essere anche rimosso, da verificare
 				.attr("x", 0).attr("y", 0).attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams));
-				// Sfrutto questo ciclo per abilitare le interazioni sui paesi per i quali abbiamo dati
+				// Sfrutto questo ciclo per abilitare le interazioni sui paesi per i quali abbiamo dati				
 				var currentCountry = getCountry(d.countryId);
 				if (currentCountry) {
 					if ($.inArray(enabledCountries, currentCountry.id) == -1) {
@@ -282,7 +292,7 @@ function Map() {
 						var coords = get_xyz(getCountry(d.countryId));
 						return coords[1];
 					}).attr("fill", function(d) {
-						return "url(#" + d.artwork_url + ")";
+						return "url(#" + convertURIToCache(d.artwork_url) + ")";
 					});
 				}
 			});
@@ -303,7 +313,7 @@ function Map() {
 		// Evitiamo che il tooltip venga disegnato fuori dall'area visibile
 		coverTooltip.transition().duration(500).style("opacity", .9);
 		// Inizio l'animazione
-		coverTooltip.html("<div style='background-image:url(" + d.artwork_url + "); background-size: 100%; height: 150px; width: 150px;'></div>" + "<br/><div>" + "Artista   : " + d.artist_name + "<br/>" + "Album     : " + d.album_name + "<br/>" + "Titolo    : " + d.track_name + "<br/>" + "Ascolti   : " + d.num_streams + "<br/></div>").style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
+		coverTooltip.html("<div style='background-image:url(" + convertURIToCache(d.artwork_url) + "); background-size: 100%; height: 150px; width: 150px;'></div>" + "<br/><div>" + "Artista   : " + d.artist_name + "<br/>" + "Album     : " + d.album_name + "<br/>" + "Titolo    : " + d.track_name + "<br/>" + "Ascolti   : " + d.num_streams + "<br/></div>").style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
 		// Imposto l'HTML da mostrare
 	}
 

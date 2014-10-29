@@ -46,6 +46,12 @@ function Distribution() {
 	
 	// I dati json che stiamo utilizzando al momento per il nostro grafico
 	var currentData = {};
+	
+	// L'URL di base per accedere alla cache delle immagini
+	var imageCacheBaseUrl = "../image_cache.php?image=";
+	
+	// L'URL di base che Sptoify usa per le immagini
+	var spotifyImageBaseUrl = "http://o.scdn.co/300/";
 
 	/* Fine variabili private */
 
@@ -125,6 +131,11 @@ function Distribution() {
 	/* Fine eventi */
 
 	/* Inizio funzioni private */
+	
+	// Converte l'URI di un'immagine nell'URI relativo alla cache
+	function convertURIToCache(uri){
+		return uri.replace(spotifyImageBaseUrl, imageCacheBaseUrl);
+	}
 
 	// Imposta il primo stato di visualizzazione
 	function setStatus1() {
@@ -140,10 +151,10 @@ function Distribution() {
 			return d.values[0].x;
 			})[1];
 
-			// Adesso posso impostare il dominio su y
+			// Adesso posso impostare il dominio su y (ascolti)
 			distributionChart.yDomain([0, maxStreams * (6 / 5)]);
 			// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
-			distributionChart.xDomain([0, maxPlays * (6 / 5)]);
+			distributionChart.xDomain([0, maxPlays * (6 / 5)]); // (condivisioni)
 			// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
 
 			d3.select('#distributionChart').datum(data).transition().duration(500).call(distributionChart);			
@@ -261,12 +272,14 @@ function Distribution() {
 
 				// Formatto i tick dell'asse x e scelgo i valori da mostrare
 				distributionChart.xAxis.tickFormat(d3.format(".2s"));
+				distributionChart.xAxis.axisLabel("Ascolti").axisLabelDistance(40);
 				// Imposto il formato dei tick per l'asse y
 				distributionChart.yAxis.tickFormat(d3.format(".2s"));
+				distributionChart.yAxis.axisLabel("Condivisioni").axisLabelDistance(20);
 				// Definisco il contenuto dei tooltip
 				distributionChart.tooltipContent(function(key) {
 					var track = data.filter(function(el){ return el.key == key; })[0];
-					return '<div style="width: 200px; height: 230px"><img src="' + track.artwork + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
+					return '<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina
 				d3.select('#distributionChart').datum(data).call(distributionChart);
@@ -281,7 +294,7 @@ function Distribution() {
 					selectedTrack.track_name = data[1];
 					selectedTrack.artist_name = data[0];
 					selectedTrack.num_streams = e.point.y;
-					selectedTrack.artwork_url = e.series.artwork;
+					selectedTrack.artwork_url = convertURIToCache(e.series.artwork);
 					selectedDate = e.point.x;
 					console.log(selectedTrack);
 					fireTrackChanged();

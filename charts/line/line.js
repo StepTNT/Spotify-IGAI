@@ -54,6 +54,12 @@ function Line() {
 	
 	// I dati json che stiamo utilizzando al momento per il nostro grafico
 	var currentData = {};
+	
+	// L'URL di base per accedere alla cache delle immagini
+	var imageCacheBaseUrl = "../image_cache.php?image=";
+	
+	// L'URL di base che Sptoify usa per le immagini
+	var spotifyImageBaseUrl = "http://o.scdn.co/300/";
 
 	/* Fine variabili private */
 
@@ -148,6 +154,11 @@ function Line() {
 	/* Fine eventi */
 
 	/* Inizio funzioni private */
+	
+	// Converte l'URI di un'immagine nell'URI relativo alla cache
+	function convertURIToCache(uri){
+		return uri.replace(spotifyImageBaseUrl, imageCacheBaseUrl);
+	}
 
 	// Imposta il primo stato di visualizzazione
 	function setStatus1() {
@@ -253,7 +264,7 @@ function Line() {
 					var artworks = data.filter(function(el) {
 						return el.key == key;
 					});
-					tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? artworks[0].artwork : "") + '"/><br/><b>' + key + '</b></br>' + y + ' il ' + x + '</center>';
+					tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + key + '</b></br>' + y + ' il ' + x + '</center>';
 					return tooltip_str;
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina
@@ -272,7 +283,7 @@ function Line() {
 					selectedTrack.track_name = data[1];
 					selectedTrack.artist_name = data[0];
 					selectedTrack.num_streams = e.point.y;
-					selectedTrack.artwork_url = e.series.artwork;
+					selectedTrack.artwork_url = convertURIToCache(e.series.artwork);
 					selectedDate = e.point.x;
 					fireDateChanged();
 					fireTrackChanged();

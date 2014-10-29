@@ -63,11 +63,14 @@
 	margin: 4px;
 }
 .overlay-background:hover {
-	background-color: rgba(255,255,255, 1);
+	background-color: rgba(255,255,255, 1);	
+}
+
+.resize-overlay:hover{
 	cursor: ne-resize;
 }
 
-.tabella-overlay-resize:hover {	
+.table-overlay:hover {	
 	cursor: pointer;
 }
 
