@@ -324,12 +324,14 @@ function Map() {
 		// Imposto l'HTML da mostrare
 		*/		
 		$(popoverTarget[0][0]).popover({
-			title: "title",
-			content : "content",
+			title: "<center><p><b>" + d.artist_name + "</b></p><p>" + d.track_name + "</p></center>",
+			content : "<center><div style='background-image:url(" + convertURIToCache(d.artwork_url) + "); background-size: 100%; height: 150px; width: 150px;'></div><p>Ascolti   : " + d.num_streams + "</p></center>",
+			html: true,
 			placement : "left",
 			container : ".grafico1",
 			trigger : "manual",
-			position : "fixed"
+			position : "fixed",
+			template: '<div class="popover" role="tooltip" style="zindex:9999999999 !important;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
 		});
 		$(popoverTarget[0][0]).popover('show'); 
 

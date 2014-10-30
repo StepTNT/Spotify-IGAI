@@ -327,15 +327,20 @@ function Distribution() {
 				distributionChart.tooltipContent(function(key, y, e, graph) {					
 					var track = data.filter(function(el){ return el.key == key; })[0];
 					// Recupero il punto al quale collegare il popover
-					var currentPoint = getMouseOverPoint(graph);
+					/*var currentPoint = getMouseOverPoint(graph);
 					console.log(currentPoint);
 					// Definisco la funzione di mouseout
 					$(currentPoint).mouseout(function(){			
 						fireMouseEvent(true, null);			
 						// Finita la funzione devo rimuovere l'handler						
 						$(currentPoint).unbind("mouseout");
-					});
-					var tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
+					});*/
+					//var tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
+					var artistName = key.split(" - ")[0];
+					var songTitle = key.split(" - ")[1];
+					var tooltipTitle = "<div style='white-space: nowrap;'><center><p><b>" + artistName + "</b></p><p>" + songTitle + "</p></center></div>";
+					var tooltipContent = '<div style="width: 150px; height: 150px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 150px; height: 150px"/>';
+					var tooltip_str = '<div class="popover fade bottom in" style="display: block !important; top:30px; left:-90px; visibility: visible !important;"><div class="arrow" style="left: 50% !important"></div><h3 class="popover-title">' + tooltipTitle + '</h3><div class="popover-content">' + tooltipContent + '</div></div>';					
 					return tooltip_str; //'<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina

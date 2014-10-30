@@ -318,7 +318,11 @@ function Line() {
 							break;
 						}
 					}		*/
-					tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
+					var artistName = key.split(" - ")[0];
+					var songTitle = key.split(" - ")[1];
+					var tooltipTitle = "<div style='white-space: nowrap;'><center><p><b>" + artistName + "</b></p><p>" + songTitle + "</p></center></div>";
+					var tooltipContent = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + y + ' il ' + x + '</center>';
+					var tooltip_str = '<div class="popover fade bottom in" style="display: block !important; top:30px; left:-90px; visibility: visible !important;"><div class="arrow" style="left: 50% !important"></div><h3 class="popover-title">' + tooltipTitle + '</h3><div class="popover-content">' + tooltipContent + '</div></div>';
 					//tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + key + '</b></br>' + y + ' il ' + x + '</center>';
 					return tooltip_str;
 				});
