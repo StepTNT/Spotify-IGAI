@@ -47,6 +47,9 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  visibility: hidden; 
+  /*height: 0*/
+  /*display: none !important;*/
 }
 
 /*Give tooltips that old fade in transition by
@@ -60,6 +63,10 @@
   transition-delay: 250ms;
   -moz-transition-delay: 250ms;
   -webkit-transition-delay: 250ms;
+}
+
+.nvtooltip.xy-nvtooltip{
+	display: none!;
 }
 
 .nvtooltip.x-nvtooltip,

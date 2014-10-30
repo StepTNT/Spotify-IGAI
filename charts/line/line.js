@@ -77,6 +77,9 @@ function Line() {
 	var dateChangedEvent = {};
 
 	var dataLoadingEvent = {};
+	
+	// Evento lanciato quando muovo il mouse su un pallino del grafico
+	var mouseEvent = {};
 
 	// Lancia l'evento relativo al cambio dello stato di visualizzazione del grafico
 	function fireStateChanged() {
@@ -151,6 +154,30 @@ function Line() {
 		// Lancio l'evento relativo alla selezione del brano
 	}
 
+
+	// Lancia l'evento relativo all'inizio del caricamento dei dati
+	function fireMouseEvent(isMouseOut, point) {
+		if (!isMouseOut) {
+			mouseEvent = new CustomEvent('mousePopoverStarted', {
+				detail : {
+					target: point,
+					graph: 2
+				},
+				bubbles : true,
+				cancelable : true
+			});
+		} else {
+			mouseEvent = new CustomEvent('mousePopoverFinished', {
+				detail : {
+					target: point
+				},
+				bubbles : true,
+				cancelable : true
+			});
+		}
+		document.dispatchEvent(mouseEvent);
+		// Lancio l'evento relativo alla selezione del brano
+	}
 	/* Fine eventi */
 
 	/* Inizio funzioni private */
@@ -268,14 +295,32 @@ function Line() {
 					var seriesIndex = graph.seriesIndex;
 					var pointIndex = graph.pointIndex;					
 					var points = $("[class^=nv-path]"); // Prendo tutti i punti del grafico
-					for(var i = 0; i<points.length; i++){        
-						var pointData = points[i].__data__;						
-						if(pointData.series == seriesIndex && pointData.point == pointIndex){
+					/*for (var i = 0; i < points.length; i++) {
+						var pointData = points[i].__data__;
+						if (pointData.series == seriesIndex && pointData.point == pointIndex) {
 							// Questo è il punto su cui si trova il mouse e quindi mostro il popover
+							// Recupero il punto al quale collegare il popover
+							var currentPoint = points[i];
+							var currentPointD3 = d3.selectAll([currentPoint])[0][0].parentNode;					
+							console.log(currentPointD3);
+							var children = d3.selectAll([currentPointD3]).select("path");
+							var cx = children.attr("cx");
+							var cy = children.attr("cy");
+							var addedCircle = d3.selectAll([currentPointD3]).append("circle").attr("cx", cx).attr("cy", cy).attr("r", 1).style("fill", "purple");
+							fireMouseEvent(false, addedCircle);
+							// Definisco la funzione di mouseout
+							$(currentPoint).mouseout(function() {
+								fireMouseEvent(true, null);
+								d3.selectAll([addedCircle]).remove();
+								// Finita la funzione devo rimuovere l'handler								
+								$(currentPoint).unbind("mouseout");
+							});
+							break;
 						}
-					}
-					tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + key + '</b></br>' + y + ' il ' + x + '</center>';
-					return "";//tooltip_str;
+					}		*/
+					tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
+					//tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + key + '</b></br>' + y + ' il ' + x + '</center>';
+					return tooltip_str;
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina
 				d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart).style({

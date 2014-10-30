@@ -235,14 +235,13 @@
 				var popoverTarget = {};
 				// Aggiungo gli handler per i popover
 					document.addEventListener('mousePopoverStarted', function(e) {
-						//controller.countryChanged(e.detail.country, "red");
-						popoverTarget = $(e.detail.target).parent();					
+						popoverTarget = $(e.detail.target);								
 						$(popoverTarget).popover({
-							title: "ciao ciao",
 							content: "ciao pollo",
 							placement: "left",
-							container: "#grafico3-container",
-							trigger: "manual"
+							container: ".grafico" + e.detail.graph,
+							trigger: "manual",
+							position: "fixed"
 						});
 						$(popoverTarget).popover('show');
 						console.log("mousePopoverStarted - " + popoverTarget);

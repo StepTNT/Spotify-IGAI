@@ -137,7 +137,8 @@ function Distribution() {
 		if (!isMouseOut) {
 			mouseEvent = new CustomEvent('mousePopoverStarted', {
 				detail : {
-					target: point
+					target: point,
+					graph: 3
 				},
 				bubbles : true,
 				cancelable : true
@@ -327,14 +328,15 @@ function Distribution() {
 					var track = data.filter(function(el){ return el.key == key; })[0];
 					// Recupero il punto al quale collegare il popover
 					var currentPoint = getMouseOverPoint(graph);
-					fireMouseEvent(false, currentPoint);
+					console.log(currentPoint);
 					// Definisco la funzione di mouseout
 					$(currentPoint).mouseout(function(){			
 						fireMouseEvent(true, null);			
 						// Finita la funzione devo rimuovere l'handler						
 						$(currentPoint).unbind("mouseout");
 					});
-					return ""; //'<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
+					var tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
+					return tooltip_str; //'<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina
 				d3.select('#distributionChart').datum(data).call(distributionChart);

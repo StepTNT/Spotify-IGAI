@@ -110,6 +110,8 @@ function Map() {
 
 	// I dati json che stiamo utilizzando al momento per il nostro grafico
 	var currentData = {};
+	
+	var popoverTarget = {};
 
 	// Lancia l'evento relativo al cambio dello stato di visualizzazione del grafico
 	function fireStateChanged() {
@@ -274,7 +276,9 @@ function Map() {
 						enabledCountries.push(currentCountry.id);
 					}
 					// Creo i cerchi, uno per ogni brano presente nei dati. (Il formato dei dati non permette cerchi multipli sullo stesso paese!)
-					var circles = g.selectAll("circle").data(data).enter().append("circle").on("mouseover", function(d) {
+					var circles = g.selectAll("circle").data(data).enter().append("circle")
+					.on("mouseover", function(d) {	
+						popoverTarget = d3.select(this);									
 						circleMouseOver(d);
 					}).on("mouseout", function() {
 						circleMouseOut();
@@ -308,25 +312,39 @@ function Map() {
 	}
 
 	// Quando il mouse entra nel cerchio mostro il tooltip
-	function circleMouseOver(d) {
+	function circleMouseOver(d) {		
 		//TODO: Usare Popover di Bootstrap per creare un popup unico condiviso tra i vari grafici.
-		var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
+		/*var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
 		// Evitiamo che il tooltip venga disegnato fuori dall'area visibile
 		coverTooltip.transition().duration(500).style("opacity", .9);
-		// Inizio l'animazione
-		coverTooltip.html("<div style='background-image:url(" + convertURIToCache(d.artwork_url) + "); background-size: 100%; height: 150px; width: 150px;'></div>" + "<br/><div>" + "Artista   : " + d.artist_name + "<br/>" + "Album     : " + d.album_name + "<br/>" + "Titolo    : " + d.track_name + "<br/>" + "Ascolti   : " + d.num_streams + "<br/></div>").style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
+		var tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
+		// Inizio l'animazione		
+		d3.select("body").append("div").html(tooltip_str).style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
+		//coverTooltip.html("<div style='background-image:url(" + convertURIToCache(d.artwork_url) + "); background-size: 100%; height: 150px; width: 150px;'></div>" + "<br/><div>" + "Artista   : " + d.artist_name + "<br/>" + "Album     : " + d.album_name + "<br/>" + "Titolo    : " + d.track_name + "<br/>" + "Ascolti   : " + d.num_streams + "<br/></div>").style("left", (d3.event.pageX) + "px").style("top", (top) + "px");		
 		// Imposto l'HTML da mostrare
+		*/		
+		$(popoverTarget[0][0]).popover({
+			title: "title",
+			content : "content",
+			placement : "left",
+			container : ".grafico1",
+			trigger : "manual",
+			position : "fixed"
+		});
+		$(popoverTarget[0][0]).popover('show'); 
+
 	}
 
 	// Quando il mouse esce dal cerchio nascondo il tooltip
 	function circleMouseOut() {
-		coverTooltip.transition().duration(500).style("opacity", 0);
+		//coverTooltip.transition().duration(500).style("opacity", 0);
+		$(popoverTarget[0][0]).popover('destroy');
 	}
 
 	// Se il mouse si muove aggiorno la posizione del tooltip per seguire il mouse
 	function circleMouseMove() {
-		var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
-		coverTooltip.style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
+		/*var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
+		coverTooltip.style("left", (d3.event.pageX) + "px").style("top", (top) + "px");*/
 	}
 
 	// Il click del mouse cambia lo stato del grafico e imposta il brano come selezionato
