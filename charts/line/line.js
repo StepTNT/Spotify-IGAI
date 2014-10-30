@@ -264,8 +264,18 @@ function Line() {
 					var artworks = data.filter(function(el) {
 						return el.key == key;
 					});
+					// Devo trovare l'oggetto giusto per attaccare il popover quindi lo scelgo in base all'indice della serie e del punto
+					var seriesIndex = graph.seriesIndex;
+					var pointIndex = graph.pointIndex;					
+					var points = $("[class^=nv-path]"); // Prendo tutti i punti del grafico
+					for(var i = 0; i<points.length; i++){        
+						var pointData = points[i].__data__;						
+						if(pointData.series == seriesIndex && pointData.point == pointIndex){
+							// Questo è il punto su cui si trova il mouse e quindi mostro il popover
+						}
+					}
 					tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + key + '</b></br>' + y + ' il ' + x + '</center>';
-					return tooltip_str;
+					return "";//tooltip_str;
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina
 				d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart).style({
@@ -275,7 +285,7 @@ function Line() {
 				// Sposto le label dell'asse x più in basso
 				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 				nv.utils.windowResize(lineChart.update);
-
+							
 				lineChart.lines.dispatch.on('elementClick', function(e) {
 					// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto
 					selectedTrack = e.series;

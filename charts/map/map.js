@@ -309,6 +309,7 @@ function Map() {
 
 	// Quando il mouse entra nel cerchio mostro il tooltip
 	function circleMouseOver(d) {
+		//TODO: Usare Popover di Bootstrap per creare un popup unico condiviso tra i vari grafici.
 		var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
 		// Evitiamo che il tooltip venga disegnato fuori dall'area visibile
 		coverTooltip.transition().duration(500).style("opacity", .9);

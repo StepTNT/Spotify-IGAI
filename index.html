@@ -11,6 +11,7 @@
 		<link href="css/jquery.dynatable.css" rel="stylesheet" type="text/css">
 		<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 		<script type="text/javascript" src="common-libs/jquery-2.1.1.min.js"></script>
+		<script src="common-libs/bootstrap.min.js"></script>
 		<script src="common-libs/d3.v3.min.js"></script>
 		<script src="common-libs/jquery.gridster.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="common-libs/jBox.min.js"></script>
@@ -230,8 +231,28 @@
 				$(".grafico3 .table-icon").click(function() {
 					modalTabella3.toggle();
 				});
-				controller.notifyPageReady();
-			});
+				// L'oggetto sul quale mostrare il popover
+				var popoverTarget = {};
+				// Aggiungo gli handler per i popover
+					document.addEventListener('mousePopoverStarted', function(e) {
+						//controller.countryChanged(e.detail.country, "red");
+						popoverTarget = $(e.detail.target).parent();					
+						$(popoverTarget).popover({
+							title: "ciao ciao",
+							content: "ciao pollo",
+							placement: "left",
+							container: "#grafico3-container",
+							trigger: "manual"
+						});
+						$(popoverTarget).popover('show');
+						console.log("mousePopoverStarted - " + popoverTarget);
+					}, false);
+					document.addEventListener('mousePopoverFinished', function(e) {
+						$(popoverTarget).popover('destroy');
+						console.log("mousePopoverFinished - " + popoverTarget);
+					}, false);
+					controller.notifyPageReady();
+					});
 		</script>
 	</head>
 

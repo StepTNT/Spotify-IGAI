@@ -66,8 +66,12 @@ function Distribution() {
 	// Evento lanciato quando cambiamo lo stato di visualizzazione del grafico
 	var stateChangedEvent = {};
 
+	// Evento lanciato quando cambia lo stato di caricamento dei dati
 	var dataLoadingEvent = {};
-
+	
+	// Evento lanciato quando muovo il mouse su un pallino del grafico
+	var mouseEvent = {};
+	
 	// Lancia l'evento relativo al cambio dello stato di visualizzazione del grafico
 	function fireStateChanged() {
 		stateChangedEvent = new CustomEvent('distribution.stateChanged', {
@@ -127,6 +131,29 @@ function Distribution() {
 		document.dispatchEvent(dataLoadingEvent);
 		// Lancio l'evento relativo alla selezione del brano
 	}
+	
+	// Lancia l'evento relativo all'inizio del caricamento dei dati
+	function fireMouseEvent(isMouseOut, point) {
+		if (!isMouseOut) {
+			mouseEvent = new CustomEvent('mousePopoverStarted', {
+				detail : {
+					target: point
+				},
+				bubbles : true,
+				cancelable : true
+			});
+		} else {
+			mouseEvent = new CustomEvent('mousePopoverFinished', {
+				detail : {
+					target: point
+				},
+				bubbles : true,
+				cancelable : true
+			});
+		}
+		document.dispatchEvent(mouseEvent);
+		// Lancio l'evento relativo alla selezione del brano
+	}
 
 	/* Fine eventi */
 
@@ -136,6 +163,25 @@ function Distribution() {
 	function convertURIToCache(uri){
 		return uri.replace(spotifyImageBaseUrl, imageCacheBaseUrl);
 	}
+	
+	// Restituisce l'oggetto sul quale si trova il mouse. E' un piccolo hack perchè nvd3.js non espone alcun metodo per sapere su quale pallino siamo
+	function getMouseOverPoint(graph) {
+		// Devo trovare l'oggetto giusto per attaccare il popover quindi lo scelgo in base all'indice della serie
+		var seriesIndex = graph.seriesIndex;
+		var points = $(".nv-point");
+		// Prendo tutti i punti del grafico
+		var resultPoints = [];
+		for (var i = 0; i < points.length; i++) {
+			var pointData = points[i].__data__;
+			if (pointData.series == seriesIndex) {
+				// Questo è il punto su cui si trova il mouse.
+				// Nel grafico Distribution ci sono casi in cui abbiamo più di un risultato e quello corretto è l'ultimo quindi devo usare un array
+				resultPoints.push(points[i]);
+			}
+		}
+		return resultPoints[resultPoints.length - 1];
+	}
+
 
 	// Imposta il primo stato di visualizzazione
 	function setStatus1() {
@@ -277,9 +323,18 @@ function Distribution() {
 				distributionChart.yAxis.tickFormat(d3.format(".2s"));
 				distributionChart.yAxis.axisLabel("Condivisioni").axisLabelDistance(20);
 				// Definisco il contenuto dei tooltip
-				distributionChart.tooltipContent(function(key) {
+				distributionChart.tooltipContent(function(key, y, e, graph) {					
 					var track = data.filter(function(el){ return el.key == key; })[0];
-					return '<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
+					// Recupero il punto al quale collegare il popover
+					var currentPoint = getMouseOverPoint(graph);
+					fireMouseEvent(false, currentPoint);
+					// Definisco la funzione di mouseout
+					$(currentPoint).mouseout(function(){			
+						fireMouseEvent(true, null);			
+						// Finita la funzione devo rimuovere l'handler						
+						$(currentPoint).unbind("mouseout");
+					});
+					return ""; //'<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina
 				d3.select('#distributionChart').datum(data).call(distributionChart);
