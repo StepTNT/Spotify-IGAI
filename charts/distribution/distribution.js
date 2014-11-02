@@ -342,7 +342,8 @@ function Distribution() {
 					var tooltipContent = '<div style="width: 150px; height: 150px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 150px; height: 150px"/>';
 					var tooltip_str = '<div class="popover fade bottom in" style="display: block !important; top:30px; left:-90px; visibility: visible !important;"><div class="arrow" style="left: 50% !important"></div><h3 class="popover-title">' + tooltipTitle + '</h3><div class="popover-content">' + tooltipContent + '</div></div>';					
 					return tooltip_str; //'<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
-				});
+				});				
+
 				// Finalizzo il grafico e lo aggiungo alla pagina
 				d3.select('#distributionChart').datum(data).call(distributionChart);
 
@@ -358,7 +359,6 @@ function Distribution() {
 					selectedTrack.num_streams = e.point.y;
 					selectedTrack.artwork_url = convertURIToCache(e.series.artwork);
 					selectedDate = e.point.x;
-					console.log(selectedTrack);
 					fireTrackChanged();
 				});
 				fireDataLoadingEvent(false);

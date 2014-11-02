@@ -331,7 +331,7 @@ function Map() {
 			container : ".grafico1",
 			trigger : "manual",
 			position : "fixed",
-			template: '<div class="popover" role="tooltip" style="zindex:9999999999 !important;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+			template: '<div class="popover" role="tooltip" style="z-index:99999999 !important;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
 		});
 		$(popoverTarget[0][0]).popover('show'); 
 

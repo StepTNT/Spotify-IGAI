@@ -290,34 +290,7 @@ function Line() {
 					var y = String(graph.point.y) + ' ascolti';
 					var artworks = data.filter(function(el) {
 						return el.key == key;
-					});
-					// Devo trovare l'oggetto giusto per attaccare il popover quindi lo scelgo in base all'indice della serie e del punto
-					var seriesIndex = graph.seriesIndex;
-					var pointIndex = graph.pointIndex;					
-					var points = $("[class^=nv-path]"); // Prendo tutti i punti del grafico
-					/*for (var i = 0; i < points.length; i++) {
-						var pointData = points[i].__data__;
-						if (pointData.series == seriesIndex && pointData.point == pointIndex) {
-							// Questo è il punto su cui si trova il mouse e quindi mostro il popover
-							// Recupero il punto al quale collegare il popover
-							var currentPoint = points[i];
-							var currentPointD3 = d3.selectAll([currentPoint])[0][0].parentNode;					
-							console.log(currentPointD3);
-							var children = d3.selectAll([currentPointD3]).select("path");
-							var cx = children.attr("cx");
-							var cy = children.attr("cy");
-							var addedCircle = d3.selectAll([currentPointD3]).append("circle").attr("cx", cx).attr("cy", cy).attr("r", 1).style("fill", "purple");
-							fireMouseEvent(false, addedCircle);
-							// Definisco la funzione di mouseout
-							$(currentPoint).mouseout(function() {
-								fireMouseEvent(true, null);
-								d3.selectAll([addedCircle]).remove();
-								// Finita la funzione devo rimuovere l'handler								
-								$(currentPoint).unbind("mouseout");
-							});
-							break;
-						}
-					}		*/
+					});			
 					var artistName = key.split(" - ")[0];
 					var songTitle = key.split(" - ")[1];
 					var tooltipTitle = "<div style='white-space: nowrap;'><center><p><b>" + artistName + "</b></p><p>" + songTitle + "</p></center></div>";
@@ -334,9 +307,34 @@ function Line() {
 				// Sposto le label dell'asse x più in basso
 				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 				nv.utils.windowResize(lineChart.update);
-							
-				lineChart.lines.dispatch.on('elementClick', function(e) {
-					// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto
+				// Aggiungo l'handler per il click sulle date
+				d3.selectAll('g.nv-axisMaxMin').style("pointer-events", "visiblePainted")
+					.on("click", function() {
+						// Lancio l'evento di cambio data
+						var date = d3.time.format("%Y-%m-%d")(d3.select(this)[0][0].__data__);
+						selectedDate = date;
+						fireDateChanged();
+						// Ricoloro tutto di nero
+						d3.selectAll('g.nv-axisMaxMin').style("stroke", "");
+						d3.selectAll('g.tick > text').style("stroke", "");
+						// Tranne la data selezionata che diventa rossa
+						d3.select(this).style("stroke", "red");
+					}); 
+
+				d3.selectAll('g.tick > text').style("pointer-events", "visiblePainted")
+					.on("click", function() {
+						// Lancio l'evento di cambio data
+						var date = d3.time.format("%Y-%m-%d")(d3.select(this)[0][0].__data__);
+						selectedDate = date;
+						fireDateChanged();
+						// Ricoloro tutto di nero
+						d3.selectAll('g.nv-axisMaxMin').style("stroke", "");
+						d3.selectAll('g.tick > text').style("stroke", "");
+						// Tranne la data selezionata che diventa rossa
+						d3.select(this).style("stroke", "red");
+					});							
+				// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto
+				lineChart.lines.dispatch.on('elementClick', function(e) {					
 					selectedTrack = e.series;
 					var data = e.series.key.split(" - ");
 					selectedTrack.track_name = data[1];
@@ -344,6 +342,7 @@ function Line() {
 					selectedTrack.num_streams = e.point.y;
 					selectedTrack.artwork_url = convertURIToCache(e.series.artwork);
 					selectedDate = e.point.x;
+					console.log(selectedDate);
 					fireDateChanged();
 					fireTrackChanged();
 				});
