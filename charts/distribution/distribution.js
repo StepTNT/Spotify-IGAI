@@ -40,16 +40,18 @@ function Distribution() {
 	// Lo stato di visualizzazione attuale
 	var currentStatus = 1;
 
+	// Il paese attualmente selezionato
 	var currentCountry = {};
 
+	// La data attualmente selezionata
 	var selectedDate = {};
-	
+
 	// I dati json che stiamo utilizzando al momento per il nostro grafico
 	var currentData = {};
-	
+
 	// L'URL di base per accedere alla cache delle immagini
 	var imageCacheBaseUrl = "../image_cache.php?image=";
-	
+
 	// L'URL di base che Sptoify usa per le immagini
 	var spotifyImageBaseUrl = "http://o.scdn.co/300/";
 
@@ -68,10 +70,10 @@ function Distribution() {
 
 	// Evento lanciato quando cambia lo stato di caricamento dei dati
 	var dataLoadingEvent = {};
-	
+
 	// Evento lanciato quando muovo il mouse su un pallino del grafico
 	var mouseEvent = {};
-	
+
 	// Lancia l'evento relativo al cambio dello stato di visualizzazione del grafico
 	function fireStateChanged() {
 		stateChangedEvent = new CustomEvent('distribution.stateChanged', {
@@ -95,7 +97,6 @@ function Distribution() {
 			cancelable : true
 		});
 		document.dispatchEvent(trackChangedEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
 
 	// Lancia l'evento relativo al cambio del paese selezionato
@@ -108,7 +109,6 @@ function Distribution() {
 			cancelable : true
 		});
 		document.dispatchEvent(countryChangedEvent);
-		// Lancio l'evento relativo al cambio del paese selezionato
 	}
 
 	// Lancia l'evento relativo all'inizio del caricamento dei dati
@@ -129,16 +129,15 @@ function Distribution() {
 			});
 		}
 		document.dispatchEvent(dataLoadingEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
-	
+
 	// Lancia l'evento relativo all'inizio del caricamento dei dati
 	function fireMouseEvent(isMouseOut, point) {
 		if (!isMouseOut) {
 			mouseEvent = new CustomEvent('mousePopoverStarted', {
 				detail : {
-					target: point,
-					graph: 3
+					target : point,
+					graph : 3
 				},
 				bubbles : true,
 				cancelable : true
@@ -146,25 +145,24 @@ function Distribution() {
 		} else {
 			mouseEvent = new CustomEvent('mousePopoverFinished', {
 				detail : {
-					target: point
+					target : point
 				},
 				bubbles : true,
 				cancelable : true
 			});
 		}
 		document.dispatchEvent(mouseEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
 
 	/* Fine eventi */
 
 	/* Inizio funzioni private */
-	
+
 	// Converte l'URI di un'immagine nell'URI relativo alla cache
-	function convertURIToCache(uri){
+	function convertURIToCache(uri) {
 		return uri.replace(spotifyImageBaseUrl, imageCacheBaseUrl);
 	}
-	
+
 	// Restituisce l'oggetto sul quale si trova il mouse. E' un piccolo hack perchè nvd3.js non espone alcun metodo per sapere su quale pallino siamo
 	function getMouseOverPoint(graph) {
 		// Devo trovare l'oggetto giusto per attaccare il popover quindi lo scelgo in base all'indice della serie
@@ -183,7 +181,6 @@ function Distribution() {
 		return resultPoints[resultPoints.length - 1];
 	}
 
-
 	// Imposta il primo stato di visualizzazione
 	function setStatus1() {
 		var date = ($.isEmptyObject(selectedDate)) ? "max" : selectedDate;
@@ -201,10 +198,10 @@ function Distribution() {
 			// Adesso posso impostare il dominio su y (ascolti)
 			distributionChart.yDomain([0, maxStreams * (6 / 5)]);
 			// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
-			distributionChart.xDomain([0, maxPlays * (6 / 5)]); // (condivisioni)
-			// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
+			distributionChart.xDomain([0, maxPlays * (6 / 5)]);
+			// (condivisioni)
 
-			d3.select('#distributionChart').datum(data).transition().duration(500).call(distributionChart);			
+			d3.select('#distributionChart').datum(data).transition().duration(500).call(distributionChart);
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 			fireDataLoadingEvent(false);
@@ -231,7 +228,6 @@ function Distribution() {
 			distributionChart.yDomain([0, maxStreams * (6 / 5)]);
 			// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
 			distributionChart.xDomain([0, maxPlays * (6 / 5)]);
-			// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
 
 			d3.select('#distributionChart').datum(data).transition().duration(500).call(distributionChart).style({
 				'width' : 1200,
@@ -264,29 +260,31 @@ function Distribution() {
 				break;
 			}
 		}
-		//fireStateChanged();
 	};
 
+	// Imposta la traccia selezionata nel grafico
 	grafico.setSelectedTrack = function(track) {
-
+		// Non esiste la traccia selezionata nel grafico Distribution
 	};
 
+	// Imposta il paese selezionato nel grafico
 	grafico.setSelectedCountry = function(country) {
 		selectedCountry = country;
 	};
 
+	// Imposta la data selezionata nel grafico
 	grafico.setSelectedDate = function(date) {
 		selectedDate = date;
 	};
 
-	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
-	grafico.toMosaic = function() {		
+	// Se siamo in modalità mosaico devo rimuovere la legenda
+	grafico.toMosaic = function() {
 		distributionChart.showLegend(false);
 		distributionChart.update();
 	};
 
-	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
-	grafico.toFull = function() {		
+	// Se siamo in modalità intera devo mostrare la legenda
+	grafico.toFull = function() {
 		distributionChart.showLegend(true);
 		distributionChart.update();
 	};
@@ -315,7 +313,6 @@ function Distribution() {
 				distributionChart.yDomain([0, maxStreams * (6 / 5)]);
 				// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
 				distributionChart.xDomain([0, maxPlays * (6 / 5)]);
-				// Aggiungo qualcosa al massimo altrimenti il valore più alto sarebbe quasi fuori dalla visualizzazione
 
 				// Formatto i tick dell'asse x e scelgo i valori da mostrare
 				distributionChart.xAxis.tickFormat(d3.format(".2s"));
@@ -324,34 +321,22 @@ function Distribution() {
 				distributionChart.yAxis.tickFormat(d3.format(".2s"));
 				distributionChart.yAxis.axisLabel("Condivisioni").axisLabelDistance(20);
 				// Definisco il contenuto dei tooltip
-				distributionChart.tooltipContent(function(key, y, e, graph) {					
+				distributionChart.tooltipContent(function(key, y, e, graph) {
 					var track = data.filter(function(el){ return el.key == key; })[0];
-					// Recupero il punto al quale collegare il popover
-					/*var currentPoint = getMouseOverPoint(graph);
-					console.log(currentPoint);
-					// Definisco la funzione di mouseout
-					$(currentPoint).mouseout(function(){			
-						fireMouseEvent(true, null);			
-						// Finita la funzione devo rimuovere l'handler						
-						$(currentPoint).unbind("mouseout");
-					});*/
-					//var tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
 					var artistName = key.split(" - ")[0];
 					var songTitle = key.split(" - ")[1];
 					var tooltipTitle = "<div style='white-space: nowrap;'><center><p><b>" + artistName + "</b></p><p>" + songTitle + "</p></center></div>";
 					var tooltipContent = '<div style="width: 150px; height: 150px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 150px; height: 150px"/>';
-					var tooltip_str = '<div class="popover fade bottom in" style="display: block !important; top:30px; left:-90px; visibility: visible !important;"><div class="arrow" style="left: 50% !important"></div><h3 class="popover-title">' + tooltipTitle + '</h3><div class="popover-content">' + tooltipContent + '</div></div>';					
-					return tooltip_str; //'<div style="width: 200px; height: 230px"><img src="' + convertURIToCache(track.artwork) + '" style="width: 200px; height: 200px"/></br>' + track.key + '</div>';
-				});				
+					var tooltip_str = '<div class="popover fade bottom in" style="display: block !important; top:30px; left:-90px; visibility: visible !important;"><div class="arrow" style="left: 50% !important"></div><h3 class="popover-title">' + tooltipTitle + '</h3><div class="popover-content">' + tooltipContent + '</div></div>';
+					return tooltip_str;
+				});
 
 				// Finalizzo il grafico e lo aggiungo alla pagina
 				d3.select('#distributionChart').datum(data).call(distributionChart);
-
 				nv.utils.windowResize(distributionChart.update);
 
+				// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto
 				distributionChart.scatter.dispatch.on('elementClick', function(e) {
-					console.log(e);
-					// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto
 					selectedTrack = e.series;
 					var data = e.series.key.split(" - ");
 					selectedTrack.track_name = data[1];

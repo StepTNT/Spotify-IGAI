@@ -46,18 +46,21 @@ function Line() {
 	// Lo stato di visualizzazione attuale
 	var currentStatus = 1;
 
+	// Ila pese attualmente selezionato
 	var selectedCountry = {};
 
+	// La traccia attualmente selezionata
 	var selectedTrack = {};
 
+	// La data attualmente selezionata
 	var selectedDate = {};
-	
+
 	// I dati json che stiamo utilizzando al momento per il nostro grafico
 	var currentData = {};
-	
+
 	// L'URL di base per accedere alla cache delle immagini
 	var imageCacheBaseUrl = "../image_cache.php?image=";
-	
+
 	// L'URL di base che Sptoify usa per le immagini
 	var spotifyImageBaseUrl = "http://o.scdn.co/300/";
 
@@ -74,10 +77,12 @@ function Line() {
 	// Evento lanciato quando cambiamo lo stato di visualizzazione del grafico
 	var stateChangedEvent = {};
 
+	// Evento lanciato quando cambiamo la data del grafico
 	var dateChangedEvent = {};
 
+	// Evento lanciato quando carichiamo i dati nel grafico
 	var dataLoadingEvent = {};
-	
+
 	// Evento lanciato quando muovo il mouse su un pallino del grafico
 	var mouseEvent = {};
 
@@ -104,7 +109,6 @@ function Line() {
 			cancelable : true
 		});
 		document.dispatchEvent(trackChangedEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
 
 	// Lancia l'evento relativo al cambio del paese selezionato
@@ -117,7 +121,6 @@ function Line() {
 			cancelable : true
 		});
 		document.dispatchEvent(countryChangedEvent);
-		// Lancio l'evento relativo al cambio del paese selezionato
 	}
 
 	// Lancia l'evento relativo al cambio della data selezionata
@@ -130,7 +133,6 @@ function Line() {
 			cancelable : true
 		});
 		document.dispatchEvent(dateChangedEvent);
-		// Lancio l'evento relativo al cambio del paese selezionato
 	}
 
 	// Lancia l'evento relativo all'inizio del caricamento dei dati
@@ -151,17 +153,15 @@ function Line() {
 			});
 		}
 		document.dispatchEvent(dataLoadingEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
-
 
 	// Lancia l'evento relativo all'inizio del caricamento dei dati
 	function fireMouseEvent(isMouseOut, point) {
 		if (!isMouseOut) {
 			mouseEvent = new CustomEvent('mousePopoverStarted', {
 				detail : {
-					target: point,
-					graph: 2
+					target : point,
+					graph : 2
 				},
 				bubbles : true,
 				cancelable : true
@@ -169,21 +169,21 @@ function Line() {
 		} else {
 			mouseEvent = new CustomEvent('mousePopoverFinished', {
 				detail : {
-					target: point
+					target : point
 				},
 				bubbles : true,
 				cancelable : true
 			});
 		}
 		document.dispatchEvent(mouseEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
+
 	/* Fine eventi */
 
 	/* Inizio funzioni private */
-	
+
 	// Converte l'URI di un'immagine nell'URI relativo alla cache
-	function convertURIToCache(uri){
+	function convertURIToCache(uri) {
 		return uri.replace(spotifyImageBaseUrl, imageCacheBaseUrl);
 	}
 
@@ -192,12 +192,12 @@ function Line() {
 		var trackUri = ($.isEmptyObject(selectedTrack)) ? "null" : selectedTrack.track_url;
 		fireDataLoadingEvent(true);
 		d3.json("../line.php?trackUri=" + trackUri, function(error, data) {
-			currentData = data;			
+			currentData = data;
 			d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart);
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 			fireDataLoadingEvent(false);
-			fireStateChanged();			
+			fireStateChanged();
 		});
 	};
 
@@ -206,12 +206,12 @@ function Line() {
 		// Creo il grafico
 		fireDataLoadingEvent(true);
 		d3.json("../line.php?country=" + selectedCountry.id, function(error, data) {
-			currentData = data;			
+			currentData = data;
 			d3.select('#lineChart').datum(data).transition().duration(500).call(lineChart);
 			// Sposto le label dell'asse x più in basso
 			d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 			fireDataLoadingEvent(false);
-			fireStateChanged();			
+			fireStateChanged();
 		});
 	}
 
@@ -234,20 +234,22 @@ function Line() {
 		}
 	};
 
+	// Imposta la traccia selezionata
 	grafico.setSelectedTrack = function(track) {
 		selectedTrack = track;
 	};
 
+	// Imposta il paese selezionato
 	grafico.setSelectedCountry = function(country) {
 		selectedCountry = country;
 	};
 
-	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
+	// Aggiorno l'oggetto per adattarlo alle nuove dimensioni
 	grafico.toMosaic = function() {
 		lineChart.update();
 	};
 
-	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
+	// Aggiorno l'oggetto per adattarlo alle nuove dimensioni
 	grafico.toFull = function() {
 		lineChart.update();
 	};
@@ -290,13 +292,12 @@ function Line() {
 					var y = String(graph.point.y) + ' ascolti';
 					var artworks = data.filter(function(el) {
 						return el.key == key;
-					});			
+					});
 					var artistName = key.split(" - ")[0];
 					var songTitle = key.split(" - ")[1];
 					var tooltipTitle = "<div style='white-space: nowrap;'><center><p><b>" + artistName + "</b></p><p>" + songTitle + "</p></center></div>";
 					var tooltipContent = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + y + ' il ' + x + '</center>';
 					var tooltip_str = '<div class="popover fade bottom in" style="display: block !important; top:30px; left:-90px; visibility: visible !important;"><div class="arrow" style="left: 50% !important"></div><h3 class="popover-title">' + tooltipTitle + '</h3><div class="popover-content">' + tooltipContent + '</div></div>';
-					//tooltip_str = '<center><image style="height:150px; width:150px" src="' + ((!$.isEmptyObject(artworks)) ? convertURIToCache(artworks[0].artwork) : "") + '"/><br/><b>' + key + '</b></br>' + y + ' il ' + x + '</center>';
 					return tooltip_str;
 				});
 				// Finalizzo il grafico e lo aggiungo alla pagina
@@ -308,33 +309,31 @@ function Line() {
 				d3.selectAll('.nv-x.nv-axis > g').attr('transform', 'translate(0,10)');
 				nv.utils.windowResize(lineChart.update);
 				// Aggiungo l'handler per il click sulle date
-				d3.selectAll('g.nv-axisMaxMin').style("pointer-events", "visiblePainted")
-					.on("click", function() {
-						// Lancio l'evento di cambio data
-						var date = d3.time.format("%Y-%m-%d")(d3.select(this)[0][0].__data__);
-						selectedDate = date;
-						fireDateChanged();
-						// Ricoloro tutto di nero
-						d3.selectAll('g.nv-axisMaxMin').style("stroke", "");
-						d3.selectAll('g.tick > text').style("stroke", "");
-						// Tranne la data selezionata che diventa rossa
-						d3.select(this).style("stroke", "red");
-					}); 
+				d3.selectAll('g.nv-axisMaxMin').style("pointer-events", "visiblePainted").on("click", function() {
+					// Lancio l'evento di cambio data
+					var date = d3.time.format("%Y-%m-%d")(d3.select(this)[0][0].__data__);
+					selectedDate = date;
+					fireDateChanged();
+					// Ricoloro tutto di nero
+					d3.selectAll('g.nv-axisMaxMin').style("stroke", "");
+					d3.selectAll('g.tick > text').style("stroke", "");
+					// Tranne la data selezionata che diventa rossa
+					d3.select(this).style("stroke", "red");
+				});
 
-				d3.selectAll('g.tick > text').style("pointer-events", "visiblePainted")
-					.on("click", function() {
-						// Lancio l'evento di cambio data
-						var date = d3.time.format("%Y-%m-%d")(d3.select(this)[0][0].__data__);
-						selectedDate = date;
-						fireDateChanged();
-						// Ricoloro tutto di nero
-						d3.selectAll('g.nv-axisMaxMin').style("stroke", "");
-						d3.selectAll('g.tick > text').style("stroke", "");
-						// Tranne la data selezionata che diventa rossa
-						d3.select(this).style("stroke", "red");
-					});							
+				d3.selectAll('g.tick > text').style("pointer-events", "visiblePainted").on("click", function() {
+					// Lancio l'evento di cambio data
+					var date = d3.time.format("%Y-%m-%d")(d3.select(this)[0][0].__data__);
+					selectedDate = date;
+					fireDateChanged();
+					// Ricoloro tutto di nero
+					d3.selectAll('g.nv-axisMaxMin').style("stroke", "");
+					d3.selectAll('g.tick > text').style("stroke", "");
+					// Tranne la data selezionata che diventa rossa
+					d3.select(this).style("stroke", "red");
+				});
 				// Il click su un pallino deve impostare il brano come selezionato, quindi lo cambio e lancio l'evento. Prima di cambiare, però, normalizzo l'oggetto
-				lineChart.lines.dispatch.on('elementClick', function(e) {					
+				lineChart.lines.dispatch.on('elementClick', function(e) {
 					selectedTrack = e.series;
 					var data = e.series.key.split(" - ");
 					selectedTrack.track_name = data[1];

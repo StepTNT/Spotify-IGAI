@@ -86,10 +86,10 @@ function Map() {
 
 	// Lo stato di visualizzazione in cui si trova il grafico
 	var currentStatus = undefined;
-	
+
 	// L'URL di base per accedere alla cache delle immagini
 	var imageCacheBaseUrl = "../image_cache.php?image=";
-	
+
 	// L'URL di base che Sptoify usa per le immagini
 	var spotifyImageBaseUrl = "http://o.scdn.co/300/";
 
@@ -110,7 +110,8 @@ function Map() {
 
 	// I dati json che stiamo utilizzando al momento per il nostro grafico
 	var currentData = {};
-	
+
+	// L'oggetto sul quale mostrare il tooltip
 	var popoverTarget = {};
 
 	// Lancia l'evento relativo al cambio dello stato di visualizzazione del grafico
@@ -136,7 +137,6 @@ function Map() {
 			cancelable : true
 		});
 		document.dispatchEvent(trackChangedEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
 
 	// Lancia l'evento relativo al cambio del paese selezionato
@@ -149,7 +149,6 @@ function Map() {
 			cancelable : true
 		});
 		document.dispatchEvent(countryChangedEvent);
-		// Lancio l'evento relativo al cambio del paese selezionato
 	}
 
 	// Lancia l'evento relativo all'inizio del caricamento dei dati
@@ -170,15 +169,14 @@ function Map() {
 			});
 		}
 		document.dispatchEvent(dataLoadingEvent);
-		// Lancio l'evento relativo alla selezione del brano
 	}
 
 	/* Fine eventi */
 
 	/* Inizio funzioni private */
-	
+
 	// Converte l'URI di un'immagine nell'URI relativo alla cache
-	function convertURIToCache(uri){
+	function convertURIToCache(uri) {
 		return uri.replace(spotifyImageBaseUrl, imageCacheBaseUrl);
 	}
 
@@ -228,9 +226,9 @@ function Map() {
 			.transition().delay((grafico.statoCorrente != 1) ? 500 : 0).duration(500).style("stroke", selectedCountryStroke);
 
 		} else {// Deseleziono un paese
-			selectedCountry = {};			
+			selectedCountry = {};
 			fireCountryChanged();
-			if(country){
+			if (country) {
 				var xyz = [width / 2, height / 1.5, 1];
 				if (currentStatus != 2)// Se sono nello stato 2 non devo ricolorare i paesi visto che li ho colorati in base agli ascolti
 					g.selectAll("#" + country.id).transition().duration(500).style('fill', enabledCountryColor);
@@ -258,16 +256,15 @@ function Map() {
 				return parseInt(d.num_streams);
 			});
 			// Una volta ottenuto il massimo costruisco la funzione per scalare il raggio all'interno del dominio tra 0 e maxStreams
-			var scale = d3.scale.linear().domain([0, maxStreams]).range([2, 10]);			
+			var scale = d3.scale.linear().domain([0, maxStreams]).range([2, 10]);
 			// I nostri cerchi avranno un raggio tra 2 e 10 unità
 			// Per poter utilizzare un'immagine di sfondo per i cerchi, è necessario usare i pattern SVG. Devo quindi definirli in modo dinamico
 			data.forEach(function(d) {
 				// Devo scorrere tutte le tracce perchè devo creare un pattern per ogni traccia
 				g.append("pattern").attr("id", convertURIToCache(d.artwork_url))// Usiamo l'url come id visto che è univoco e non presenta spazi o caratteri vietati
-				.attr("patternUnits", "userSpaceOnUse")
-				.attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams)).append("image").attr("xlink:href", convertURIToCache(d.artwork_url)).attr("src", convertURIToCache(d.artwork_url))//TODO: potrebbe essere anche rimosso, da verificare
+				.attr("patternUnits", "userSpaceOnUse").attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams)).append("image").attr("xlink:href", convertURIToCache(d.artwork_url)).attr("src", convertURIToCache(d.artwork_url))//TODO: potrebbe essere anche rimosso, da verificare
 				.attr("x", 0).attr("y", 0).attr("width", scale(d.num_streams)).attr("height", scale(d.num_streams));
-				// Sfrutto questo ciclo per abilitare le interazioni sui paesi per i quali abbiamo dati				
+				// Sfrutto questo ciclo per abilitare le interazioni sui paesi per i quali abbiamo dati
 				var currentCountry = getCountry(d.countryId);
 				if (currentCountry) {
 					if ($.inArray(enabledCountries, currentCountry.id) == -1) {
@@ -276,9 +273,8 @@ function Map() {
 						enabledCountries.push(currentCountry.id);
 					}
 					// Creo i cerchi, uno per ogni brano presente nei dati. (Il formato dei dati non permette cerchi multipli sullo stesso paese!)
-					var circles = g.selectAll("circle").data(data).enter().append("circle")
-					.on("mouseover", function(d) {	
-						popoverTarget = d3.select(this);									
+					var circles = g.selectAll("circle").data(data).enter().append("circle").on("mouseover", function(d) {
+						popoverTarget = d3.select(this);
 						circleMouseOver(d);
 					}).on("mouseout", function() {
 						circleMouseOut();
@@ -287,8 +283,7 @@ function Map() {
 					}).on("click", function(d) {
 						circleMouseClick(d);
 					}).style("stroke", selectedCountryStroke).style("stroke-width", "0.5").style("opacity", 0)// L'opacità iniziale è 0 perchè verrà animata successivamente
-					.attr("id", "mapCircle")
-					.attr("r", 0)// Come sopra, anche il raggio verrà animato
+					.attr("id", "mapCircle").attr("r", 0)// Come sopra, anche il raggio verrà animato
 					.attr("cx", function(d) {
 						var coords = get_xyz(getCountry(d.countryId));
 						return coords[0];
@@ -312,41 +307,29 @@ function Map() {
 	}
 
 	// Quando il mouse entra nel cerchio mostro il tooltip
-	function circleMouseOver(d) {		
-		//TODO: Usare Popover di Bootstrap per creare un popup unico condiviso tra i vari grafici.
-		/*var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
-		// Evitiamo che il tooltip venga disegnato fuori dall'area visibile
-		coverTooltip.transition().duration(500).style("opacity", .9);
-		var tooltip_str = '<div class="popover fade left in" style="display: block !important; left:-80px; top:-10px; visibility: visible !important;"><div class="arrow" style="top: 50% !important"></div><h3 class="popover-title">title</h3><div class="popover-content">content</div></div>';
-		// Inizio l'animazione		
-		d3.select("body").append("div").html(tooltip_str).style("left", (d3.event.pageX) + "px").style("top", (top) + "px");
-		//coverTooltip.html("<div style='background-image:url(" + convertURIToCache(d.artwork_url) + "); background-size: 100%; height: 150px; width: 150px;'></div>" + "<br/><div>" + "Artista   : " + d.artist_name + "<br/>" + "Album     : " + d.album_name + "<br/>" + "Titolo    : " + d.track_name + "<br/>" + "Ascolti   : " + d.num_streams + "<br/></div>").style("left", (d3.event.pageX) + "px").style("top", (top) + "px");		
-		// Imposto l'HTML da mostrare
-		*/		
+	function circleMouseOver(d) {
 		$(popoverTarget[0][0]).popover({
-			title: "<center><p><b>" + d.artist_name + "</b></p><p>" + d.track_name + "</p></center>",
+			title : "<center><p><b>" + d.artist_name + "</b></p><p>" + d.track_name + "</p></center>",
 			content : "<center><div style='background-image:url(" + convertURIToCache(d.artwork_url) + "); background-size: 100%; height: 150px; width: 150px;'></div><p>Ascolti   : " + d.num_streams + "</p></center>",
-			html: true,
+			html : true,
 			placement : "left",
 			container : ".grafico1",
 			trigger : "manual",
 			position : "fixed",
-			template: '<div class="popover" role="tooltip" style="z-index:99999999 !important;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+			template : '<div class="popover" role="tooltip" style="z-index:99999999 !important;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
 		});
-		$(popoverTarget[0][0]).popover('show'); 
+		$(popoverTarget[0][0]).popover('show');
 
 	}
 
 	// Quando il mouse esce dal cerchio nascondo il tooltip
 	function circleMouseOut() {
-		//coverTooltip.transition().duration(500).style("opacity", 0);
 		$(popoverTarget[0][0]).popover('destroy');
 	}
 
 	// Se il mouse si muove aggiorno la posizione del tooltip per seguire il mouse
 	function circleMouseMove() {
-		/*var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
-		coverTooltip.style("left", (d3.event.pageX) + "px").style("top", (top) + "px");*/
+		// Utilizzando la libreria Popover questo metodo diventa superfluo
 	}
 
 	// Il click del mouse cambia lo stato del grafico e imposta il brano come selezionato
@@ -362,7 +345,7 @@ function Map() {
 			return Math.random() * Math.sqrt(d.num_streams / 10);
 		}).duration(1000).style("opacity", 0).attr("r", 0);
 		// Devo resettare lo zoom e lo stato selezionato
-		if (country){
+		if (country) {
 			var xyz = [width / 2, height / 1.5, 1];
 			zoom(xyz);
 		}
@@ -386,7 +369,7 @@ function Map() {
 			// Adesso posso colorare ogni paese utilizzando la funzione di quantizzazione
 			data.forEach(function(d) {
 				var country = getCountry(d.countryId);
-				if (country) {					
+				if (country) {
 					g.selectAll("#" + country.id).on("mouseover", function(d) {
 						var top = ((d3.event.pageY > height) ? height : d3.event.pageY);
 						// Evitiamo che il tooltip venga disegnato fuori dall'area visibile
@@ -422,14 +405,14 @@ function Map() {
 	};
 
 	// Cambiamo lo stato di visualizzazione del grafico rimuovendo i dati vecchi e inserendo quelli nuovi con delle animazioni
-	grafico.changeStatus = function(newStatus) {		
+	grafico.changeStatus = function(newStatus) {
 		currentStatus = newStatus;
 		switch(newStatus) {
-			case 1: {				
+			case 1: {
 				setStatus1();
 				break;
 			}
-			case 2: {				
+			case 2: {
 				exitStatus1();
 				setStatus2();
 				break;
@@ -437,14 +420,12 @@ function Map() {
 		}
 	};
 
-	// Se siamo in modalità mosaico devo rimuovere le trasformazioni dall'oggetto SVG
 	grafico.toMosaic = function() {
-
+		// L'oggetto SVG scala e cambia dimensione adattandosi al container in modo automatico, non devo fare niente
 	};
 
-	// Se siamo in modalità intera devo aggiungere le trasformazioni dall'oggetto SVG
 	grafico.toFull = function() {
-
+		// L'oggetto SVG scala e cambia dimensione adattandosi al container in modo automatico, non devo fare niente
 	};
 
 	/* Fine funzioni pubbliche */

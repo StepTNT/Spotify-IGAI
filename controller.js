@@ -18,21 +18,12 @@ function Controller() {
 	// Le variabili che rappresentano i dati selezionati dall'utente
 	var selectedDate, selectedCountry, selectedTrack;
 
+	// Ci serve sapere se la pagina è pronta per decidere se eseguire o meno alcune funzioni
 	var isPageReady = false;
 
 	/* Fine variaibli private */
 
 	/* Inizio metodi privati */
-
-	// Restituisce l'URL della bandiera del paese selezionato
-	function getCountryFlag(country) {
-
-	}
-
-	// Restituisce il nome completo del paese a partire dal codice ISO
-	function getCountryName(country) {
-
-	}
 
 	/* Fine metodi privati */
 
@@ -60,8 +51,6 @@ function Controller() {
 	/* Inizio gestione eventi */
 
 	// E' stata selezionata una nuova traccia, quindi devo aggiornare i grafici
-	
-	
 	controller.trackChanged = function(newTrack, color) {
 		notice = new jBox('Notice', {
 			content : 'Selezionata nuova traccia: ' + newTrack.artist_name + " - " + newTrack.track_name,
@@ -100,7 +89,7 @@ function Controller() {
 		//controller.selectedTrack = newTrack;
 		selectedCountry = newCountry;
 		// Aggiorno il grafico line per rimuovere l'eventuale traccia selezionata in precedenza
-		lineChart.setSelectedTrack({});		
+		lineChart.setSelectedTrack({});
 		// Aggiorno il grafico line
 		lineChart.setSelectedCountry(newCountry);
 		distributionChart.setSelectedCountry(newCountry);
@@ -110,7 +99,7 @@ function Controller() {
 			distributionChart.changeStatus(2);
 			mapChart.changeStatus(1);
 			$("#countryFlag").attr("class", "flag-icon flag-icon-" + newCountry.id);
-			$("#countryName").html(newCountry.properties.name);			
+			$("#countryName").html(newCountry.properties.name);
 		} else {
 			lineChart.changeStatus(1);
 			distributionChart.changeStatus(1);
@@ -139,18 +128,20 @@ function Controller() {
 
 	// Aggiorna la tabaella target con i nuovi dati contenuti in data
 	controller.updateTable = function(target, data) {
-		var finalData = jQuery.extend(true, {}, data); // Ne faccio una copia altrimenti rischio di modificare i dati da visualizzare nel grafico
+		var finalData = jQuery.extend(true, {}, data);
+		// Ne faccio una copia altrimenti rischio di modificare i dati da visualizzare nel grafico
 		var keys = Object.keys(data[0]);
 		var result = "<thead>";
 		for (var i = 0; i < keys.length; i++) {
 			result += "<th>" + keys[i] + "</th>";
-		} // Genero i nomi delle colonne a partire dal contenuto del JSON
-		result += "</thead>";		
-		$("#tabella" + target).empty(); // Svuoto il div dal codice html precedente e poi aggiungo quello aggiornato
+		}// Genero i nomi delle colonne a partire dal contenuto del JSON
+		result += "</thead>";
+		$("#tabella" + target).empty();
+		// Svuoto il div dal codice html precedente e poi aggiungo quello aggiornato
 		$("#tabella" + target).append("<table id=\"contenutoTabella" + target + "\" class=\"table table-bordered\"></table>");
-		$("#contenutoTabella" + target).html(result);		
-		if(target != 1){
-			for(var i = 0; i<data.length; i++){
+		$("#contenutoTabella" + target).html(result);
+		if (target != 1) {
+			for (var i = 0; i < data.length; i++) {
 				// Il plugin non si comporta bene con i JSON che contengono array, quindi li dobbiamo convertire in stringhe per avere una visualizzazione accettabile
 				finalData[i].values = JSON.stringify(data[i].values);
 			}

@@ -165,7 +165,10 @@
 					height : 600,
 					closeButton : true,
 					animation : 'zoomIn',
-					delayClose : 250
+					delayClose : 250,
+					onClose: function(){
+						lineChart.toMosaic();
+					}					
 				});
 				$(".grafico2 .table-icon").click(function() {
 					modalTabella2.toggle();
