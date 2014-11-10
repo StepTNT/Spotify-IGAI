@@ -251,7 +251,10 @@ function Line() {
 
 	// Aggiorno l'oggetto per adattarlo alle nuove dimensioni
 	grafico.toFull = function() {
-		lineChart.update();
+		var rect = $(".nv-lineChart > g > rect")[0];
+		$(rect).attr("height", 490);
+		$(rect).attr("width", 1280);
+		lineChart.update();		
 	};
 
 	/* Fine funzioni pubbliche */

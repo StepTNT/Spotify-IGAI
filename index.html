@@ -61,6 +61,18 @@
 				$(".grafico3").mouseleave(function() {
 					$(".grafico3 .overlay-resize").fadeOut();
 				});
+				function toggleTableButtons(show){
+					var buttons = $(".overlay-background");
+					if(show){
+						$(buttons[1]).show();
+						$(buttons[3]).show();
+						$(buttons[5]).show();
+					} else {
+						$(buttons[1]).hide();
+						$(buttons[3]).hide();
+						$(buttons[5]).hide();
+					}
+				}
 				var modalG1 = $('#myModal').jBox('Modal', {
 					title : 'Map',
 					content : $('.grafico1'),
@@ -76,6 +88,7 @@
 						$(".grafico1 .overlay-resize").animate({
 							right : "1.1%"
 						});
+						toggleTableButtons(false);
 					},
 					onClose : function() {
 						if ($("#grafico1-container > div").length == 0)
@@ -90,6 +103,7 @@
 							right : "0"
 						});
 						$(".grafico1 .overlay-resize").fadeOut();
+						toggleTableButtons(true);
 					},
 					animation : 'zoomIn',
 					delayClose : 250
@@ -125,12 +139,13 @@
 						}, {
 							complete : function() {
 								lineChart.toFull();
+								toggleTableButtons(false);
 							}
 						});
 						$(".grafico2 .overlay-resize").animate({
 							right : "1.1%"
 						});
-						lineChart.toFull();
+						//lineChart.toFull();						
 					},
 					onClose : function() {
 						if ($("#grafico2-container > div").length == 0)
@@ -144,13 +159,13 @@
 						}, {
 							complete : function() {
 								lineChart.toMosaic();
+								toggleTableButtons(true);
 							}
 						});
 						$(".grafico2 .overlay-resize").animate({
 							right : "0"
 						});
 						$(".grafico2 .overlay-resize").fadeOut();
-
 					},
 					animation : 'zoomIn',
 					delayClose : 250
@@ -187,13 +202,14 @@
 							width : 1266,
 							top : 0,
 							left : 0
-						});
-						$(".grafico3 .overlay-resize").animate({
-							right : "1.1%"
 						}, {
 							complete : function() {
 								distributionChart.toFull();
+								toggleTableButtons(false);
 							}
+						});
+						$(".grafico3 .overlay-resize").animate({
+							right : "1.1%"
 						});
 					},
 					onClose : function() {
@@ -208,7 +224,8 @@
 							left : 635
 						}, {
 							complete : function() {
-								distributionChart.toMosaic();
+								distributionChart.toMosaic();	
+								toggleTableButtons(true);							
 							}
 						});
 						$(".grafico3 .overlay-resize").animate({
